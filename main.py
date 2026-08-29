@@ -72,3 +72,37 @@ def parse(raw_script: bytes) -> list[Token]:
                 )
 
     return tokens
+
+
+def compile(tokens: list[Token]) -> bytes:
+    raw = bytearray()
+
+    for token in tokens:
+        match token.opcode:
+            case Opcode.OP_PUSHDATA_DIRECT:
+                assert token.data is not None
+                raw.append(len(token.data))
+                raw.extend(token.data)
+
+            case Opcode.OP_PUSHDATA1:
+                assert token.data is not None
+                raw.append(Opcode.OP_PUSHDATA1.value)
+                raw.append(len(token.data))
+                raw.extend(token.data)
+
+            case Opcode.OP_PUSHDATA2:
+                assert token.data is not None
+                raw.append(Opcode.OP_PUSHDATA2.value)
+                raw.extend(len(token.data).to_bytes(2, byteorder="little"))
+                raw.extend(token.data)
+
+            case Opcode.OP_PUSHDATA4:
+                assert token.data is not None
+                raw.append(Opcode.OP_PUSHDATA4.value)
+                raw.extend(len(token.data).to_bytes(4, byteorder="little"))
+                raw.extend(token.data)
+
+            case regular_opcode:
+                raw.append(regular_opcode.value)
+
+    return bytes(raw)

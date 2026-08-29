@@ -37,6 +37,19 @@ class TestScriptParser(unittest.TestCase):
             parse(raw_75bytes), [Token(Opcode.OP_PUSHDATA_DIRECT, data_75)]
         )
 
+    def test_pushdata1(self):
+        data_80 = b"B" * 80
+        raw = b"\x4c\x50" + data_80
+        self.assertEqual(parse(raw), [Token(Opcode.OP_PUSHDATA1, data_80)])
+
+    def test_unknown_opcode_raises_error(self):
+        raw = bytes([0x76, 0xA9, 0xFF, 0x88])
+        with self.assertRaises(ValueError) as ctx:
+            _ = parse(raw)
+
+        self.assertIn("0xFF", str(ctx.exception))
+        self.assertIn("offset 2", str(ctx.exception))
+
 
 if __name__ == "__main__":
     _ = unittest.main(verbosity=2)
