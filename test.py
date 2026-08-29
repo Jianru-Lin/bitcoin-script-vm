@@ -24,16 +24,18 @@ class TestScriptParser(unittest.TestCase):
         ]
         self.assertEqual(parse(raw), expected)
 
-    def test_direct_pushdata_small(self):
+    def test_direct_pushdata_direct(self):
         raw_4bytes = b"\x04\xde\xad\xbe\xef"
         self.assertEqual(
-            parse(raw_4bytes), [Token(Opcode.OP_PUSHDATA, b"\xde\xad\xbe\xef")]
+            parse(raw_4bytes), [Token(Opcode.OP_PUSHDATA_DIRECT, b"\xde\xad\xbe\xef")]
         )
 
         # 75 bytes data
         data_75 = b"A" * 75
         raw_75bytes = b"\x4b" + data_75
-        self.assertEqual(parse(raw_75bytes), [Token(Opcode.OP_PUSHDATA, data_75)])
+        self.assertEqual(
+            parse(raw_75bytes), [Token(Opcode.OP_PUSHDATA_DIRECT, data_75)]
+        )
 
 
 if __name__ == "__main__":

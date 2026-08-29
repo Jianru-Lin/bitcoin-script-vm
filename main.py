@@ -3,7 +3,10 @@ from typing import NamedTuple
 
 
 class Opcode(IntEnum):
-    OP_PUSHDATA = -1
+    OP_PUSHDATA_DIRECT = -1  # 0x01 ~ 0x4B
+    OP_PUSHDATA1 = 0x4C
+    OP_PUSHDATA2 = 0x4D
+    OP_PUSHDATA4 = 0x4E
     OP_0 = 0x00
     OP_1 = 0x51
     OP_VERIFY = 0x69
@@ -36,19 +39,27 @@ def parse(raw_script: bytes) -> list[Token]:
 
         if 0x01 <= byte <= 0x4B:
             data_len = byte
-            tokens.append(Token(Opcode.OP_PUSHDATA, raw_script[pc : pc + data_len]))
+            tokens.append(
+                Token(Opcode.OP_PUSHDATA_DIRECT, raw_script[pc : pc + data_len])
+            )
             pc += data_len
 
-        elif byte == 0x4C:
+        elif byte == Opcode.OP_PUSHDATA1:
             data_len = raw_script[pc]
             pc += 1
-            tokens.append(Token(Opcode.OP_PUSHDATA, raw_script[pc : pc + data_len]))
+            tokens.append(Token(Opcode.OP_PUSHDATA1, raw_script[pc : pc + data_len]))
             pc += data_len
 
-        elif byte == 0x4D:
+        elif byte == Opcode.OP_PUSHDATA2:
             data_len = int.from_bytes(raw_script[pc : pc + 2], byteorder="little")
             pc += 2
-            tokens.append(Token(Opcode.OP_PUSHDATA, raw_script[pc : pc + data_len]))
+            tokens.append(Token(Opcode.OP_PUSHDATA2, raw_script[pc : pc + data_len]))
+            pc += data_len
+
+        elif byte == Opcode.OP_PUSHDATA4:
+            data_len = int.from_bytes(raw_script[pc : pc + 4], byteorder="little")
+            pc += 4
+            tokens.append(Token(Opcode.OP_PUSHDATA4, raw_script[pc : pc + data_len]))
             pc += data_len
 
         else:
