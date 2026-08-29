@@ -30,6 +30,11 @@ class TestScriptParser(unittest.TestCase):
             parse(raw_4bytes), [Token(Opcode.OP_PUSHDATA, b"\xde\xad\xbe\xef")]
         )
 
+        # 75 bytes data
+        data_75 = b"A" * 75
+        raw_75bytes = b"\x4b" + data_75
+        self.assertEqual(parse(raw_75bytes), [Token(Opcode.OP_PUSHDATA, data_75)])
+
 
 if __name__ == "__main__":
     _ = unittest.main(verbosity=2)
