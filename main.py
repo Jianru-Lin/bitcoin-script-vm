@@ -235,9 +235,9 @@ class BytesReader:
             raise ValueError(
                 f"Unexpected end of stream: cannot read 1 byte at offset {self._pc}"
             )
-        byte = self._raw[self._pc]
+        val = self._raw[self._pc]
         self._pc += 1
-        return byte
+        return val
 
     def read_bytes(self, n: int) -> bytes:
         if self._pc + n > self._length:
@@ -254,3 +254,31 @@ class BytesReader:
 
     def read_uint132_le(self) -> int:
         return int.from_bytes(self.read_bytes(4), byteorder="little")
+
+
+class BytesWriter:
+    _buf: bytearray
+
+    def __init__(self) -> None:
+        self._buf = bytearray()
+
+    def write_byte(self, val: int) -> None:
+        if not (0 <= val <= 0xFF):
+            raise ValueError(f"Byte value out of range (0~255): {val}")
+        self._buf.append(val)
+
+    def write_bytes(self, data: bytes) -> None:
+        self._buf.extend(data)
+
+    def write_uint16_le(self, val: int) -> None:
+        if not (0 <= val <= 0xFFFF):
+            raise ValueError(f"Uint16 out of range (0~65535): {val}")
+        self._buf.extend(val.to_bytes(2, byteorder="little"))
+
+    def write_unit32_le(self, val: int) -> None:
+        if not (0 <= val <= 0xFFFFFFFF):
+            raise ValueError(f"Uint32 out of range (0~4294967295): {val}")
+        self._buf.extend(val.to_bytes(4, byteorder="little"))
+
+    def to_bytes(self) -> bytes
+        return bytes(self._buf)
