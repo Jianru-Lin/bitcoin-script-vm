@@ -135,37 +135,29 @@ class Token(NamedTuple):
 
 
 def parse(raw_script: bytes) -> list[Token]:
+    reader = BytesReader(raw_script)
     tokens: list[Token] = []
-    pc = 0
-    length = len(raw_script)
-    while pc < length:
-        byte = raw_script[pc]
-        pc += 1
+    while not reader.is_eof():
+        byte = reader.read_byte()
 
         if 0x01 <= byte <= 0x4B:
-            data_len = byte
-            tokens.append(
-                Token(Opcode.OP_PUSHDATA_DIRECT, raw_script[pc : pc + data_len])
-            )
-            pc += data_len
+            data = reader.read_bytes(byte)
+            tokens.append(Token(Opcode.OP_PUSHDATA_DIRECT, data))
 
         elif byte == Opcode.OP_PUSHDATA1:
-            data_len = raw_script[pc]
-            pc += 1
-            tokens.append(Token(Opcode.OP_PUSHDATA1, raw_script[pc : pc + data_len]))
-            pc += data_len
+            data_len = reader.read_byte()
+            data = reader.read_bytes(data_len)
+            tokens.append(Token(Opcode.OP_PUSHDATA1, data))
 
         elif byte == Opcode.OP_PUSHDATA2:
-            data_len = int.from_bytes(raw_script[pc : pc + 2], byteorder="little")
-            pc += 2
-            tokens.append(Token(Opcode.OP_PUSHDATA2, raw_script[pc : pc + data_len]))
-            pc += data_len
+            data_len = reader.read_uint16_le()
+            data = reader.read_bytes(data_len)
+            tokens.append(Token(Opcode.OP_PUSHDATA2, data))
 
         elif byte == Opcode.OP_PUSHDATA4:
-            data_len = int.from_bytes(raw_script[pc : pc + 4], byteorder="little")
-            pc += 4
-            tokens.append(Token(Opcode.OP_PUSHDATA4, raw_script[pc : pc + data_len]))
-            pc += data_len
+            data_len = reader.read_uint32_le()
+            data = reader.read_bytes(data_len)
+            tokens.append(Token(Opcode.OP_PUSHDATA4, data))
 
         else:
             try:
@@ -180,37 +172,57 @@ def parse(raw_script: bytes) -> list[Token]:
 
 
 def compile(tokens: list[Token]) -> bytes:
-    raw = bytearray()
+    writer = BytesWriter()
 
     for token in tokens:
         match token.opcode:
             case Opcode.OP_PUSHDATA_DIRECT:
                 assert token.data is not None
-                raw.append(len(token.data))
-                raw.extend(token.data)
+                data_len = len(token.data)
+                if not (1 <= data_len <= 75):
+                    raise ValueError(
+                        f"OP_PUSHDATA_DIRECT payload must be 1-75 bytes, got {data_len}"
+                    )
+                writer.write_byte(data_len)
+                writer.write_bytes(token.data)
 
             case Opcode.OP_PUSHDATA1:
                 assert token.data is not None
-                raw.append(Opcode.OP_PUSHDATA1.value)
-                raw.append(len(token.data))
-                raw.extend(token.data)
+                data_len = len(token.data)
+                if data_len > 0xFF:
+                    raise ValueError(
+                        f"OP_PUSHDATA1 payload exceeds 255 bytes: {data_len}"
+                    )
+                writer.write_byte(Opcode.OP_PUSHDATA1.value)
+                writer.write_byte(data_len)
+                writer.write_bytes(token.data)
 
             case Opcode.OP_PUSHDATA2:
                 assert token.data is not None
-                raw.append(Opcode.OP_PUSHDATA2.value)
-                raw.extend(len(token.data).to_bytes(2, byteorder="little"))
-                raw.extend(token.data)
+                data_len = len(token.data)
+                if data_len > 0xFFFF:
+                    raise ValueError(
+                        f"OP_PUSHDATA2 payload exceeds 65535 bytes: {data_len}"
+                    )
+                writer.write_byte(Opcode.OP_PUSHDATA1.value)
+                writer.write_uint16_le(data_len)
+                writer.write_bytes(token.data)
 
             case Opcode.OP_PUSHDATA4:
                 assert token.data is not None
-                raw.append(Opcode.OP_PUSHDATA4.value)
-                raw.extend(len(token.data).to_bytes(4, byteorder="little"))
-                raw.extend(token.data)
+                data_len = len(token.data)
+                if data_len > 0xFFFF:
+                    raise ValueError(
+                        f"OP_PUSHDATA4 payload exceeds 4294967295 bytes: {data_len}"
+                    )
+                writer.write_byte(Opcode.OP_PUSHDATA1.value)
+                writer.write_unit32_le(data_len)
+                writer.write_bytes(token.data)
 
             case regular_opcode:
-                raw.append(regular_opcode.value)
+                writer.write_byte(regular_opcode.value)
 
-    return bytes(raw)
+    return writer.to_bytes()
 
 
 class BytesReader:
@@ -252,7 +264,7 @@ class BytesReader:
     def read_uint16_le(self) -> int:
         return int.from_bytes(self.read_bytes(2), byteorder="little")
 
-    def read_uint132_le(self) -> int:
+    def read_uint32_le(self) -> int:
         return int.from_bytes(self.read_bytes(4), byteorder="little")
 
 
