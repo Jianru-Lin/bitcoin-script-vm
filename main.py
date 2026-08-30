@@ -2,6 +2,7 @@ from enum import IntEnum
 from typing import NamedTuple
 
 
+# Check here https://github.com/bitcoin/bitcoin/blob/master/src/script/script.h
 class Opcode(IntEnum):
     # Constants
     OP_PUSHDATA_DIRECT = -1  # 0x01 ~ 0x4B
@@ -125,6 +126,7 @@ class Opcode(IntEnum):
     OP_NOP8 = 0xB7
     OP_NOP9 = 0xB8
     OP_NOP10 = 0xB9
+    OP_INVALIDOPCODE = 0xFF
 
 
 class Token(NamedTuple):
