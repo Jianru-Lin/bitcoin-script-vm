@@ -280,5 +280,5 @@ class BytesWriter:
             raise ValueError(f"Uint32 out of range (0~4294967295): {val}")
         self._buf.extend(val.to_bytes(4, byteorder="little"))
 
-    def to_bytes(self) -> bytes
+    def to_bytes(self) -> bytes:
         return bytes(self._buf)
