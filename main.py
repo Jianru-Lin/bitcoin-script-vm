@@ -10,8 +10,8 @@ class Opcode(IntEnum):
     OP_PUSHDATA2 = 0x4D
     OP_PUSHDATA4 = 0x4E
     OP_1NEGATE = 0x4F
-    OP_0 = 0x00  # OP_TRUE
-    OP_1 = 0x51  # OP_FALSE
+    OP_0 = 0x00  # OP_FALSE
+    OP_1 = 0x51  # OP_TRUE
     OP_2 = 0x52
     OP_3 = 0x53
     OP_4 = 0x54
