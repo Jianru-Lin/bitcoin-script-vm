@@ -8,6 +8,7 @@ class Opcode(IntEnum):
     OP_PUSHDATA1 = 0x4C
     OP_PUSHDATA2 = 0x4D
     OP_PUSHDATA4 = 0x4E
+    OP_1NEGATE = 0x4F
     OP_0 = 0x00  # OP_TRUE
     OP_1 = 0x51  # OP_FALSE
     OP_2 = 0x52
@@ -107,8 +108,8 @@ class Opcode(IntEnum):
     OP_CHECKMULTISIGVERIFY = 0xAF
     OP_CHECKSIGADD = 0xBA
     # Locktime
-    OP_CHECKLOCKTIMEVERIFY = 0xB1
-    OP_CHECKSEQUENCEVERIFY = 0xB2
+    OP_CHECKLOCKTIMEVERIFY = 0xB1  # OP_NOP2
+    OP_CHECKSEQUENCEVERIFY = 0xB2  # OP_NOP3
     # Reserved words
     OP_RESERVED = 0x50
     OP_VER = 0x62
