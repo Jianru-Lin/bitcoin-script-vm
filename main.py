@@ -2,6 +2,76 @@ from enum import IntEnum
 from typing import NamedTuple
 
 
+class BytesReader:
+    _raw: bytes
+    _pc: int
+    _length: int
+
+    def __init__(self, raw: bytes):
+        self._raw = raw
+        self._pc = 0
+        self._length = len(raw)
+
+    @property
+    def pc(self) -> int:
+        return self._pc
+
+    def is_eof(self) -> bool:
+        return self._pc >= self._length
+
+    def read_byte(self) -> int:
+        if self._pc >= self._length:
+            raise ValueError(
+                f"Unexpected end of stream: cannot read 1 byte at offset {self._pc}"
+            )
+        val = self._raw[self._pc]
+        self._pc += 1
+        return val
+
+    def read_bytes(self, n: int) -> bytes:
+        if self._pc + n > self._length:
+            raise ValueError(
+                f"Unexpected end of stream: required {n} bytes, only {self._length - self._pc} available at offset {self._pc}"
+            )
+        data = self._raw[self._pc : self._pc + n]
+        self._pc += n
+        return data
+
+    def read_uint16_le(self) -> int:
+        return int.from_bytes(self.read_bytes(2), byteorder="little")
+
+    def read_uint32_le(self) -> int:
+        return int.from_bytes(self.read_bytes(4), byteorder="little")
+
+
+class BytesWriter:
+    _buf: bytearray
+
+    def __init__(self) -> None:
+        self._buf = bytearray()
+
+    def write_byte(self, val: int) -> None:
+        if not (0 <= val <= 0xFF):
+            raise ValueError(f"Byte value out of range (0~255): {val}")
+        self._buf.append(val)
+
+    def write_bytes(self, data: bytes) -> None:
+        self._buf.extend(data)
+
+    def write_uint16_le(self, val: int) -> None:
+        if not (0 <= val <= 0xFFFF):
+            raise ValueError(f"Uint16 out of range (0~65535): {val}")
+        self._buf.extend(val.to_bytes(2, byteorder="little"))
+
+    def write_uint32_le(self, val: int) -> None:
+        if not (0 <= val <= 0xFFFFFFFF):
+            raise ValueError(f"Uint32 out of range (0~4294967295): {val}")
+        self._buf.extend(val.to_bytes(4, byteorder="little"))
+
+    def to_bytes(self) -> bytes:
+        return bytes(self._buf)
+
+
 # Check here https://github.com/bitcoin/bitcoin/blob/master/src/script/script.h
 class Opcode(IntEnum):
     # Constants
@@ -138,6 +208,7 @@ def parse(raw_script: bytes) -> list[Token]:
     reader = BytesReader(raw_script)
     tokens: list[Token] = []
     while not reader.is_eof():
+        offset = reader.pc
         byte = reader.read_byte()
 
         if 0x01 <= byte <= 0x4B:
@@ -165,7 +236,7 @@ def parse(raw_script: bytes) -> list[Token]:
                 tokens.append(Token(opcode))
             except ValueError:
                 raise ValueError(
-                    f"Unknown opcode byte: 0x{byte:02X} at offset {pc - 1}"
+                    f"Unknown opcode byte: 0x{byte:02X} at offset {offset}"
                 )
 
     return tokens
@@ -204,93 +275,22 @@ def compile(tokens: list[Token]) -> bytes:
                     raise ValueError(
                         f"OP_PUSHDATA2 payload exceeds 65535 bytes: {data_len}"
                     )
-                writer.write_byte(Opcode.OP_PUSHDATA1.value)
+                writer.write_byte(Opcode.OP_PUSHDATA2.value)
                 writer.write_uint16_le(data_len)
                 writer.write_bytes(token.data)
 
             case Opcode.OP_PUSHDATA4:
                 assert token.data is not None
                 data_len = len(token.data)
-                if data_len > 0xFFFF:
+                if data_len > 0xFFFFFFFF:
                     raise ValueError(
                         f"OP_PUSHDATA4 payload exceeds 4294967295 bytes: {data_len}"
                     )
-                writer.write_byte(Opcode.OP_PUSHDATA1.value)
-                writer.write_unit32_le(data_len)
+                writer.write_byte(Opcode.OP_PUSHDATA4.value)
+                writer.write_uint32_le(data_len)
                 writer.write_bytes(token.data)
 
             case regular_opcode:
                 writer.write_byte(regular_opcode.value)
 
     return writer.to_bytes()
-
-
-class BytesReader:
-    _raw: bytes
-    _pc: int
-    _length: int
-
-    def __init__(self, raw: bytes):
-        self._raw = raw
-        self._pc = 0
-        self._length = len(raw)
-
-    @property
-    def pc(self) -> int:
-        return self._pc
-
-    def is_eof(self) -> bool:
-        return self._pc >= self._length
-
-    def read_byte(self) -> int:
-        if self._pc >= self._length:
-            raise ValueError(
-                f"Unexpected end of stream: cannot read 1 byte at offset {self._pc}"
-            )
-        val = self._raw[self._pc]
-        self._pc += 1
-        return val
-
-    def read_bytes(self, n: int) -> bytes:
-        if self._pc + n > self._length:
-            raise ValueError(
-                f"Unexpected end of stream: required {n} bytes, "
-                + f"only {self._length - self._pc} available at offset {self._pc}"
-            )
-        data = self._raw[self._pc : self._pc + n]
-        self._pc += n
-        return data
-
-    def read_uint16_le(self) -> int:
-        return int.from_bytes(self.read_bytes(2), byteorder="little")
-
-    def read_uint32_le(self) -> int:
-        return int.from_bytes(self.read_bytes(4), byteorder="little")
-
-
-class BytesWriter:
-    _buf: bytearray
-
-    def __init__(self) -> None:
-        self._buf = bytearray()
-
-    def write_byte(self, val: int) -> None:
-        if not (0 <= val <= 0xFF):
-            raise ValueError(f"Byte value out of range (0~255): {val}")
-        self._buf.append(val)
-
-    def write_bytes(self, data: bytes) -> None:
-        self._buf.extend(data)
-
-    def write_uint16_le(self, val: int) -> None:
-        if not (0 <= val <= 0xFFFF):
-            raise ValueError(f"Uint16 out of range (0~65535): {val}")
-        self._buf.extend(val.to_bytes(2, byteorder="little"))
-
-    def write_unit32_le(self, val: int) -> None:
-        if not (0 <= val <= 0xFFFFFFFF):
-            raise ValueError(f"Uint32 out of range (0~4294967295): {val}")
-        self._buf.extend(val.to_bytes(4, byteorder="little"))
-
-    def to_bytes(self) -> bytes:
-        return bytes(self._buf)
