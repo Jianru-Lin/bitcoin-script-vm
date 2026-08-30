@@ -199,41 +199,41 @@ class Opcode(IntEnum):
     OP_INVALIDOPCODE = 0xFF
 
 
-class Token(NamedTuple):
+class ScriptToken(NamedTuple):
     opcode: Opcode
     data: bytes | None = None  # only for OP_PUSHDATA
 
 
-def parse(raw_script: bytes) -> list[Token]:
+def parse(raw_script: bytes) -> list[ScriptToken]:
     reader = BytesReader(raw_script)
-    tokens: list[Token] = []
+    tokens: list[ScriptToken] = []
     while not reader.is_eof():
         offset = reader.pc
         byte = reader.read_byte()
 
         if 0x01 <= byte <= 0x4B:
             data = reader.read_bytes(byte)
-            tokens.append(Token(Opcode.OP_PUSHDATA_DIRECT, data))
+            tokens.append(ScriptToken(Opcode.OP_PUSHDATA_DIRECT, data))
 
         elif byte == Opcode.OP_PUSHDATA1:
             data_len = reader.read_byte()
             data = reader.read_bytes(data_len)
-            tokens.append(Token(Opcode.OP_PUSHDATA1, data))
+            tokens.append(ScriptToken(Opcode.OP_PUSHDATA1, data))
 
         elif byte == Opcode.OP_PUSHDATA2:
             data_len = reader.read_uint16_le()
             data = reader.read_bytes(data_len)
-            tokens.append(Token(Opcode.OP_PUSHDATA2, data))
+            tokens.append(ScriptToken(Opcode.OP_PUSHDATA2, data))
 
         elif byte == Opcode.OP_PUSHDATA4:
             data_len = reader.read_uint32_le()
             data = reader.read_bytes(data_len)
-            tokens.append(Token(Opcode.OP_PUSHDATA4, data))
+            tokens.append(ScriptToken(Opcode.OP_PUSHDATA4, data))
 
         else:
             try:
                 opcode = Opcode(byte)
-                tokens.append(Token(opcode))
+                tokens.append(ScriptToken(opcode))
             except ValueError:
                 raise ValueError(
                     f"Unknown opcode byte: 0x{byte:02X} at offset {offset}"
@@ -242,7 +242,7 @@ def parse(raw_script: bytes) -> list[Token]:
     return tokens
 
 
-def compile(tokens: list[Token]) -> bytes:
+def compile(tokens: list[ScriptToken]) -> bytes:
     writer = BytesWriter()
 
     for token in tokens:
