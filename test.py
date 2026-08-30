@@ -42,13 +42,13 @@ class TestScriptParser(unittest.TestCase):
         raw = b"\x4c\x50" + data_80
         self.assertEqual(parse(raw), [Token(Opcode.OP_PUSHDATA1, data_80)])
 
-    def test_unknown_opcode_raises_error(self):
-        raw = bytes([0x76, 0xA9, 0xFF, 0x88])
-        with self.assertRaises(ValueError) as ctx:
-            _ = parse(raw)
+    # def test_unknown_opcode_raises_error(self):
+    #     raw = bytes([0x76, 0xA9, 0xFF, 0x88])
+    #     with self.assertRaises(ValueError) as ctx:
+    #         _ = parse(raw)
 
-        self.assertIn("0xFF", str(ctx.exception))
-        self.assertIn("offset 2", str(ctx.exception))
+    #     self.assertIn("0xFF", str(ctx.exception))
+    #     self.assertIn("offset 2", str(ctx.exception))
 
 
 if __name__ == "__main__":

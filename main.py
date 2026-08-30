@@ -211,3 +211,46 @@ def compile(tokens: list[Token]) -> bytes:
                 raw.append(regular_opcode.value)
 
     return bytes(raw)
+
+
+class BytesReader:
+    _raw: bytes
+    _pc: int
+    _length: int
+
+    def __init__(self, raw: bytes):
+        self._raw = raw
+        self._pc = 0
+        self._length = len(raw)
+
+    @property
+    def pc(self) -> int:
+        return self._pc
+
+    def is_eof(self) -> bool:
+        return self._pc >= self._length
+
+    def read_byte(self) -> int:
+        if self._pc >= self._length:
+            raise ValueError(
+                f"Unexpected end of stream: cannot read 1 byte at offset {self._pc}"
+            )
+        byte = self._raw[self._pc]
+        self._pc += 1
+        return byte
+
+    def read_bytes(self, n: int) -> bytes:
+        if self._pc + n > self._length:
+            raise ValueError(
+                f"Unexpected end of stream: required {n} bytes, "
+                + f"only {self._length - self._pc} available at offset {self._pc}"
+            )
+        data = self._raw[self._pc : self._pc + n]
+        self._pc += n
+        return data
+
+    def read_uint16_le(self) -> int:
+        return int.from_bytes(self.read_bytes(2), byteorder="little")
+
+    def read_uint132_le(self) -> int:
+        return int.from_bytes(self.read_bytes(4), byteorder="little")
