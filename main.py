@@ -204,93 +204,117 @@ class ScriptToken(NamedTuple):
     data: bytes | None = None  # only for OP_PUSHDATA
 
 
-def parse(raw_script: bytes) -> list[ScriptToken]:
-    reader = BytesReader(raw_script)
-    tokens: list[ScriptToken] = []
-    while not reader.is_eof():
+class ScriptParser:
+    _reader: BytesReader
+
+    def __init__(self, raw_script: bytes) -> None:
+        self._reader = BytesReader(raw_script)
+
+    @property
+    def reader(self) -> BytesReader:
+        return self._reader
+
+    def is_eof(self) -> bool:
+        return self._reader.is_eof()
+
+    def next_token(self) -> ScriptToken | None:
+        reader = self._reader
+
+        if reader.is_eof():
+            return None
+
         offset = reader.pc
         byte = reader.read_byte()
 
         if 0x01 <= byte <= 0x4B:
             data = reader.read_bytes(byte)
-            tokens.append(ScriptToken(Opcode.OP_PUSHDATA_DIRECT, data))
+            return ScriptToken(Opcode.OP_PUSHDATA_DIRECT, data)
 
         elif byte == Opcode.OP_PUSHDATA1:
             data_len = reader.read_byte()
             data = reader.read_bytes(data_len)
-            tokens.append(ScriptToken(Opcode.OP_PUSHDATA1, data))
+            return ScriptToken(Opcode.OP_PUSHDATA1, data)
 
         elif byte == Opcode.OP_PUSHDATA2:
             data_len = reader.read_uint16_le()
             data = reader.read_bytes(data_len)
-            tokens.append(ScriptToken(Opcode.OP_PUSHDATA2, data))
+            return ScriptToken(Opcode.OP_PUSHDATA2, data)
 
         elif byte == Opcode.OP_PUSHDATA4:
             data_len = reader.read_uint32_le()
             data = reader.read_bytes(data_len)
-            tokens.append(ScriptToken(Opcode.OP_PUSHDATA4, data))
+            return ScriptToken(Opcode.OP_PUSHDATA4, data)
 
         else:
             try:
                 opcode = Opcode(byte)
-                tokens.append(ScriptToken(opcode))
+                return ScriptToken(opcode)
             except ValueError:
                 raise ValueError(
                     f"Unknown opcode byte: 0x{byte:02X} at offset {offset}"
                 )
 
-    return tokens
+    def __iter__(self):
+        while (token := self.next_token()) is not None:
+            yield token
+
+    @staticmethod
+    def parse(raw_script: bytes) -> list[ScriptToken]:
+        parser = ScriptParser(raw_script)
+        return list(parser)
 
 
-def compile(tokens: list[ScriptToken]) -> bytes:
-    writer = BytesWriter()
+class ScriptCompiler:
+    @staticmethod
+    def compile(tokens: list[ScriptToken]) -> bytes:
+        writer = BytesWriter()
 
-    for token in tokens:
-        match token.opcode:
-            case Opcode.OP_PUSHDATA_DIRECT:
-                assert token.data is not None
-                data_len = len(token.data)
-                if not (1 <= data_len <= 75):
-                    raise ValueError(
-                        f"OP_PUSHDATA_DIRECT payload must be 1-75 bytes, got {data_len}"
-                    )
-                writer.write_byte(data_len)
-                writer.write_bytes(token.data)
+        for token in tokens:
+            match token.opcode:
+                case Opcode.OP_PUSHDATA_DIRECT:
+                    assert token.data is not None
+                    data_len = len(token.data)
+                    if not (1 <= data_len <= 75):
+                        raise ValueError(
+                            f"OP_PUSHDATA_DIRECT payload must be 1-75 bytes, got {data_len}"
+                        )
+                    writer.write_byte(data_len)
+                    writer.write_bytes(token.data)
 
-            case Opcode.OP_PUSHDATA1:
-                assert token.data is not None
-                data_len = len(token.data)
-                if data_len > 0xFF:
-                    raise ValueError(
-                        f"OP_PUSHDATA1 payload exceeds 255 bytes: {data_len}"
-                    )
-                writer.write_byte(Opcode.OP_PUSHDATA1.value)
-                writer.write_byte(data_len)
-                writer.write_bytes(token.data)
+                case Opcode.OP_PUSHDATA1:
+                    assert token.data is not None
+                    data_len = len(token.data)
+                    if data_len > 0xFF:
+                        raise ValueError(
+                            f"OP_PUSHDATA1 payload exceeds 255 bytes: {data_len}"
+                        )
+                    writer.write_byte(Opcode.OP_PUSHDATA1.value)
+                    writer.write_byte(data_len)
+                    writer.write_bytes(token.data)
 
-            case Opcode.OP_PUSHDATA2:
-                assert token.data is not None
-                data_len = len(token.data)
-                if data_len > 0xFFFF:
-                    raise ValueError(
-                        f"OP_PUSHDATA2 payload exceeds 65535 bytes: {data_len}"
-                    )
-                writer.write_byte(Opcode.OP_PUSHDATA2.value)
-                writer.write_uint16_le(data_len)
-                writer.write_bytes(token.data)
+                case Opcode.OP_PUSHDATA2:
+                    assert token.data is not None
+                    data_len = len(token.data)
+                    if data_len > 0xFFFF:
+                        raise ValueError(
+                            f"OP_PUSHDATA2 payload exceeds 65535 bytes: {data_len}"
+                        )
+                    writer.write_byte(Opcode.OP_PUSHDATA2.value)
+                    writer.write_uint16_le(data_len)
+                    writer.write_bytes(token.data)
 
-            case Opcode.OP_PUSHDATA4:
-                assert token.data is not None
-                data_len = len(token.data)
-                if data_len > 0xFFFFFFFF:
-                    raise ValueError(
-                        f"OP_PUSHDATA4 payload exceeds 4294967295 bytes: {data_len}"
-                    )
-                writer.write_byte(Opcode.OP_PUSHDATA4.value)
-                writer.write_uint32_le(data_len)
-                writer.write_bytes(token.data)
+                case Opcode.OP_PUSHDATA4:
+                    assert token.data is not None
+                    data_len = len(token.data)
+                    if data_len > 0xFFFFFFFF:
+                        raise ValueError(
+                            f"OP_PUSHDATA4 payload exceeds 4294967295 bytes: {data_len}"
+                        )
+                    writer.write_byte(Opcode.OP_PUSHDATA4.value)
+                    writer.write_uint32_le(data_len)
+                    writer.write_bytes(token.data)
 
-            case regular_opcode:
-                writer.write_byte(regular_opcode.value)
+                case regular_opcode:
+                    writer.write_byte(regular_opcode.value)
 
-    return writer.to_bytes()
+        return writer.to_bytes()

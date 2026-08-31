@@ -1,6 +1,8 @@
 import unittest
 
-from main import Opcode, ScriptToken, parse
+from main import Opcode, ScriptParser, ScriptToken
+
+parse = ScriptParser.parse
 
 
 class TestScriptParser(unittest.TestCase):
