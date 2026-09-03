@@ -318,3 +318,36 @@ class ScriptCompiler:
                     writer.write_byte(regular_opcode.value)
 
         return writer.to_bytes()
+
+
+class ScriptNum:
+    @staticmethod
+    def decode(data: bytes, require_minimal: bool, max_size: int) -> int:
+        if len(data) > max_size:
+            raise ValueError(f"ScriptNum overflow: exceeds {max_size} bytes")
+
+        if len(data) == 0:
+            return 0
+
+        if require_minimal and ScriptNum.is_minimal(data) == False:
+            raise ValueError("Non-minimallly encoded ScriptNum")
+
+        is_negative = bool(data[-1] & 0b1000_0000)
+
+        data_array = bytearray(data)
+        data_array[-1] &= 0b0111_1111  # clear sign
+
+        result = 0
+        for i, byte in enumerate(data_array):
+            result |= byte << (8 * i)
+
+        return -result if is_negative else result
+
+    @staticmethod
+    def is_minimal(data: bytes) -> bool:
+        if len(data) == 0:
+            return True
+        elif len(data) == 1:
+            return (data[-1] & 0b0111_1111) != 0
+        else:
+            return not ((data[-1] & 0b0111_1111) == 0 and (data[-2] & 0b1000_0000) == 0)
