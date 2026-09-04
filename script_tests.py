@@ -1,6 +1,5 @@
 import json
 import os
-import sys
 
 
 def parse_script_tests(file_path: str):
