@@ -1,4 +1,5 @@
 import unittest
+from sys import maxsize
 
 from main import Opcode, ScriptNumDecoder, ScriptNumEncoder, ScriptParser, ScriptToken
 
@@ -52,6 +53,40 @@ class TestScriptParser(unittest.TestCase):
 
     #     self.assertIn("0xFF", str(ctx.exception))
     #     self.assertIn("offset 2", str(ctx.exception))
+
+
+class TestScriptNumDecoder(unittest.TestCase):
+    def test_decode(self):
+        cases = [
+            (bytes([]), 0),
+            (bytes([0b0000_0001]), 1),
+            (bytes([0b1000_0001]), -1),
+            (bytes([0b0000_0010]), 2),
+            (bytes([0b1000_0010]), -2),
+        ]
+        for raw_bytes, expected_val in cases:
+            with self.subTest(raw_bytes=raw_bytes, expected_val=expected_val):
+                self.assertIs(
+                    ScriptNumDecoder.decode(
+                        raw_bytes, require_minimal=True, max_size=4
+                    ),
+                    expected_val,
+                )
+
+    def test_is_minimal(self):
+        cases = [
+            (bytes([]), True),  # zero (correct)
+            (bytes([0b0000_0000]), False),  # zero (incorrect)
+            (bytes([0b1000_0000]), False),  # negtive zero (incorrect)
+            (bytes([0b0000_0001]), True),  # one (correct)
+            (bytes([0b0000_0001, 0b0000_0000]), False),  # one (incorrect)
+            (bytes([0b1000_0001]), True),  # negtive one (correct)
+            (bytes([0b1000_0001, 0b0000_0000]), True),  # negtive one (correct)
+            (bytes([0b0111_1111]), True),
+        ]
+        for raw_bytes, expected_valid in cases:
+            with self.subTest(raw_bytes=raw_bytes, expected_valid=expected_valid):
+                self.assertIs(ScriptNumDecoder.is_minimal(raw_bytes), expected_valid)
 
 
 if __name__ == "__main__":
