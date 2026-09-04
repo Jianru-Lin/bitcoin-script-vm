@@ -329,7 +329,7 @@ class ScriptNum:
         if len(data) == 0:
             return 0
 
-        if require_minimal and ScriptNum.is_minimal(data) == False:
+        if require_minimal and not ScriptNum.is_minimal(data):
             raise ValueError("Non-minimallly encoded ScriptNum")
 
         is_negative = bool(data[-1] & 0b1000_0000)
