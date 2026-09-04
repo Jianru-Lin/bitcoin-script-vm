@@ -320,7 +320,7 @@ class ScriptCompiler:
         return writer.to_bytes()
 
 
-class ScriptNum:
+class ScriptNumDecoder:
     @staticmethod
     def decode(data: bytes, require_minimal: bool, max_size: int) -> int:
         if len(data) > max_size:
@@ -329,7 +329,7 @@ class ScriptNum:
         if len(data) == 0:
             return 0
 
-        if require_minimal and not ScriptNum.is_minimal(data):
+        if require_minimal and not ScriptNumDecoder.is_minimal(data):
             raise ValueError("Non-minimallly encoded ScriptNum")
 
         is_negative = bool(data[-1] & 0b1000_0000)
@@ -343,6 +343,17 @@ class ScriptNum:
 
         return -result if is_negative else result
 
+    @staticmethod
+    def is_minimal(data: bytes) -> bool:
+        if len(data) == 0:
+            return True
+        elif len(data) == 1:
+            return (data[-1] & 0b0111_1111) != 0
+        else:
+            return not ((data[-1] & 0b0111_1111) == 0 and (data[-2] & 0b1000_0000) == 0)
+
+
+class ScriptNumEncoder:
     @staticmethod
     def encode(val: int) -> bytes:
         if val == 0:
@@ -362,12 +373,3 @@ class ScriptNum:
             result[-1] |= 0b1000_0000
 
         return bytes(result)
-
-    @staticmethod
-    def is_minimal(data: bytes) -> bool:
-        if len(data) == 0:
-            return True
-        elif len(data) == 1:
-            return (data[-1] & 0b0111_1111) != 0
-        else:
-            return not ((data[-1] & 0b0111_1111) == 0 and (data[-2] & 0b1000_0000) == 0)

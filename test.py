@@ -1,6 +1,6 @@
 import unittest
 
-from main import Opcode, ScriptParser, ScriptToken
+from main import Opcode, ScriptNumDecoder, ScriptNumEncoder, ScriptParser, ScriptToken
 
 parse = ScriptParser.parse
 
