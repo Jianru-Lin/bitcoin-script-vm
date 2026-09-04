@@ -344,6 +344,26 @@ class ScriptNum:
         return -result if is_negative else result
 
     @staticmethod
+    def encode(val: int) -> bytes:
+        if val == 0:
+            return b""
+
+        neg = val < 0
+        abs_val = abs(val)
+        result = bytearray()
+
+        while abs_val > 0:
+            result.append(abs_val & 0b1111_1111)
+            abs_val >>= 8
+
+        if result[-1] & 0b1000_0000:
+            result.append(0b1000_0000 if neg else 0b0000_0000)
+        elif neg:
+            result[-1] |= 0b1000_0000
+
+        return bytes(result)
+
+    @staticmethod
     def is_minimal(data: bytes) -> bool:
         if len(data) == 0:
             return True
