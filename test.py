@@ -77,13 +77,13 @@ class TestScriptNumDecoder(unittest.TestCase):
 
     def test_is_minimal(self):
         cases = [
-            (bytes([]), True),  # zero (correct)
-            (bytes([0b0000_0000]), False),  # zero (incorrect)
-            (bytes([0b1000_0000]), False),  # negtive zero (incorrect)
-            (bytes([0b0000_0001]), True),  # one (correct)
-            (bytes([0b0000_0001, 0b0000_0000]), False),  # one (incorrect)
-            (bytes([0b1000_0001]), True),  # negtive one (correct)
-            (bytes([0b1000_0001, 0b0000_0000]), True),  # negtive one (correct)
+            (bytes([]), True),  # +0 (correct)
+            (bytes([0b0000_0000]), False),  # +0 (incorrect)
+            (bytes([0b1000_0000]), False),  # -0 (incorrect)
+            (bytes([0b0000_0001]), True),  # 1 (correct)
+            (bytes([0b0000_0001, 0b0000_0000]), False),  # 1 (incorrect)
+            (bytes([0b1000_0001]), True),  # -1 (correct)
+            (bytes([0b1000_0001, 0b0000_0000]), True),  # 129 (correct)
             (bytes([0b0111_1111]), True),
         ]
         for raw_bytes, expected_valid in cases:
