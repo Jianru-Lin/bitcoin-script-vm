@@ -63,10 +63,12 @@ class TestScriptNumDecoder(unittest.TestCase):
             (bytes([0b1000_0001]), -1),
             (bytes([0b0000_0010]), 2),
             (bytes([0b1000_0010]), -2),
+            (bytes([0b1000_0000, 0b0000_0000]), 128),
+            (bytes([0b1000_0000, 0b1000_0000]), -128),  # failed here
         ]
         for raw_bytes, expected_val in cases:
             with self.subTest(raw_bytes=raw_bytes, expected_val=expected_val):
-                self.assertIs(
+                self.assertEqual(
                     ScriptNumDecoder.decode(
                         raw_bytes, require_minimal=True, max_size=4
                     ),
