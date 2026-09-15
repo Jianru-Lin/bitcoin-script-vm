@@ -1,5 +1,5 @@
 from enum import IntEnum
-from typing import NamedTuple
+from typing import NamedTuple, Self, override
 
 
 class BytesReader:
@@ -433,3 +433,23 @@ class ScriptNumEncoder:
             result[-1] |= 0b1000_0000
 
         return bytes(result)
+
+
+class ScriptStack:
+    _stack: list[bytes]
+
+    def __init__(self, initial: list[bytes] | None = None) -> None:
+        self._stack = list(initial) if initial else []
+
+    def __len__(self) -> int:
+        return len(self._stack)
+
+    def __bool__(self) -> bool:
+        return bool(self._stack)
+
+    def __iter__(self) -> Iterator[bytes]:
+        return iter(self._stack)
+
+    @override
+    def __repr__(self) -> str:
+        return f"ScriptStack({self._stack!r})"
