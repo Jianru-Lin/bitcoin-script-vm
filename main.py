@@ -453,3 +453,11 @@ class ScriptStack:
     @override
     def __repr__(self) -> str:
         return f"ScriptStack({self._stack!r})"
+
+    def push(self, data: bytes | bytearray) -> None:
+        self._stack.append(bytes(data))
+
+    def pop(self) -> bytes:
+        if not self._stack:
+            raise ValueError("Stack underflow: cannot pop from empty stack")
+        return self._stack.pop()
