@@ -1,5 +1,6 @@
+from collections.abc import Iterator
 from enum import IntEnum
-from typing import Iterator, NamedTuple, Self, override
+from typing import NamedTuple, Self, override
 
 
 class BytesReader:
