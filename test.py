@@ -151,6 +151,16 @@ class TestScriptStack(unittest.TestCase):
         with self.assertRaises(ValueError):
             _ = stack.peek(0)
 
+    def test_push_peek(self):
+        stack = ScriptStack()
+        self.assertEqual(len(stack), 0)
+        stack.push(b"\x01")
+        self.assertEqual(len(stack), 1)
+        stack.push(b"\x02")
+        self.assertEqual(len(stack), 2)
+        self.assertEqual(stack.peek(0), b"\x02")
+        self.assertEqual(stack.peek(1), b"\x01")
+
 
 if __name__ == "__main__":
     _ = unittest.main(verbosity=2)
