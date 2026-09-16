@@ -1,6 +1,13 @@
 import unittest
 
-from main import Opcode, ScriptNumDecoder, ScriptNumEncoder, ScriptParser, ScriptToken
+from main import (
+    Opcode,
+    ScriptNumDecoder,
+    ScriptNumEncoder,
+    ScriptParser,
+    ScriptStack,
+    ScriptToken,
+)
 
 parse = ScriptParser.parse
 
@@ -88,6 +95,31 @@ class TestScriptNumDecoder(unittest.TestCase):
         for raw_bytes, expected_valid in cases:
             with self.subTest(raw_bytes=raw_bytes, expected_valid=expected_valid):
                 self.assertIs(ScriptNumDecoder.is_minimal(raw_bytes), expected_valid)
+
+
+class TestScriptStack(unittest.TestCase):
+    def test_len(self):
+        self.assertEqual(len(ScriptStack()), 0)
+        self.assertEqual(len(ScriptStack([])), 0)
+        self.assertEqual(len(ScriptStack([b""])), 1)
+        self.assertEqual(len(ScriptStack([b"\x00"])), 1)
+        self.assertEqual(len(ScriptStack([b"\x00", b"\x00"])), 2)
+
+    def test_bool(self):
+        self.assertEqual(bool(ScriptStack()), False)
+        self.assertEqual(bool(ScriptStack([])), False)
+        self.assertEqual(bool(ScriptStack([b""])), True)
+        self.assertEqual(bool(ScriptStack([b"\x00"])), True)
+        self.assertEqual(bool(ScriptStack([b"\x00", b"\x00"])), True)
+
+    def test_repr(self):
+        self.assertEqual(repr(ScriptStack()), r"ScriptStack([])")
+        self.assertEqual(repr(ScriptStack([])), r"ScriptStack([])")
+        self.assertEqual(repr(ScriptStack([b""])), r"ScriptStack([b''])")
+        self.assertEqual(repr(ScriptStack([b"\x00"])), r"ScriptStack([b'\x00'])")
+        self.assertEqual(
+            repr(ScriptStack([b"\x00", b"\x01"])), r"ScriptStack([b'\x00', b'\x01'])"
+        )
 
 
 if __name__ == "__main__":
