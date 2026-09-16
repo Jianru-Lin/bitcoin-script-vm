@@ -177,6 +177,34 @@ class TestScriptStack(unittest.TestCase):
         self.assertEqual(stack1.peek(0), b"\x01")
         self.assertEqual(stack2.peek(0), b"\x02")
 
+    def test_remove_at_empty(self):
+        stack = ScriptStack()
+        with self.assertRaises(ValueError):
+            _ = stack.remove_at(0)
+
+    def test_remove_at_0(self):
+        stack = ScriptStack()
+        stack.push(b"\x01")
+        stack.push(b"\x02")
+        stack.push(b"\x03")
+        self.assertEqual(len(stack), 3)
+        self.assertEqual(stack.remove_at(0), b"\x03")
+        self.assertEqual(len(stack), 2)
+        self.assertEqual(stack.remove_at(0), b"\x02")
+        self.assertEqual(len(stack), 1)
+        self.assertEqual(stack.remove_at(0), b"\x01")
+        self.assertEqual(len(stack), 0)
+
+    def test_remove_at_1(self):
+        stack = ScriptStack()
+        stack.push(b"\x01")
+        stack.push(b"\x02")
+        stack.push(b"\x03")
+        self.assertEqual(len(stack), 3)
+        self.assertEqual(stack.remove_at(1), b"\x02")
+        self.assertEqual(stack.peek(0), b"\x03")
+        self.assertEqual(stack.peek(1), b"\x01")
+
 
 if __name__ == "__main__":
     _ = unittest.main(verbosity=2)
