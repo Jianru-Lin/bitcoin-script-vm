@@ -134,6 +134,18 @@ class TestScriptStack(unittest.TestCase):
         with self.assertRaises(ValueError):
             _ = stack.pop()
 
+    def test_push_pop(self):
+        stack = ScriptStack()
+        self.assertEqual(len(stack), 0)
+        stack.push(b"\x01")
+        self.assertEqual(len(stack), 1)
+        stack.push(b"\x02")
+        self.assertEqual(len(stack), 2)
+        self.assertEqual(stack.pop(), b"\x02")
+        self.assertEqual(len(stack), 1)
+        self.assertEqual(stack.pop(), b"\x01")
+        self.assertEqual(len(stack), 0)
+
 
 if __name__ == "__main__":
     _ = unittest.main(verbosity=2)
