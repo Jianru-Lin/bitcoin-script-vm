@@ -121,6 +121,19 @@ class TestScriptStack(unittest.TestCase):
             repr(ScriptStack([b"\x00", b"\x01"])), r"ScriptStack([b'\x00', b'\x01'])"
         )
 
+    def test_push(self):
+        stack = ScriptStack()
+        self.assertEqual(len(stack), 0)
+        stack.push(b"")
+        self.assertEqual(len(stack), 1)
+        stack.push(b"")
+        self.assertEqual(len(stack), 2)
+
+    def test_pop_empty(self):
+        stack = ScriptStack()
+        with self.assertRaises(ValueError):
+            _ = stack.pop()
+
 
 if __name__ == "__main__":
     _ = unittest.main(verbosity=2)
