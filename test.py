@@ -205,6 +205,16 @@ class TestScriptStack(unittest.TestCase):
         self.assertEqual(stack.peek(0), b"\x03")
         self.assertEqual(stack.peek(1), b"\x01")
 
+    def test_remove_at_2(self):
+        stack = ScriptStack()
+        stack.push(b"\x01")
+        stack.push(b"\x02")
+        stack.push(b"\x03")
+        self.assertEqual(len(stack), 3)
+        self.assertEqual(stack.remove_at(2), b"\x01")
+        self.assertEqual(stack.peek(0), b"\x03")
+        self.assertEqual(stack.peek(1), b"\x02")
+
 
 if __name__ == "__main__":
     _ = unittest.main(verbosity=2)
