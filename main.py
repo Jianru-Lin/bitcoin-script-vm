@@ -24,9 +24,9 @@ class BytesReader:
             raise ValueError(
                 f"Unexpected end of stream: cannot read 1 byte at offset {self._pc}"
             )
-        val = self._raw[self._pc]
+        value = self._raw[self._pc]
         self._pc += 1
-        return val
+        return value
 
     def read_bytes(self, n: int) -> bytes:
         if self._pc + n > self._length:
@@ -50,23 +50,23 @@ class BytesWriter:
     def __init__(self) -> None:
         self._buf = bytearray()
 
-    def write_byte(self, val: int) -> None:
-        if not (0 <= val <= 0xFF):
-            raise ValueError(f"Byte value out of range (0~255): {val}")
-        self._buf.append(val)
+    def write_byte(self, value: int) -> None:
+        if not (0 <= value <= 0xFF):
+            raise ValueError(f"Byte value out of range (0~255): {value}")
+        self._buf.append(value)
 
     def write_bytes(self, data: bytes) -> None:
         self._buf.extend(data)
 
-    def write_uint16_le(self, val: int) -> None:
-        if not (0 <= val <= 0xFFFF):
-            raise ValueError(f"Uint16 out of range (0~65535): {val}")
-        self._buf.extend(val.to_bytes(2, byteorder="little"))
+    def write_uint16_le(self, value: int) -> None:
+        if not (0 <= value <= 0xFFFF):
+            raise ValueError(f"Uint16 out of range (0~65535): {value}")
+        self._buf.extend(value.to_bytes(2, byteorder="little"))
 
-    def write_uint32_le(self, val: int) -> None:
-        if not (0 <= val <= 0xFFFFFFFF):
-            raise ValueError(f"Uint32 out of range (0~4294967295): {val}")
-        self._buf.extend(val.to_bytes(4, byteorder="little"))
+    def write_uint32_le(self, value: int) -> None:
+        if not (0 <= value <= 0xFFFFFFFF):
+            raise ValueError(f"Uint32 out of range (0~4294967295): {value}")
+        self._buf.extend(value.to_bytes(4, byteorder="little"))
 
     def to_bytes(self) -> bytes:
         return bytes(self._buf)
@@ -415,17 +415,17 @@ class ScriptNumDecoder:
 
 class ScriptNumEncoder:
     @staticmethod
-    def encode(val: int) -> bytes:
-        if val == 0:
+    def encode(value: int) -> bytes:
+        if value == 0:
             return b""
 
-        neg = val < 0
-        abs_val = abs(val)
+        neg = value < 0
+        abs_value = abs(value)
         result = bytearray()
 
-        while abs_val > 0:
-            result.append(abs_val & 0b1111_1111)
-            abs_val >>= 8
+        while abs_value > 0:
+            result.append(abs_value & 0b1111_1111)
+            abs_value >>= 8
 
         if result[-1] & 0b1000_0000:
             result.append(0b1000_0000 if neg else 0b0000_0000)
@@ -461,3 +461,13 @@ class ScriptStack:
         if not self._stack:
             raise ValueError("Stack underflow: cannot pop from empty stack")
         return self._stack.pop()
+
+    def peek(self, depth: int = 0) -> bytes:
+        # 0 -> len - 1
+        # 1 -> len - 2
+        # 2 -> len - 3
+        # n -> len - (n + 1)
+        if depth < 0 or depth >= len(self._stack):
+            raise ValueError(f"Stack index out of bounds: depth {depth}")
+        index = len(self._stack) - depth - 1
+        return self._stack[index]
