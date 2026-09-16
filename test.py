@@ -1,5 +1,4 @@
 import unittest
-from sys import maxsize
 
 from main import Opcode, ScriptNumDecoder, ScriptNumEncoder, ScriptParser, ScriptToken
 
