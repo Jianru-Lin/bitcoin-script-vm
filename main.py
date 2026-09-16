@@ -471,3 +471,6 @@ class ScriptStack:
             raise ValueError(f"Stack index out of bounds: depth {depth}")
         index = len(self._stack) - depth - 1
         return self._stack[index]
+
+    def clone(self) -> Self:
+        return self.__class__(self._stack)

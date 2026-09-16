@@ -161,6 +161,22 @@ class TestScriptStack(unittest.TestCase):
         self.assertEqual(stack.peek(0), b"\x02")
         self.assertEqual(stack.peek(1), b"\x01")
 
+    def test_clone_empty(self):
+        stack1 = ScriptStack()
+        stack2 = stack1.clone()
+        self.assertIsNot(stack1, stack2)
+
+    def test_clone(self):
+        stack1 = ScriptStack()
+        stack1.push(b"\x01")
+        stack2 = stack1.clone()
+        stack2.push(b"\x02")
+        self.assertIsNot(stack1, stack2)
+        self.assertEqual(len(stack1), 1)
+        self.assertEqual(len(stack2), 2)
+        self.assertEqual(stack1.peek(0), b"\x01")
+        self.assertEqual(stack2.peek(0), b"\x02")
+
 
 if __name__ == "__main__":
     _ = unittest.main(verbosity=2)
