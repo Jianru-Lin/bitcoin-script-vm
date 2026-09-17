@@ -215,6 +215,64 @@ class TestScriptStack(unittest.TestCase):
         self.assertEqual(stack.peek(0), b"\x03")
         self.assertEqual(stack.peek(1), b"\x02")
 
+    def test_insert_at_empty(self):
+        stack = ScriptStack()
+        stack.insert_at(0, b"\x00")
+        self.assertEqual(len(stack), 1)
+        self.assertEqual(stack.peek(0), b"\x00")
+
+    def test_insert_at_0(self):
+        stack = ScriptStack()
+        stack.push(b"\x01")
+        stack.push(b"\x02")
+        stack.push(b"\x03")
+        self.assertEqual(len(stack), 3)
+        stack.insert_at(0, b"\x04")
+        self.assertEqual(len(stack), 4)
+        self.assertEqual(stack.peek(0), b"\x04")
+        self.assertEqual(stack.peek(1), b"\x03")
+        self.assertEqual(stack.peek(2), b"\x02")
+        self.assertEqual(stack.peek(3), b"\x01")
+
+    def test_insert_at_1(self):
+        stack = ScriptStack()
+        stack.push(b"\x01")
+        stack.push(b"\x02")
+        stack.push(b"\x03")
+        self.assertEqual(len(stack), 3)
+        stack.insert_at(1, b"\x04")
+        self.assertEqual(len(stack), 4)
+        self.assertEqual(stack.peek(0), b"\x03")
+        self.assertEqual(stack.peek(1), b"\x04")
+        self.assertEqual(stack.peek(2), b"\x02")
+        self.assertEqual(stack.peek(3), b"\x01")
+
+    def test_insert_at_2(self):
+        stack = ScriptStack()
+        stack.push(b"\x01")
+        stack.push(b"\x02")
+        stack.push(b"\x03")
+        self.assertEqual(len(stack), 3)
+        stack.insert_at(2, b"\x04")
+        self.assertEqual(len(stack), 4)
+        self.assertEqual(stack.peek(0), b"\x03")
+        self.assertEqual(stack.peek(1), b"\x02")
+        self.assertEqual(stack.peek(2), b"\x04")
+        self.assertEqual(stack.peek(3), b"\x01")
+
+    def test_insert_at_3(self):
+        stack = ScriptStack()
+        stack.push(b"\x01")
+        stack.push(b"\x02")
+        stack.push(b"\x03")
+        self.assertEqual(len(stack), 3)
+        stack.insert_at(3, b"\x04")
+        self.assertEqual(len(stack), 4)
+        self.assertEqual(stack.peek(0), b"\x03")
+        self.assertEqual(stack.peek(1), b"\x02")
+        self.assertEqual(stack.peek(2), b"\x01")
+        self.assertEqual(stack.peek(3), b"\x04")
+
 
 if __name__ == "__main__":
     _ = unittest.main(verbosity=2)

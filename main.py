@@ -479,5 +479,12 @@ class ScriptStack:
         index = len(self._stack) - depth - 1
         return self._stack.pop(index)
 
+    def insert_at(self, depth: int, data: bytes) -> None:
+        # insert at empty stack is ok. depth can be len(self._stack)
+        if depth < 0 or depth > len(self._stack):
+            raise ValueError(f"Stack insert index out of bounds: depth {depth}")
+        index = len(self._stack) - depth
+        return self._stack.insert(index, data)
+
     def clone(self) -> Self:
         return self.__class__(self._stack)
