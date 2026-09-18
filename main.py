@@ -605,7 +605,7 @@ class ScriptInterpreter:
                 self.stack.push_num(16)
 
             case Opcode.OP_NOP:
-                raise NotImplementedError("TODO")
+                pass
 
             case Opcode.OP_IF:
                 raise NotImplementedError("TODO")
@@ -748,10 +748,14 @@ class ScriptInterpreter:
                 self.stack.push_num(abs(a))
 
             case Opcode.OP_NOT:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(1 if a == 0 else 0)
 
             case Opcode.OP_0NOTEQUAL:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(1 if a != 0 else 0)
 
             case Opcode.OP_ADD:
                 self._require_stack_size(min_size=2)
@@ -766,13 +770,13 @@ class ScriptInterpreter:
                 self.stack.push_num(a - b)
 
             case Opcode.OP_MUL:
-                self._require_stack_size(2)
+                self._require_stack_size(min_size=2)
                 b = self.stack.pop_num(require_minimal=False, max_size=1024)
                 a = self.stack.pop_num(require_minimal=False, max_size=1024)
                 self.stack.push_num(a * b)
 
             case Opcode.OP_DIV:
-                self._require_stack_size(2)
+                self._require_stack_size(min_size=2)
                 b = self.stack.pop_num(require_minimal=False, max_size=1024)
                 a = self.stack.pop_num(require_minimal=False, max_size=1024)
                 if b == 0:
@@ -782,7 +786,7 @@ class ScriptInterpreter:
                 self.stack.push_num(int(a / b))
 
             case Opcode.OP_MOD:
-                self._require_stack_size(2)
+                self._require_stack_size(min_size=2)
                 b = self.stack.pop_num(require_minimal=False, max_size=1024)
                 a = self.stack.pop_num(require_minimal=False, max_size=1024)
                 if b == 0:
@@ -826,10 +830,16 @@ class ScriptInterpreter:
                 raise NotImplementedError("TODO")
 
             case Opcode.OP_MIN:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(min(a, b))
 
             case Opcode.OP_MAX:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(max(a, b))
 
             case Opcode.OP_WITHIN:
                 raise NotImplementedError("TODO")
@@ -942,11 +952,11 @@ class ScriptInterpreter:
                     f"Unhandled opcode: {opcode.name}",
                 )
 
-    def _require_stack_size(self, min_size: int) -> None:
+    def _require_stack_size(self, *, min_size: int) -> None:
         if len(self.stack) < min_size:
             raise ScriptExecutionError(ScriptError.SCRIPT_ERR_INVALID_STACK_OPERATION)
 
-    def _require_altstack_size(self, min_size: int) -> None:
+    def _require_altstack_size(self, *, min_size: int) -> None:
         if len(self.altstack) < min_size:
             raise ScriptExecutionError(
                 ScriptError.SCRIPT_ERR_INVALID_ALTSTACK_OPERATION
