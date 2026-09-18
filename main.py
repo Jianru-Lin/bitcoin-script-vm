@@ -554,7 +554,7 @@ class ScriptInterpreter:
                 self.stack.push_num(-1)
 
             case Opcode.OP_0:  # OP_FALSE
-                self.stack.push_num(0)
+                self.stack.push(b"")  # self.stack.push_num(0)
 
             case Opcode.OP_1:  # OP_TRUE
                 self.stack.push_num(1)
@@ -836,52 +836,70 @@ class ScriptInterpreter:
                 raise NotImplementedError("TODO")
 
             case Opcode.OP_RESERVED:
-                raise NotImplementedError("TODO")
+                raise ScriptExecutionError(
+                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                    f"Encountered reserved/illegal opcode: {opcode.name}",
+                )
 
             case Opcode.OP_VER:
-                raise NotImplementedError("TODO")
+                raise ScriptExecutionError(
+                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                    f"Encountered reserved/illegal opcode: {opcode.name}",
+                )
 
             case Opcode.OP_VERIF:
-                raise NotImplementedError("TODO")
+                raise ScriptExecutionError(
+                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                    f"Encountered reserved/illegal opcode: {opcode.name}",
+                )
 
             case Opcode.OP_VERNOTIF:
-                raise NotImplementedError("TODO")
+                raise ScriptExecutionError(
+                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                    f"Encountered reserved/illegal opcode: {opcode.name}",
+                )
 
             case Opcode.OP_RESERVED1:
-                raise NotImplementedError("TODO")
+                raise ScriptExecutionError(
+                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                    f"Encountered reserved/illegal opcode: {opcode.name}",
+                )
 
             case Opcode.OP_RESERVED2:
-                raise NotImplementedError("TODO")
+                raise ScriptExecutionError(
+                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                    f"Encountered reserved/illegal opcode: {opcode.name}",
+                )
 
             case Opcode.OP_NOP1:
-                raise NotImplementedError("TODO")
+                pass
 
             case Opcode.OP_NOP4:
-                raise NotImplementedError("TODO")
+                pass
 
             case Opcode.OP_NOP5:
-                raise NotImplementedError("TODO")
+                pass
 
             case Opcode.OP_NOP6:
-                raise NotImplementedError("TODO")
+                pass
 
             case Opcode.OP_NOP7:
-                raise NotImplementedError("TODO")
+                pass
 
             case Opcode.OP_NOP8:
-                raise NotImplementedError("TODO")
+                pass
 
             case Opcode.OP_NOP9:
-                raise NotImplementedError("TODO")
+                pass
 
             case Opcode.OP_NOP10:
-                raise NotImplementedError("TODO")
+                pass
 
             case Opcode.OP_INVALIDOPCODE:
                 raise NotImplementedError("TODO")
 
-            # case _:
-            #     raise ScriptExecutionError(
-            #         ScriptError.SCRIPT_ERR_BAD_OPCODE,
-            #         f"Unhandled opcode: {opcode.name}",
-            #     )
+            case _:
+                raise ScriptExecutionError(
+                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                    f"Unhandled opcode: {opcode.name}",
+                )
