@@ -716,22 +716,34 @@ class ScriptInterpreter:
                 raise NotImplementedError("TODO")
 
             case Opcode.OP_1ADD:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(a + 1)
 
             case Opcode.OP_1SUB:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(a - 1)
 
             case Opcode.OP_2MUL:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(a * 2)
 
             case Opcode.OP_2DIV:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(int(a / 2))
 
             case Opcode.OP_NEGATE:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(-a)
 
             case Opcode.OP_ABS:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(abs(a))
 
             case Opcode.OP_NOT:
                 raise NotImplementedError("TODO")
