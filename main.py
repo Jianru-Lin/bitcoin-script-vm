@@ -903,3 +903,13 @@ class ScriptInterpreter:
                     ScriptError.SCRIPT_ERR_BAD_OPCODE,
                     f"Unhandled opcode: {opcode.name}",
                 )
+
+    def _require_stack_size(self, min_size: int) -> None:
+        if len(self.stack) < min_size:
+            raise ScriptExecutionError(ScriptError.SCRIPT_ERR_INVALID_STACK_OPERATION)
+
+    def _require_altstack_size(self, min_size: int) -> None:
+        if len(self.altstack) < min_size:
+            raise ScriptExecutionError(
+                ScriptError.SCRIPT_ERR_INVALID_ALTSTACK_OPERATION
+            )
