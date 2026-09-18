@@ -626,10 +626,12 @@ class ScriptInterpreter:
                 raise NotImplementedError("TODO")
 
             case Opcode.OP_TOALTSTACK:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                self.altstack.push(self.stack.pop())
 
             case Opcode.OP_FROMALTSTACK:
-                raise NotImplementedError("TODO")
+                self._require_altstack_size(min_size=1)
+                self.stack.push(self.altstack.pop())
 
             case Opcode.OP_IFDUP:
                 raise NotImplementedError("TODO")
@@ -764,10 +766,20 @@ class ScriptInterpreter:
                 self.stack.push_num(a - b)
 
             case Opcode.OP_MUL:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(2)
+                b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(a * b)
 
             case Opcode.OP_DIV:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(2)
+                b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                if b == 0:
+                    raise ScriptExecutionError(
+                        ScriptError.SCRIPT_ERR_UNKNOWN_ERROR, "Division by zero"
+                    )
+                self.stack.push_num(int(a / b))
 
             case Opcode.OP_MOD:
                 raise NotImplementedError("TODO")
