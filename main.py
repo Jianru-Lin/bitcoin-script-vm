@@ -514,3 +514,39 @@ class ScriptExecutionError(Exception):
     def __init__(self, error: ScriptError, message: str = ""):
         super().__init__(message or error.name)
         self.error = error
+
+
+class ScriptInterpreter:
+    stack: ScriptStack
+    altstack: ScriptStack
+    vf_exec: list[bool]
+
+    MAX_OPS_PER_SCRIPT: int = 201
+    MAX_STACK_ELEMENT_SIZE: int = 520
+
+    def __init__(self, stack: ScriptStack | None = None) -> None:
+        self.stack = stack if stack is not None else ScriptStack()
+        self.altstack = ScriptStack()
+        self.vf_exec = []
+
+    def execute(self, script_bytes: bytes) -> None:
+        parser = ScriptParser(script_bytes)
+        for token in parser:
+            self._step(token)
+
+    def _step(self, token: ScriptToken) -> None:
+        opcode = token.opcode
+        match opcode:
+            case (
+                Opcode.OP_PUSHDATA_DIRECT
+                | Opcode.OP_PUSHDATA1
+                | Opcode.OP_PUSHDATA2
+                | Opcode.OP_PUSHDATA4
+            ):
+                assert token.data is not None
+                self.stack.push(token.data)
+            case _:
+                raise ScriptExecutionError(
+                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                    f"Unhandled opcode: {opcode.name}",
+                )
