@@ -782,7 +782,15 @@ class ScriptInterpreter:
                 self.stack.push_num(int(a / b))
 
             case Opcode.OP_MOD:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(2)
+                b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                if b == 0:
+                    raise ScriptExecutionError(
+                        ScriptError.SCRIPT_ERR_UNKNOWN_ERROR, "Modulo by zero"
+                    )
+                rem = a - int(a / b) * b
+                self.stack.push_num(rem)
 
             case Opcode.OP_LSHIFT:
                 raise NotImplementedError("TODO")
