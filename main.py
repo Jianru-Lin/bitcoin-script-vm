@@ -842,7 +842,11 @@ class ScriptInterpreter:
                 self.stack.push_num(max(a, b))
 
             case Opcode.OP_WITHIN:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                max_value = self.stack.pop_num(require_minimal=False, max_size=1024)
+                min_value = self.stack.pop_num(require_minimal=False, max_size=1024)
+                x = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(1 if min_value <= x < max_value else 0)
 
             case Opcode.OP_RIPEMD160:
                 raise NotImplementedError("TODO")
