@@ -534,14 +534,76 @@ class ScriptInterpreter:
     def _step(self, token: ScriptToken) -> None:
         opcode = token.opcode
         match opcode:
-            case (
-                Opcode.OP_PUSHDATA_DIRECT
-                | Opcode.OP_PUSHDATA1
-                | Opcode.OP_PUSHDATA2
-                | Opcode.OP_PUSHDATA4
-            ):
+            case Opcode.OP_PUSHDATA_DIRECT:
                 assert token.data is not None
                 self.stack.push(token.data)
+
+            case Opcode.OP_PUSHDATA1:
+                assert token.data is not None
+                self.stack.push(token.data)
+
+            case Opcode.OP_PUSHDATA2:
+                assert token.data is not None
+                self.stack.push(token.data)
+
+            case Opcode.OP_PUSHDATA4:
+                assert token.data is not None
+                self.stack.push(token.data)
+
+            case Opcode.OP_1NEGATE:
+                self.stack.push_num(-1)
+
+            case Opcode.OP_0:
+                self.stack.push_num(0)
+
+            case Opcode.OP_1:
+                self.stack.push_num(1)
+
+            case Opcode.OP_2:
+                self.stack.push_num(2)
+
+            case Opcode.OP_3:
+                self.stack.push_num(3)
+
+            case Opcode.OP_4:
+                self.stack.push_num(4)
+
+            case Opcode.OP_5:
+                self.stack.push_num(5)
+
+            case Opcode.OP_6:
+                self.stack.push_num(6)
+
+            case Opcode.OP_7:
+                self.stack.push_num(7)
+
+            case Opcode.OP_8:
+                self.stack.push_num(8)
+
+            case Opcode.OP_9:
+                self.stack.push_num(9)
+
+            case Opcode.OP_10:
+                self.stack.push_num(10)
+
+            case Opcode.OP_11:
+                self.stack.push_num(11)
+
+            case Opcode.OP_12:
+                self.stack.push_num(12)
+
+            case Opcode.OP_13:
+                self.stack.push_num(13)
+
+            case Opcode.OP_14:
+                self.stack.push_num(14)
+
+            case Opcode.OP_15:
+                self.stack.push_num(15)
+
+            case Opcode.OP_16:
+                self.stack.push_num(16)
+
             case _:
                 raise ScriptExecutionError(
                     ScriptError.SCRIPT_ERR_BAD_OPCODE,
