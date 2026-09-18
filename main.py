@@ -553,10 +553,10 @@ class ScriptInterpreter:
             case Opcode.OP_1NEGATE:
                 self.stack.push_num(-1)
 
-            case Opcode.OP_0:
+            case Opcode.OP_0:  # OP_FALSE
                 self.stack.push_num(0)
 
-            case Opcode.OP_1:
+            case Opcode.OP_1:  # OP_TRUE
                 self.stack.push_num(1)
 
             case Opcode.OP_2:
@@ -829,10 +829,10 @@ class ScriptInterpreter:
             case Opcode.OP_CHECKSIGADD:
                 raise NotImplementedError("TODO")
 
-            case Opcode.OP_CHECKLOCKTIMEVERIFY:
+            case Opcode.OP_CHECKLOCKTIMEVERIFY:  # OP_NOP2
                 raise NotImplementedError("TODO")
 
-            case Opcode.OP_CHECKSEQUENCEVERIFY:
+            case Opcode.OP_CHECKSEQUENCEVERIFY:  # OP_NOP3
                 raise NotImplementedError("TODO")
 
             case Opcode.OP_RESERVED:
