@@ -604,8 +604,284 @@ class ScriptInterpreter:
             case Opcode.OP_16:
                 self.stack.push_num(16)
 
-            case _:
-                raise ScriptExecutionError(
-                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
-                    f"Unhandled opcode: {opcode.name}",
-                )
+            case Opcode.OP_NOP:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_IF:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_NOTIF:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_ELSE:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_ENDIF:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_VERIFY:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_RETURN:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_TOALTSTACK:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_FROMALTSTACK:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_IFDUP:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_DEPTH:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_DROP:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_DUP:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_NIP:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_OVER:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_PICK:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_ROLL:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_ROT:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_SWAP:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_TUCK:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_2DROP:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_2DUP:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_3DUP:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_2OVER:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_2ROT:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_2SWAP:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_CAT:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_SUBSTR:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_LEFT:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_RIGHT:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_SIZE:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_INVERT:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_AND:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_OR:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_XOR:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_EQUAL:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_EQUALVERIFY:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_1ADD:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_1SUB:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_2MUL:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_2DIV:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_NEGATE:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_ABS:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_NOT:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_0NOTEQUAL:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_ADD:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_SUB:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_MUL:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_DIV:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_MOD:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_LSHIFT:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_RSHIFT:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_BOOLAND:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_BOOLOR:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_NUMEQUAL:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_NUMEQUALVERIFY:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_NUMNOTEQUAL:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_LESSTHAN:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_GREATERTHAN:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_LESSTHANOREQUAL:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_GREATERTHANOREQUAL:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_MIN:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_MAX:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_WITHIN:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_RIPEMD160:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_SHA1:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_SHA256:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_HASH160:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_HASH256:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_CODESEPARATOR:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_CHECKSIG:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_CHECKSIGVERIFY:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_CHECKMULTISIG:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_CHECKMULTISIGVERIFY:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_CHECKSIGADD:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_CHECKLOCKTIMEVERIFY:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_CHECKSEQUENCEVERIFY:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_RESERVED:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_VER:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_VERIF:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_VERNOTIF:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_RESERVED1:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_RESERVED2:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_NOP1:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_NOP4:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_NOP5:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_NOP6:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_NOP7:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_NOP8:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_NOP9:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_NOP10:
+                raise NotImplementedError("TODO")
+
+            case Opcode.OP_INVALIDOPCODE:
+                raise NotImplementedError("TODO")
+
+            # case _:
+            #     raise ScriptExecutionError(
+            #         ScriptError.SCRIPT_ERR_BAD_OPCODE,
+            #         f"Unhandled opcode: {opcode.name}",
+            #     )
