@@ -685,7 +685,10 @@ class ScriptInterpreter:
                 raise NotImplementedError("TODO")
 
             case Opcode.OP_CAT:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop()
+                a = self.stack.pop()
+                self.stack.push(a + b)
 
             case Opcode.OP_SUBSTR:
                 raise NotImplementedError("TODO")
@@ -697,7 +700,8 @@ class ScriptInterpreter:
                 raise NotImplementedError("TODO")
 
             case Opcode.OP_SIZE:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                self.stack.push_num(len(self.stack.peek()))
 
             case Opcode.OP_INVERT:
                 raise NotImplementedError("TODO")
