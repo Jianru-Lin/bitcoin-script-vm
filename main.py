@@ -1,5 +1,6 @@
 from collections.abc import Iterator
 from enum import IntEnum
+from sys import maxsize
 from typing import NamedTuple, Self, override
 
 
@@ -488,3 +489,21 @@ class ScriptStack:
 
     def clone(self) -> Self:
         return self.__class__(self._stack)
+
+    def pop_bool(self) -> bool:
+        raw = self.pop()
+        for i, b in enumerate(raw):
+            if b != 0:
+                return not (i == len(raw) - 1 and b == 0b1000_0000)
+        return False
+
+    def push_bool(self, value: bool) -> None:
+        self.push(b"\x01" if value else b"")
+
+    def pop_num(self, require_minimal: bool, max_size: int) -> int:
+        return ScriptNumDecoder.decode(
+            self.pop(), require_minimal=require_minimal, max_size=max_size
+        )
+
+    def push_num(self, value: int) -> None:
+        self.push(ScriptNumEncoder.encode(value))

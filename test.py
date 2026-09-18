@@ -273,6 +273,28 @@ class TestScriptStack(unittest.TestCase):
         self.assertEqual(stack.peek(2), b"\x01")
         self.assertEqual(stack.peek(3), b"\x04")
 
+    def test_push_bool_pop_bool(self):
+        stack = ScriptStack()
+        stack.push_bool(True)
+        self.assertEqual(len(stack), 1)
+        self.assertEqual(stack.pop_bool(), True)
+        self.assertEqual(len(stack), 0)
+        stack.push_bool(False)
+        self.assertEqual(len(stack), 1)
+        self.assertEqual(stack.pop_bool(), False)
+        self.assertEqual(len(stack), 0)
+
+    def test_push_num_pop_num(self):
+        stack = ScriptStack()
+        stack.push_num(0)
+        self.assertEqual(len(stack), 1)
+        self.assertEqual(stack.pop_num(require_minimal=True, max_size=4), 0)
+        self.assertEqual(len(stack), 0)
+        stack.push_num(1)
+        self.assertEqual(len(stack), 1)
+        self.assertEqual(stack.pop_num(require_minimal=True, max_size=4), 1)
+        self.assertEqual(len(stack), 0)
+
 
 if __name__ == "__main__":
     _ = unittest.main(verbosity=2)
