@@ -1,6 +1,5 @@
 from collections.abc import Iterator
 from enum import IntEnum
-from sys import maxsize
 from typing import NamedTuple, Self, override
 
 
