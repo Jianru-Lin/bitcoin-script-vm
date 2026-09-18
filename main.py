@@ -521,9 +521,6 @@ class ScriptInterpreter:
     altstack: ScriptStack
     vf_exec: list[bool]
 
-    MAX_OPS_PER_SCRIPT: int = 201
-    MAX_STACK_ELEMENT_SIZE: int = 520
-
     def __init__(self, stack: ScriptStack | None = None) -> None:
         self.stack = stack if stack is not None else ScriptStack()
         self.altstack = ScriptStack()
