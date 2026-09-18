@@ -506,3 +506,11 @@ class ScriptStack:
 
     def push_num(self, value: int) -> None:
         self.push(ScriptNumEncoder.encode(value))
+
+
+class ScriptExecutionError(Exception):
+    error: ScriptError
+
+    def __init__(self, error: ScriptError, message: str = ""):
+        super().__init__(message or error.name)
+        self.error = error
