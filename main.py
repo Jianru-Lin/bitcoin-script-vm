@@ -777,12 +777,12 @@ class ScriptInterpreter:
             case Opcode.OP_NOT:
                 self._require_stack_size(min_size=1)
                 a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(1 if a == 0 else 0)
+                self.stack.push_bool(a == 0)
 
             case Opcode.OP_0NOTEQUAL:
                 self._require_stack_size(min_size=1)
                 a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(1 if a != 0 else 0)
+                self.stack.push_bool(a != 0)
 
             case Opcode.OP_ADD:
                 self._require_stack_size(min_size=2)
@@ -839,7 +839,7 @@ class ScriptInterpreter:
                 self._require_stack_size(min_size=2)
                 b = self.stack.pop_num(require_minimal=False, max_size=1024)
                 a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(1 if a == b else 0)
+                self.stack.push_bool(a == b)
 
             case Opcode.OP_NUMEQUALVERIFY:
                 self._require_stack_size(min_size=2)
@@ -852,31 +852,31 @@ class ScriptInterpreter:
                 self._require_stack_size(min_size=2)
                 b = self.stack.pop_num(require_minimal=False, max_size=1024)
                 a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(1 if a != b else 0)
+                self.stack.push_bool(a != b)
 
             case Opcode.OP_LESSTHAN:
                 self._require_stack_size(min_size=2)
                 b = self.stack.pop_num(require_minimal=False, max_size=1024)
                 a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(1 if a < b else 0)
+                self.stack.push_bool(a < b)
 
             case Opcode.OP_GREATERTHAN:
                 self._require_stack_size(min_size=2)
                 b = self.stack.pop_num(require_minimal=False, max_size=1024)
                 a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(1 if a > b else 0)
+                self.stack.push_bool(a > b)
 
             case Opcode.OP_LESSTHANOREQUAL:
                 self._require_stack_size(min_size=2)
                 b = self.stack.pop_num(require_minimal=False, max_size=1024)
                 a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(1 if a <= b else 0)
+                self.stack.push_bool(a <= b)
 
             case Opcode.OP_GREATERTHANOREQUAL:
                 self._require_stack_size(min_size=2)
                 b = self.stack.pop_num(require_minimal=False, max_size=1024)
                 a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(1 if a >= b else 0)
+                self.stack.push_bool(a >= b)
 
             case Opcode.OP_MIN:
                 self._require_stack_size(min_size=2)
@@ -895,7 +895,7 @@ class ScriptInterpreter:
                 max_value = self.stack.pop_num(require_minimal=False, max_size=1024)
                 min_value = self.stack.pop_num(require_minimal=False, max_size=1024)
                 x = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(1 if min_value <= x < max_value else 0)
+                self.stack.push_bool(min_value <= x < max_value)
 
             case Opcode.OP_RIPEMD160:
                 raise NotImplementedError("TODO")
