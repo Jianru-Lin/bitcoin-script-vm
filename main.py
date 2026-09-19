@@ -732,10 +732,17 @@ class ScriptInterpreter:
                 raise NotImplementedError("TODO")
 
             case Opcode.OP_EQUAL:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop()
+                a = self.stack.pop()
+                self.stack.push_bool(a == b)
 
             case Opcode.OP_EQUALVERIFY:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop()
+                a = self.stack.pop()
+                if a != b:
+                    raise ScriptExecutionError(ScriptError.SCRIPT_ERR_EQUALVERIFY)
 
             case Opcode.OP_1ADD:
                 self._require_stack_size(min_size=1)
