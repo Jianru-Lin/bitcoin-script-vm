@@ -884,7 +884,7 @@ class ScriptInterpreter:
                 self.stack.push_num(max(a, b))
 
             case Opcode.OP_WITHIN:
-                self._require_stack_size(min_size=2)
+                self._require_stack_size(min_size=3)
                 max_value = self.stack.pop_num(require_minimal=False, max_size=1024)
                 min_value = self.stack.pop_num(require_minimal=False, max_size=1024)
                 x = self.stack.pop_num(require_minimal=False, max_size=1024)
