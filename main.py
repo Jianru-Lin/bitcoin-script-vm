@@ -824,10 +824,28 @@ class ScriptInterpreter:
                 self.stack.push_num(rem)
 
             case Opcode.OP_LSHIFT:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                shift = self.stack.pop_num(require_minimal=False, max_size=1024)
+                value = self.stack.pop_num(require_minimal=False, max_size=1024)
+                if shift < 0:
+                    raise ScriptExecutionError(
+                        ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
+                        "Shift amount must not be negative",
+                    )
+                self.stack.push_num(value << shift)
 
             case Opcode.OP_RSHIFT:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                shift = self.stack.pop_num(require_minimal=False, max_size=1024)
+                value = self.stack.pop_num(require_minimal=False, max_size=1024)
+                if shift < 0:
+                    raise ScriptExecutionError(
+                        ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
+                        "Shift amount must not be negative",
+                    )
+                sign = -1 if value < 0 else 1
+                result = (abs(value) >> shift) * sign
+                self.stack.push_num(result)
 
             case Opcode.OP_BOOLAND:
                 self._require_stack_size(min_size=2)
