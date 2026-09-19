@@ -691,13 +691,29 @@ class ScriptInterpreter:
                 self.stack.push(a + b)
 
             case Opcode.OP_SUBSTR:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=3)
+                size = self.stack.pop_num(require_minimal=False, max_size=1024)
+                begin = self.stack.pop_num(require_minimal=False, max_size=1024)
+                if begin < 0 or size < 0:
+                    raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
+                data = self.stack.pop()
+                self.stack.push(data[begin : begin + size])
 
             case Opcode.OP_LEFT:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                size = self.stack.pop_num(require_minimal=False, max_size=1024)
+                if size < 0:
+                    raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
+                data = self.stack.pop()
+                self.stack.push(data[:size])
 
             case Opcode.OP_RIGHT:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                size = self.stack.pop_num(require_minimal=False, max_size=1024)
+                if size < 0:
+                    raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
+                data = self.stack.pop()
+                self.stack.push(data[-size:] if size else b"")
 
             case Opcode.OP_SIZE:
                 self._require_stack_size(min_size=1)
