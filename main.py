@@ -554,7 +554,7 @@ class ScriptInterpreter:
                 self.stack.push_num(-1)
 
             case Opcode.OP_0:  # OP_FALSE
-                self.stack.push(b"")  # self.stack.push_num(0)
+                self.stack.push_num(0)
 
             case Opcode.OP_1:  # OP_TRUE
                 self.stack.push_num(1)
