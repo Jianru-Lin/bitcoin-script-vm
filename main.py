@@ -670,24 +670,36 @@ class ScriptInterpreter:
 
             case Opcode.OP_IFDUP:
                 self._require_stack_size(min_size=1)
+                if self.stack.peek_bool():
+                    self.stack.push(self.stack.peek())
 
             case Opcode.OP_DEPTH:
-                raise NotImplementedError("TODO")
+                self.stack.push_num(len(self.stack))
 
             case Opcode.OP_DROP:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                _ = self.stack.pop()
 
             case Opcode.OP_DUP:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                self.stack.push(self.stack.peek())
 
             case Opcode.OP_NIP:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                _ = self.stack.remove_at(1)
 
             case Opcode.OP_OVER:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                self.stack.push(self.stack.peek(1))
 
             case Opcode.OP_PICK:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                n = self.stack.pop_num(require_minimal=False, max_size=1024)
+                if n < 0 or n >= len(self.stack):
+                    raise ScriptExecutionError(
+                        ScriptError.SCRIPT_ERR_INVALID_STACK_OPERATION
+                    )
+                self.stack.push(self.stack.peek(n))
 
             case Opcode.OP_ROLL:
                 raise NotImplementedError("TODO")
