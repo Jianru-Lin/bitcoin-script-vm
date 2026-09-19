@@ -830,10 +830,16 @@ class ScriptInterpreter:
                 raise NotImplementedError("TODO")
 
             case Opcode.OP_BOOLAND:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_bool(a != 0 and b != 0)
 
             case Opcode.OP_BOOLOR:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_bool(a != 0 or b != 0)
 
             case Opcode.OP_NUMEQUAL:
                 self._require_stack_size(min_size=2)
