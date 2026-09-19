@@ -490,6 +490,13 @@ class ScriptStack:
     def clone(self) -> Self:
         return self.__class__(self._stack)
 
+    def peek_bool(self, depth: int = 0) -> bool:
+        raw = self.peek(depth)
+        for i, b in enumerate(raw):
+            if b != 0:
+                return not (i == len(raw) - 1 and b == 0b1000_0000)
+        return False
+
     def pop_bool(self) -> bool:
         raw = self.pop()
         for i, b in enumerate(raw):
@@ -499,6 +506,11 @@ class ScriptStack:
 
     def push_bool(self, value: bool) -> None:
         self.push(b"\x01" if value else b"")
+
+    def peek_num(self, require_minimal: bool, max_size: int, depth: int = 0) -> int:
+        return ScriptNumDecoder.decode(
+            self.peek(depth), require_minimal=require_minimal, max_size=max_size
+        )
 
     def pop_num(self, require_minimal: bool, max_size: int) -> int:
         return ScriptNumDecoder.decode(
@@ -657,7 +669,7 @@ class ScriptInterpreter:
                 self.stack.push(self.altstack.pop())
 
             case Opcode.OP_IFDUP:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
 
             case Opcode.OP_DEPTH:
                 raise NotImplementedError("TODO")
