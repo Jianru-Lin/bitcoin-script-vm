@@ -829,25 +829,47 @@ class ScriptInterpreter:
                 raise NotImplementedError("TODO")
 
             case Opcode.OP_NUMEQUAL:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(1 if a == b else 0)
 
             case Opcode.OP_NUMEQUALVERIFY:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                if a != b:
+                    raise ScriptExecutionError(ScriptError.SCRIPT_ERR_NUMEQUALVERIFY)
 
             case Opcode.OP_NUMNOTEQUAL:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(1 if a != b else 0)
 
             case Opcode.OP_LESSTHAN:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(1 if a < b else 0)
 
             case Opcode.OP_GREATERTHAN:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(1 if a > b else 0)
 
             case Opcode.OP_LESSTHANOREQUAL:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(1 if a <= b else 0)
 
             case Opcode.OP_GREATERTHANOREQUAL:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                self.stack.push_num(1 if a >= b else 0)
 
             case Opcode.OP_MIN:
                 self._require_stack_size(min_size=2)
