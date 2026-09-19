@@ -945,19 +945,24 @@ class ScriptInterpreter:
                 self.stack.push_bool(min_value <= x < max_value)
 
             case Opcode.OP_RIPEMD160:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                self.stack.push(ScriptCrypto.ripemd160(self.stack.pop()))
 
             case Opcode.OP_SHA1:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                self.stack.push(ScriptCrypto.sha1(self.stack.pop()))
 
             case Opcode.OP_SHA256:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                self.stack.push(ScriptCrypto.sha256(self.stack.pop()))
 
             case Opcode.OP_HASH160:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                self.stack.push(ScriptCrypto.hash160(self.stack.pop()))
 
             case Opcode.OP_HASH256:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                self.stack.push(ScriptCrypto.hash256(self.stack.pop()))
 
             case Opcode.OP_CODESEPARATOR:
                 raise NotImplementedError("TODO")
