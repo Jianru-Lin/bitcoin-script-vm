@@ -1,3 +1,4 @@
+import hashlib
 from collections.abc import Iterator
 from enum import IntEnum
 from typing import NamedTuple, Self, override
@@ -506,6 +507,28 @@ class ScriptStack:
 
     def push_num(self, value: int) -> None:
         self.push(ScriptNumEncoder.encode(value))
+
+
+class ScriptCrypto:
+    @staticmethod
+    def sha1(data: bytes) -> bytes:
+        return hashlib.sha1(data).digest()
+
+    @staticmethod
+    def sha256(data: bytes) -> bytes:
+        return hashlib.sha256(data).digest()
+
+    @staticmethod
+    def hash256(data: bytes) -> bytes:
+        return hashlib.sha256(hashlib.sha256(data).digest()).digest()
+
+    @staticmethod
+    def ripemd160(data: bytes) -> bytes:
+        return hashlib.new("ripemd160", data).digest()
+
+    @staticmethod
+    def hash160(data: bytes) -> bytes:
+        return hashlib.new("ripemd160", hashlib.sha256(data).digest()).digest()
 
 
 class ScriptExecutionError(Exception):
