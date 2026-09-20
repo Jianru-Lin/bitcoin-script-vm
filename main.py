@@ -817,16 +817,42 @@ class ScriptInterpreter:
                 self.stack.push_num(len(self.stack.peek()))
 
             case Opcode.OP_INVERT:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                data = self.stack.pop()
+                self.stack.push(bytes(~b & 0xFF for b in data))
 
             case Opcode.OP_AND:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop()
+                a = self.stack.pop()
+                if len(a) != len(b):
+                    raise ScriptExecutionError(
+                        ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
+                        "Bitwise operands must have equal lengths",
+                    )
+                self.stack.push(bytes(x & y for x, y in zip(a, b)))
 
             case Opcode.OP_OR:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop()
+                a = self.stack.pop()
+                if len(a) != len(b):
+                    raise ScriptExecutionError(
+                        ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
+                        "Bitwise operands must have equal lengths",
+                    )
+                self.stack.push(bytes(x | y for x, y in zip(a, b)))
 
             case Opcode.OP_XOR:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop()
+                a = self.stack.pop()
+                if len(a) != len(b):
+                    raise ScriptExecutionError(
+                        ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
+                        "Bitwise operands must have equal lengths",
+                    )
+                self.stack.push(bytes(x ^ y for x, y in zip(a, b)))
 
             case Opcode.OP_EQUAL:
                 self._require_stack_size(min_size=2)
