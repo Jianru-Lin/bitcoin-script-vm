@@ -728,16 +728,34 @@ class ScriptInterpreter:
                 self.stack.push(a)
 
             case Opcode.OP_TUCK:
-                raise NotImplementedError("TODO")
+                # [..., a, b] => [..., b, a, b]
+                self._require_stack_size(min_size=2)
+                top = self.stack.peek(0)
+                self.stack.insert_at(2, top)
 
             case Opcode.OP_2DROP:
-                raise NotImplementedError("TODO")
+                # [..., a, b] => [...]
+                self._require_stack_size(min_size=2)
+                _ = self.stack.pop()
+                _ = self.stack.pop()
 
             case Opcode.OP_2DUP:
-                raise NotImplementedError("TODO")
+                # [..., a, b] => [..., a, b, a, b]
+                self._require_stack_size(min_size=2)
+                b = self.stack.peek(0)
+                a = self.stack.peek(1)
+                self.stack.push(a)
+                self.stack.push(b)
 
             case Opcode.OP_3DUP:
-                raise NotImplementedError("TODO")
+                # [..., a, b, c] => [..., a, b, c, a, b, c]
+                self._require_stack_size(min_size=3)
+                c = self.stack.peek(0)
+                b = self.stack.peek(1)
+                a = self.stack.peek(2)
+                self.stack.push(a)
+                self.stack.push(b)
+                self.stack.push(c)
 
             case Opcode.OP_2OVER:
                 raise NotImplementedError("TODO")
