@@ -685,14 +685,17 @@ class ScriptInterpreter:
                 self.stack.push(self.stack.peek())
 
             case Opcode.OP_NIP:
+                # [..., a, b] => [..., b]
                 self._require_stack_size(min_size=2)
                 _ = self.stack.remove_at(1)
 
             case Opcode.OP_OVER:
+                # [..., a, b] => [..., a, b, a]
                 self._require_stack_size(min_size=2)
                 self.stack.push(self.stack.peek(1))
 
             case Opcode.OP_PICK:
+                # [..., item(depth=n), ...] => [..., item(depth=n), ..., item]
                 self._require_stack_size(min_size=1)
                 n = self.stack.pop_num(require_minimal=False, max_size=1024)
                 if n < 0 or n >= len(self.stack):
@@ -702,13 +705,27 @@ class ScriptInterpreter:
                 self.stack.push(self.stack.peek(n))
 
             case Opcode.OP_ROLL:
-                raise NotImplementedError("TODO")
+                # [..., item(depth=n), ...] => [..., (removed), ..., item]
+                self._require_stack_size(min_size=1)
+                n = self.stack.pop_num(require_minimal=False, max_size=1024)
+                if n < 0 or n >= len(self.stack):
+                    raise ScriptExecutionError(
+                        ScriptError.SCRIPT_ERR_INVALID_STACK_OPERATION
+                    )
+                self.stack.push(self.stack.remove_at(n))
 
             case Opcode.OP_ROT:
-                raise NotImplementedError("TODO")
+                # [..., a, b, c] => [..., b, c, a]
+                self._require_stack_size(min_size=3)
+                self.stack.push(self.stack.remove_at(2))
 
             case Opcode.OP_SWAP:
-                raise NotImplementedError("TODO")
+                # [..., a, b] => [..., b, a]
+                self._require_stack_size(min_size=2)
+                b = self.stack.pop()
+                a = self.stack.pop()
+                self.stack.push(b)
+                self.stack.push(a)
 
             case Opcode.OP_TUCK:
                 raise NotImplementedError("TODO")
