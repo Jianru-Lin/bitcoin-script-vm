@@ -742,29 +742,44 @@ class ScriptInterpreter:
             case Opcode.OP_2DUP:
                 # [..., a, b] => [..., a, b, a, b]
                 self._require_stack_size(min_size=2)
-                b = self.stack.peek(0)
                 a = self.stack.peek(1)
+                b = self.stack.peek(0)
                 self.stack.push(a)
                 self.stack.push(b)
 
             case Opcode.OP_3DUP:
                 # [..., a, b, c] => [..., a, b, c, a, b, c]
                 self._require_stack_size(min_size=3)
-                c = self.stack.peek(0)
-                b = self.stack.peek(1)
                 a = self.stack.peek(2)
+                b = self.stack.peek(1)
+                c = self.stack.peek(0)
                 self.stack.push(a)
                 self.stack.push(b)
                 self.stack.push(c)
 
             case Opcode.OP_2OVER:
-                raise NotImplementedError("TODO")
+                # [..., a, b, c, d] => [..., a, b, c, d, a, b]
+                self._require_stack_size(min_size=4)
+                a = self.stack.peek(3)
+                b = self.stack.peek(2)
+                self.stack.push(a)
+                self.stack.push(b)
 
             case Opcode.OP_2ROT:
-                raise NotImplementedError("TODO")
+                # [..., a, b, c, d, e, f] => [..., c, d, e, f, a, b]
+                self._require_stack_size(min_size=6)
+                a = self.stack.remove_at(5)
+                b = self.stack.remove_at(4)
+                self.stack.push(a)
+                self.stack.push(b)
 
             case Opcode.OP_2SWAP:
-                raise NotImplementedError("TODO")
+                # [..., a, b, c, d] => [..., c, d, a, b]
+                self._require_stack_size(min_size=4)
+                a = self.stack.remove_at(3)
+                b = self.stack.remove_at(2)
+                self.stack.push(a)
+                self.stack.push(b)
 
             case Opcode.OP_CAT:
                 self._require_stack_size(min_size=2)
