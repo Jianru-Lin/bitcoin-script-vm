@@ -655,10 +655,20 @@ class ScriptInterpreter:
                 raise NotImplementedError("TODO")
 
             case Opcode.OP_VERIFY:
-                raise NotImplementedError("TODO")
+                self._require_stack_size(min_size=1)
+                value = self.stack.pop_bool()
+                if not value:
+                    raise ScriptExecutionError(
+                        ScriptError.SCRIPT_ERR_VERIFY,
+                        "OP_VERIFY failed: top stack item evaluated to false",
+                    )
 
             case Opcode.OP_RETURN:
-                raise NotImplementedError("TODO")
+                # TODO consider IF branche
+                raise ScriptExecutionError(
+                    ScriptError.SCRIPT_ERR_OP_RETURN,
+                    "Encountered OP_RETURN",
+                )
 
             case Opcode.OP_TOALTSTACK:
                 self._require_stack_size(min_size=1)
@@ -1149,7 +1159,10 @@ class ScriptInterpreter:
                 pass
 
             case Opcode.OP_INVALIDOPCODE:
-                raise NotImplementedError("TODO")
+                raise ScriptExecutionError(
+                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                    "Encountered OP_INVALIDOPCODE (0xFF)",
+                )
 
             case _:
                 raise ScriptExecutionError(
