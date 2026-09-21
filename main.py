@@ -3,6 +3,8 @@ from collections.abc import Iterator
 from enum import IntEnum
 from typing import NamedTuple, Self, override
 
+from btclib.ecc import dsa, ssa
+
 
 class BytesReader:
     _raw: bytes
