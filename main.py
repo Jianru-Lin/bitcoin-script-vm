@@ -544,6 +544,24 @@ class ScriptCrypto:
     def hash160(data: bytes) -> bytes:
         return hashlib.new("ripemd160", hashlib.sha256(data).digest()).digest()
 
+    @staticmethod
+    def verify_ecdsa(msg_hash: bytes, pubkey_bytes: bytes, sig_der: bytes) -> bool:
+        if not sig_der or not pubkey_bytes:
+            return False
+        try:
+            return bool(dsa.verify(msg_hash, pubkey_bytes, sig_der))
+        except Exception:  # noqa: BLE001
+            return False
+
+    @staticmethod
+    def verify_schnorr(msg_hash: bytes, pubkey_bytes: bytes, sig_bytes: bytes) -> bool:
+        if len(sig_bytes) != 64 or len(pubkey_bytes) != 32:
+            return False
+        try:
+            return bool(ssa.verify(msg_hash, pubkey_bytes, sig_bytes))
+        except Exception:  # noqa: BLE001
+            return False
+
 
 class ScriptExecutionError(Exception):
     error: ScriptError
