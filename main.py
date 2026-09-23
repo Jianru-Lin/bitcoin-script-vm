@@ -1,7 +1,8 @@
 import hashlib
 from collections.abc import Iterator
+from dataclasses import dataclass
 from enum import IntEnum
-from typing import NamedTuple, Self, override
+from typing import ClassVar, NamedTuple, Self, override
 
 from btclib.ecc import dsa, ssa
 
@@ -572,14 +573,30 @@ class ScriptExecutionError(Exception):
 
 
 class ScriptInterpreter:
+    @dataclass(frozen=True)
+    class Ready:
+        pass
+
+    @dataclass(frozen=True)
+    class Running:
+        pass
+
+    @dataclass(frozen=True)
+    class Terminated:
+        error: ScriptError = ScriptError.SCRIPT_ERR_OK
+
+    type State = Ready | Running | Terminated
+
     stack: ScriptStack
     altstack: ScriptStack
     vf_exec: list[bool]
+    state: State
 
     def __init__(self, stack: ScriptStack | None = None) -> None:
         self.stack = stack if stack is not None else ScriptStack()
         self.altstack = ScriptStack()
         self.vf_exec = []
+        self.state = self.Ready()
 
     def execute(self, script_bytes: bytes) -> None:
         parser = ScriptParser(script_bytes)
