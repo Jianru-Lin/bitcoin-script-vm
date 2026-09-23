@@ -598,10 +598,15 @@ class ScriptInterpreter:
         self.vf_exec = []
         self.state = self.Ready()
 
-    def execute(self, script_bytes: bytes) -> None:
+    def execute(self, script_bytes: bytes) -> Terminated:
+        self.state = self.Running()
         parser = ScriptParser(script_bytes)
         for token in parser:
             self._step(token)
+            if isinstance(self.state, self.Terminated):
+                return self.state
+        self.state = self.Terminated(error=ScriptError.SCRIPT_ERR_OK)
+        return self.state
 
     def _step(self, token: ScriptToken) -> None:
         opcode = token.opcode
