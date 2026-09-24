@@ -1228,12 +1228,6 @@ class ScriptInterpreter:
             )
 
 
-@dataclass(frozen=True)
-class ValidationResult:
-    is_valid: bool
-    error: ScriptError
-
-
 class Prevout(TypedDict):
     amount: int
     lock_script: bytes
@@ -1243,7 +1237,7 @@ class TransactionValidator:
     @staticmethod
     def validate_2009_satoshi(
         lock_script: bytes, unlock_script: bytes, tx: bytes, input_index: int
-    ) -> ValidationResult:
+    ) -> ScriptError:
         raise NotImplementedError("TODO")
 
     @staticmethod
@@ -1252,7 +1246,7 @@ class TransactionValidator:
         unlock_script: bytes,
         tx: bytes,
         input_index: int,
-    ) -> ValidationResult:
+    ) -> ScriptError:
         raise NotImplementedError("TODO")
 
     @staticmethod
@@ -1263,7 +1257,7 @@ class TransactionValidator:
         tx: bytes,
         input_index: int,
         amount: int,
-    ) -> ValidationResult:
+    ) -> ScriptError:
         raise NotImplementedError("TODO")
 
     @staticmethod
@@ -1273,5 +1267,5 @@ class TransactionValidator:
         tx: bytes,
         input_index: int,
         prevouts: list[Prevout],
-    ) -> ValidationResult:
+    ) -> ScriptError:
         raise NotImplementedError("TODO")
