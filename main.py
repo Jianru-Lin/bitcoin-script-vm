@@ -609,608 +609,613 @@ class ScriptInterpreter:
         return self.state
 
     def _step(self, token: ScriptToken) -> None:
-        opcode = token.opcode
-        match opcode:
-            case Opcode.OP_PUSHDATA_DIRECT:
-                assert token.data is not None
-                self.stack.push(token.data)
+        try:
+            opcode = token.opcode
+            match opcode:
+                case Opcode.OP_PUSHDATA_DIRECT:
+                    assert token.data is not None
+                    self.stack.push(token.data)
 
-            case Opcode.OP_PUSHDATA1:
-                assert token.data is not None
-                self.stack.push(token.data)
+                case Opcode.OP_PUSHDATA1:
+                    assert token.data is not None
+                    self.stack.push(token.data)
 
-            case Opcode.OP_PUSHDATA2:
-                assert token.data is not None
-                self.stack.push(token.data)
+                case Opcode.OP_PUSHDATA2:
+                    assert token.data is not None
+                    self.stack.push(token.data)
 
-            case Opcode.OP_PUSHDATA4:
-                assert token.data is not None
-                self.stack.push(token.data)
+                case Opcode.OP_PUSHDATA4:
+                    assert token.data is not None
+                    self.stack.push(token.data)
 
-            case Opcode.OP_1NEGATE:
-                self.stack.push_num(-1)
+                case Opcode.OP_1NEGATE:
+                    self.stack.push_num(-1)
 
-            case Opcode.OP_0:  # OP_FALSE
-                self.stack.push_num(0)
+                case Opcode.OP_0:  # OP_FALSE
+                    self.stack.push_num(0)
 
-            case Opcode.OP_1:  # OP_TRUE
-                self.stack.push_num(1)
+                case Opcode.OP_1:  # OP_TRUE
+                    self.stack.push_num(1)
 
-            case Opcode.OP_2:
-                self.stack.push_num(2)
+                case Opcode.OP_2:
+                    self.stack.push_num(2)
 
-            case Opcode.OP_3:
-                self.stack.push_num(3)
+                case Opcode.OP_3:
+                    self.stack.push_num(3)
 
-            case Opcode.OP_4:
-                self.stack.push_num(4)
+                case Opcode.OP_4:
+                    self.stack.push_num(4)
 
-            case Opcode.OP_5:
-                self.stack.push_num(5)
+                case Opcode.OP_5:
+                    self.stack.push_num(5)
 
-            case Opcode.OP_6:
-                self.stack.push_num(6)
+                case Opcode.OP_6:
+                    self.stack.push_num(6)
 
-            case Opcode.OP_7:
-                self.stack.push_num(7)
+                case Opcode.OP_7:
+                    self.stack.push_num(7)
 
-            case Opcode.OP_8:
-                self.stack.push_num(8)
+                case Opcode.OP_8:
+                    self.stack.push_num(8)
 
-            case Opcode.OP_9:
-                self.stack.push_num(9)
+                case Opcode.OP_9:
+                    self.stack.push_num(9)
 
-            case Opcode.OP_10:
-                self.stack.push_num(10)
+                case Opcode.OP_10:
+                    self.stack.push_num(10)
 
-            case Opcode.OP_11:
-                self.stack.push_num(11)
+                case Opcode.OP_11:
+                    self.stack.push_num(11)
 
-            case Opcode.OP_12:
-                self.stack.push_num(12)
+                case Opcode.OP_12:
+                    self.stack.push_num(12)
 
-            case Opcode.OP_13:
-                self.stack.push_num(13)
+                case Opcode.OP_13:
+                    self.stack.push_num(13)
 
-            case Opcode.OP_14:
-                self.stack.push_num(14)
+                case Opcode.OP_14:
+                    self.stack.push_num(14)
 
-            case Opcode.OP_15:
-                self.stack.push_num(15)
+                case Opcode.OP_15:
+                    self.stack.push_num(15)
 
-            case Opcode.OP_16:
-                self.stack.push_num(16)
+                case Opcode.OP_16:
+                    self.stack.push_num(16)
 
-            case Opcode.OP_NOP:
-                pass
+                case Opcode.OP_NOP:
+                    pass
 
-            case Opcode.OP_IF:
-                raise NotImplementedError("TODO")
+                case Opcode.OP_IF:
+                    raise NotImplementedError("TODO")
 
-            case Opcode.OP_NOTIF:
-                raise NotImplementedError("TODO")
+                case Opcode.OP_NOTIF:
+                    raise NotImplementedError("TODO")
 
-            case Opcode.OP_ELSE:
-                raise NotImplementedError("TODO")
+                case Opcode.OP_ELSE:
+                    raise NotImplementedError("TODO")
 
-            case Opcode.OP_ENDIF:
-                raise NotImplementedError("TODO")
+                case Opcode.OP_ENDIF:
+                    raise NotImplementedError("TODO")
 
-            case Opcode.OP_VERIFY:
-                self._require_stack_min_size(1)
-                value = self.stack.pop_bool()
-                if not value:
+                case Opcode.OP_VERIFY:
+                    self._require_stack_min_size(1)
+                    value = self.stack.pop_bool()
+                    if not value:
+                        raise ScriptExecutionError(
+                            ScriptError.SCRIPT_ERR_VERIFY,
+                            "OP_VERIFY failed: top stack item evaluated to false",
+                        )
+
+                case Opcode.OP_RETURN:
+                    # TODO consider IF branche
                     raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_VERIFY,
-                        "OP_VERIFY failed: top stack item evaluated to false",
+                        ScriptError.SCRIPT_ERR_OP_RETURN,
+                        "Encountered OP_RETURN",
                     )
 
-            case Opcode.OP_RETURN:
-                # TODO consider IF branche
-                raise ScriptExecutionError(
-                    ScriptError.SCRIPT_ERR_OP_RETURN,
-                    "Encountered OP_RETURN",
-                )
+                case Opcode.OP_TOALTSTACK:
+                    self._require_stack_min_size(1)
+                    self.altstack.push(self.stack.pop())
 
-            case Opcode.OP_TOALTSTACK:
-                self._require_stack_min_size(1)
-                self.altstack.push(self.stack.pop())
+                case Opcode.OP_FROMALTSTACK:
+                    self._require_altstack_min_size(1)
+                    self.stack.push(self.altstack.pop())
 
-            case Opcode.OP_FROMALTSTACK:
-                self._require_altstack_min_size(1)
-                self.stack.push(self.altstack.pop())
+                case Opcode.OP_IFDUP:
+                    self._require_stack_min_size(1)
+                    if self.stack.peek_bool():
+                        self.stack.push(self.stack.peek())
 
-            case Opcode.OP_IFDUP:
-                self._require_stack_min_size(1)
-                if self.stack.peek_bool():
+                case Opcode.OP_DEPTH:
+                    self.stack.push_num(len(self.stack))
+
+                case Opcode.OP_DROP:
+                    self._require_stack_min_size(1)
+                    _ = self.stack.pop()
+
+                case Opcode.OP_DUP:
+                    self._require_stack_min_size(1)
                     self.stack.push(self.stack.peek())
 
-            case Opcode.OP_DEPTH:
-                self.stack.push_num(len(self.stack))
+                case Opcode.OP_NIP:
+                    # [..., a, b] => [..., b]
+                    self._require_stack_min_size(2)
+                    _ = self.stack.remove_at(1)
 
-            case Opcode.OP_DROP:
-                self._require_stack_min_size(1)
-                _ = self.stack.pop()
+                case Opcode.OP_OVER:
+                    # [..., a, b] => [..., a, b, a]
+                    self._require_stack_min_size(2)
+                    self.stack.push(self.stack.peek(1))
 
-            case Opcode.OP_DUP:
-                self._require_stack_min_size(1)
-                self.stack.push(self.stack.peek())
+                case Opcode.OP_PICK:
+                    # [..., item(depth=n), ...] => [..., item(depth=n), ..., item]
+                    self._require_stack_min_size(1)
+                    n = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    if n < 0 or n >= len(self.stack):
+                        raise ScriptExecutionError(
+                            ScriptError.SCRIPT_ERR_INVALID_STACK_OPERATION
+                        )
+                    self.stack.push(self.stack.peek(n))
 
-            case Opcode.OP_NIP:
-                # [..., a, b] => [..., b]
-                self._require_stack_min_size(2)
-                _ = self.stack.remove_at(1)
+                case Opcode.OP_ROLL:
+                    # [..., item(depth=n), ...] => [..., (removed), ..., item]
+                    self._require_stack_min_size(1)
+                    n = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    if n < 0 or n >= len(self.stack):
+                        raise ScriptExecutionError(
+                            ScriptError.SCRIPT_ERR_INVALID_STACK_OPERATION
+                        )
+                    self.stack.push(self.stack.remove_at(n))
 
-            case Opcode.OP_OVER:
-                # [..., a, b] => [..., a, b, a]
-                self._require_stack_min_size(2)
-                self.stack.push(self.stack.peek(1))
+                case Opcode.OP_ROT:
+                    # [..., a, b, c] => [..., b, c, a]
+                    self._require_stack_min_size(3)
+                    self.stack.push(self.stack.remove_at(2))
 
-            case Opcode.OP_PICK:
-                # [..., item(depth=n), ...] => [..., item(depth=n), ..., item]
-                self._require_stack_min_size(1)
-                n = self.stack.pop_num(require_minimal=False, max_size=1024)
-                if n < 0 or n >= len(self.stack):
+                case Opcode.OP_SWAP:
+                    # [..., a, b] => [..., b, a]
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop()
+                    a = self.stack.pop()
+                    self.stack.push(b)
+                    self.stack.push(a)
+
+                case Opcode.OP_TUCK:
+                    # [..., a, b] => [..., b, a, b]
+                    self._require_stack_min_size(2)
+                    top = self.stack.peek(0)
+                    self.stack.insert_at(2, top)
+
+                case Opcode.OP_2DROP:
+                    # [..., a, b] => [...]
+                    self._require_stack_min_size(2)
+                    _ = self.stack.pop()
+                    _ = self.stack.pop()
+
+                case Opcode.OP_2DUP:
+                    # [..., a, b] => [..., a, b, a, b]
+                    self._require_stack_min_size(2)
+                    a = self.stack.peek(1)
+                    b = self.stack.peek(0)
+                    self.stack.push(a)
+                    self.stack.push(b)
+
+                case Opcode.OP_3DUP:
+                    # [..., a, b, c] => [..., a, b, c, a, b, c]
+                    self._require_stack_min_size(3)
+                    a = self.stack.peek(2)
+                    b = self.stack.peek(1)
+                    c = self.stack.peek(0)
+                    self.stack.push(a)
+                    self.stack.push(b)
+                    self.stack.push(c)
+
+                case Opcode.OP_2OVER:
+                    # [..., a, b, c, d] => [..., a, b, c, d, a, b]
+                    self._require_stack_min_size(4)
+                    a = self.stack.peek(3)
+                    b = self.stack.peek(2)
+                    self.stack.push(a)
+                    self.stack.push(b)
+
+                case Opcode.OP_2ROT:
+                    # [..., a, b, c, d, e, f] => [..., c, d, e, f, a, b]
+                    self._require_stack_min_size(6)
+                    a = self.stack.remove_at(5)
+                    b = self.stack.remove_at(4)
+                    self.stack.push(a)
+                    self.stack.push(b)
+
+                case Opcode.OP_2SWAP:
+                    # [..., a, b, c, d] => [..., c, d, a, b]
+                    self._require_stack_min_size(4)
+                    a = self.stack.remove_at(3)
+                    b = self.stack.remove_at(2)
+                    self.stack.push(a)
+                    self.stack.push(b)
+
+                case Opcode.OP_CAT:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop()
+                    a = self.stack.pop()
+                    self.stack.push(a + b)
+
+                case Opcode.OP_SUBSTR:
+                    self._require_stack_min_size(3)
+                    size = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    begin = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    if begin < 0 or size < 0:
+                        raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
+                    data = self.stack.pop()
+                    self.stack.push(data[begin : begin + size])
+
+                case Opcode.OP_LEFT:
+                    self._require_stack_min_size(2)
+                    size = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    if size < 0:
+                        raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
+                    data = self.stack.pop()
+                    self.stack.push(data[:size])
+
+                case Opcode.OP_RIGHT:
+                    self._require_stack_min_size(2)
+                    size = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    if size < 0:
+                        raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
+                    data = self.stack.pop()
+                    self.stack.push(data[-size:] if size else b"")
+
+                case Opcode.OP_SIZE:
+                    self._require_stack_min_size(1)
+                    self.stack.push_num(len(self.stack.peek()))
+
+                case Opcode.OP_INVERT:
+                    self._require_stack_min_size(1)
+                    data = self.stack.pop()
+                    self.stack.push(bytes(~b & 0xFF for b in data))
+
+                case Opcode.OP_AND:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop()
+                    a = self.stack.pop()
+                    if len(a) != len(b):
+                        raise ScriptExecutionError(
+                            ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
+                            "Bitwise operands must have equal lengths",
+                        )
+                    self.stack.push(bytes(x & y for x, y in zip(a, b)))
+
+                case Opcode.OP_OR:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop()
+                    a = self.stack.pop()
+                    if len(a) != len(b):
+                        raise ScriptExecutionError(
+                            ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
+                            "Bitwise operands must have equal lengths",
+                        )
+                    self.stack.push(bytes(x | y for x, y in zip(a, b)))
+
+                case Opcode.OP_XOR:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop()
+                    a = self.stack.pop()
+                    if len(a) != len(b):
+                        raise ScriptExecutionError(
+                            ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
+                            "Bitwise operands must have equal lengths",
+                        )
+                    self.stack.push(bytes(x ^ y for x, y in zip(a, b)))
+
+                case Opcode.OP_EQUAL:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop()
+                    a = self.stack.pop()
+                    self.stack.push_bool(a == b)
+
+                case Opcode.OP_EQUALVERIFY:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop()
+                    a = self.stack.pop()
+                    if a != b:
+                        raise ScriptExecutionError(ScriptError.SCRIPT_ERR_EQUALVERIFY)
+
+                case Opcode.OP_1ADD:
+                    self._require_stack_min_size(1)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_num(a + 1)
+
+                case Opcode.OP_1SUB:
+                    self._require_stack_min_size(1)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_num(a - 1)
+
+                case Opcode.OP_2MUL:
+                    self._require_stack_min_size(1)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_num(a * 2)
+
+                case Opcode.OP_2DIV:
+                    self._require_stack_min_size(1)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_num(int(a / 2))
+
+                case Opcode.OP_NEGATE:
+                    self._require_stack_min_size(1)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_num(-a)
+
+                case Opcode.OP_ABS:
+                    self._require_stack_min_size(1)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_num(abs(a))
+
+                case Opcode.OP_NOT:
+                    self._require_stack_min_size(1)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_bool(a == 0)
+
+                case Opcode.OP_0NOTEQUAL:
+                    self._require_stack_min_size(1)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_bool(a != 0)
+
+                case Opcode.OP_ADD:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_num(a + b)
+
+                case Opcode.OP_SUB:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_num(a - b)
+
+                case Opcode.OP_MUL:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_num(a * b)
+
+                case Opcode.OP_DIV:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    if b == 0:
+                        raise ScriptExecutionError(
+                            ScriptError.SCRIPT_ERR_UNKNOWN_ERROR, "Division by zero"
+                        )
+                    self.stack.push_num(int(a / b))
+
+                case Opcode.OP_MOD:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    if b == 0:
+                        raise ScriptExecutionError(
+                            ScriptError.SCRIPT_ERR_UNKNOWN_ERROR, "Modulo by zero"
+                        )
+                    rem = a - int(a / b) * b
+                    self.stack.push_num(rem)
+
+                case Opcode.OP_LSHIFT:
+                    self._require_stack_min_size(2)
+                    shift = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    value = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    if shift < 0:
+                        raise ScriptExecutionError(
+                            ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
+                            "Shift amount must not be negative",
+                        )
+                    self.stack.push_num(value << shift)
+
+                case Opcode.OP_RSHIFT:
+                    self._require_stack_min_size(2)
+                    shift = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    value = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    if shift < 0:
+                        raise ScriptExecutionError(
+                            ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
+                            "Shift amount must not be negative",
+                        )
+                    sign = -1 if value < 0 else 1
+                    result = (abs(value) >> shift) * sign
+                    self.stack.push_num(result)
+
+                case Opcode.OP_BOOLAND:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_bool(a != 0 and b != 0)
+
+                case Opcode.OP_BOOLOR:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_bool(a != 0 or b != 0)
+
+                case Opcode.OP_NUMEQUAL:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_bool(a == b)
+
+                case Opcode.OP_NUMEQUALVERIFY:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    if a != b:
+                        raise ScriptExecutionError(
+                            ScriptError.SCRIPT_ERR_NUMEQUALVERIFY
+                        )
+
+                case Opcode.OP_NUMNOTEQUAL:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_bool(a != b)
+
+                case Opcode.OP_LESSTHAN:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_bool(a < b)
+
+                case Opcode.OP_GREATERTHAN:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_bool(a > b)
+
+                case Opcode.OP_LESSTHANOREQUAL:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_bool(a <= b)
+
+                case Opcode.OP_GREATERTHANOREQUAL:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_bool(a >= b)
+
+                case Opcode.OP_MIN:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_num(min(a, b))
+
+                case Opcode.OP_MAX:
+                    self._require_stack_min_size(2)
+                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_num(max(a, b))
+
+                case Opcode.OP_WITHIN:
+                    self._require_stack_min_size(3)
+                    max_value = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    min_value = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    x = self.stack.pop_num(require_minimal=False, max_size=1024)
+                    self.stack.push_bool(min_value <= x < max_value)
+
+                case Opcode.OP_RIPEMD160:
+                    self._require_stack_min_size(1)
+                    self.stack.push(ScriptCrypto.ripemd160(self.stack.pop()))
+
+                case Opcode.OP_SHA1:
+                    self._require_stack_min_size(1)
+                    self.stack.push(ScriptCrypto.sha1(self.stack.pop()))
+
+                case Opcode.OP_SHA256:
+                    self._require_stack_min_size(1)
+                    self.stack.push(ScriptCrypto.sha256(self.stack.pop()))
+
+                case Opcode.OP_HASH160:
+                    self._require_stack_min_size(1)
+                    self.stack.push(ScriptCrypto.hash160(self.stack.pop()))
+
+                case Opcode.OP_HASH256:
+                    self._require_stack_min_size(1)
+                    self.stack.push(ScriptCrypto.hash256(self.stack.pop()))
+
+                case Opcode.OP_CODESEPARATOR:
+                    raise NotImplementedError("TODO")
+
+                case Opcode.OP_CHECKSIG:
+                    raise NotImplementedError("TODO")
+
+                case Opcode.OP_CHECKSIGVERIFY:
+                    raise NotImplementedError("TODO")
+
+                case Opcode.OP_CHECKMULTISIG:
+                    raise NotImplementedError("TODO")
+
+                case Opcode.OP_CHECKMULTISIGVERIFY:
+                    raise NotImplementedError("TODO")
+
+                case Opcode.OP_CHECKSIGADD:
+                    raise NotImplementedError("TODO")
+
+                case Opcode.OP_CHECKLOCKTIMEVERIFY:  # OP_NOP2
+                    raise NotImplementedError("TODO")
+
+                case Opcode.OP_CHECKSEQUENCEVERIFY:  # OP_NOP3
+                    raise NotImplementedError("TODO")
+
+                case Opcode.OP_RESERVED:
                     raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_INVALID_STACK_OPERATION
+                        ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                        f"Encountered reserved/illegal opcode: {opcode.name}",
                     )
-                self.stack.push(self.stack.peek(n))
 
-            case Opcode.OP_ROLL:
-                # [..., item(depth=n), ...] => [..., (removed), ..., item]
-                self._require_stack_min_size(1)
-                n = self.stack.pop_num(require_minimal=False, max_size=1024)
-                if n < 0 or n >= len(self.stack):
+                case Opcode.OP_VER:
                     raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_INVALID_STACK_OPERATION
+                        ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                        f"Encountered reserved/illegal opcode: {opcode.name}",
                     )
-                self.stack.push(self.stack.remove_at(n))
 
-            case Opcode.OP_ROT:
-                # [..., a, b, c] => [..., b, c, a]
-                self._require_stack_min_size(3)
-                self.stack.push(self.stack.remove_at(2))
-
-            case Opcode.OP_SWAP:
-                # [..., a, b] => [..., b, a]
-                self._require_stack_min_size(2)
-                b = self.stack.pop()
-                a = self.stack.pop()
-                self.stack.push(b)
-                self.stack.push(a)
-
-            case Opcode.OP_TUCK:
-                # [..., a, b] => [..., b, a, b]
-                self._require_stack_min_size(2)
-                top = self.stack.peek(0)
-                self.stack.insert_at(2, top)
-
-            case Opcode.OP_2DROP:
-                # [..., a, b] => [...]
-                self._require_stack_min_size(2)
-                _ = self.stack.pop()
-                _ = self.stack.pop()
-
-            case Opcode.OP_2DUP:
-                # [..., a, b] => [..., a, b, a, b]
-                self._require_stack_min_size(2)
-                a = self.stack.peek(1)
-                b = self.stack.peek(0)
-                self.stack.push(a)
-                self.stack.push(b)
-
-            case Opcode.OP_3DUP:
-                # [..., a, b, c] => [..., a, b, c, a, b, c]
-                self._require_stack_min_size(3)
-                a = self.stack.peek(2)
-                b = self.stack.peek(1)
-                c = self.stack.peek(0)
-                self.stack.push(a)
-                self.stack.push(b)
-                self.stack.push(c)
-
-            case Opcode.OP_2OVER:
-                # [..., a, b, c, d] => [..., a, b, c, d, a, b]
-                self._require_stack_min_size(4)
-                a = self.stack.peek(3)
-                b = self.stack.peek(2)
-                self.stack.push(a)
-                self.stack.push(b)
-
-            case Opcode.OP_2ROT:
-                # [..., a, b, c, d, e, f] => [..., c, d, e, f, a, b]
-                self._require_stack_min_size(6)
-                a = self.stack.remove_at(5)
-                b = self.stack.remove_at(4)
-                self.stack.push(a)
-                self.stack.push(b)
-
-            case Opcode.OP_2SWAP:
-                # [..., a, b, c, d] => [..., c, d, a, b]
-                self._require_stack_min_size(4)
-                a = self.stack.remove_at(3)
-                b = self.stack.remove_at(2)
-                self.stack.push(a)
-                self.stack.push(b)
-
-            case Opcode.OP_CAT:
-                self._require_stack_min_size(2)
-                b = self.stack.pop()
-                a = self.stack.pop()
-                self.stack.push(a + b)
-
-            case Opcode.OP_SUBSTR:
-                self._require_stack_min_size(3)
-                size = self.stack.pop_num(require_minimal=False, max_size=1024)
-                begin = self.stack.pop_num(require_minimal=False, max_size=1024)
-                if begin < 0 or size < 0:
-                    raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
-                data = self.stack.pop()
-                self.stack.push(data[begin : begin + size])
-
-            case Opcode.OP_LEFT:
-                self._require_stack_min_size(2)
-                size = self.stack.pop_num(require_minimal=False, max_size=1024)
-                if size < 0:
-                    raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
-                data = self.stack.pop()
-                self.stack.push(data[:size])
-
-            case Opcode.OP_RIGHT:
-                self._require_stack_min_size(2)
-                size = self.stack.pop_num(require_minimal=False, max_size=1024)
-                if size < 0:
-                    raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
-                data = self.stack.pop()
-                self.stack.push(data[-size:] if size else b"")
-
-            case Opcode.OP_SIZE:
-                self._require_stack_min_size(1)
-                self.stack.push_num(len(self.stack.peek()))
-
-            case Opcode.OP_INVERT:
-                self._require_stack_min_size(1)
-                data = self.stack.pop()
-                self.stack.push(bytes(~b & 0xFF for b in data))
-
-            case Opcode.OP_AND:
-                self._require_stack_min_size(2)
-                b = self.stack.pop()
-                a = self.stack.pop()
-                if len(a) != len(b):
+                case Opcode.OP_VERIF:
                     raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
-                        "Bitwise operands must have equal lengths",
+                        ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                        f"Encountered reserved/illegal opcode: {opcode.name}",
                     )
-                self.stack.push(bytes(x & y for x, y in zip(a, b)))
 
-            case Opcode.OP_OR:
-                self._require_stack_min_size(2)
-                b = self.stack.pop()
-                a = self.stack.pop()
-                if len(a) != len(b):
+                case Opcode.OP_VERNOTIF:
                     raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
-                        "Bitwise operands must have equal lengths",
+                        ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                        f"Encountered reserved/illegal opcode: {opcode.name}",
                     )
-                self.stack.push(bytes(x | y for x, y in zip(a, b)))
 
-            case Opcode.OP_XOR:
-                self._require_stack_min_size(2)
-                b = self.stack.pop()
-                a = self.stack.pop()
-                if len(a) != len(b):
+                case Opcode.OP_RESERVED1:
                     raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
-                        "Bitwise operands must have equal lengths",
+                        ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                        f"Encountered reserved/illegal opcode: {opcode.name}",
                     )
-                self.stack.push(bytes(x ^ y for x, y in zip(a, b)))
 
-            case Opcode.OP_EQUAL:
-                self._require_stack_min_size(2)
-                b = self.stack.pop()
-                a = self.stack.pop()
-                self.stack.push_bool(a == b)
-
-            case Opcode.OP_EQUALVERIFY:
-                self._require_stack_min_size(2)
-                b = self.stack.pop()
-                a = self.stack.pop()
-                if a != b:
-                    raise ScriptExecutionError(ScriptError.SCRIPT_ERR_EQUALVERIFY)
-
-            case Opcode.OP_1ADD:
-                self._require_stack_min_size(1)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(a + 1)
-
-            case Opcode.OP_1SUB:
-                self._require_stack_min_size(1)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(a - 1)
-
-            case Opcode.OP_2MUL:
-                self._require_stack_min_size(1)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(a * 2)
-
-            case Opcode.OP_2DIV:
-                self._require_stack_min_size(1)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(int(a / 2))
-
-            case Opcode.OP_NEGATE:
-                self._require_stack_min_size(1)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(-a)
-
-            case Opcode.OP_ABS:
-                self._require_stack_min_size(1)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(abs(a))
-
-            case Opcode.OP_NOT:
-                self._require_stack_min_size(1)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_bool(a == 0)
-
-            case Opcode.OP_0NOTEQUAL:
-                self._require_stack_min_size(1)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_bool(a != 0)
-
-            case Opcode.OP_ADD:
-                self._require_stack_min_size(2)
-                b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(a + b)
-
-            case Opcode.OP_SUB:
-                self._require_stack_min_size(2)
-                b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(a - b)
-
-            case Opcode.OP_MUL:
-                self._require_stack_min_size(2)
-                b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(a * b)
-
-            case Opcode.OP_DIV:
-                self._require_stack_min_size(2)
-                b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                if b == 0:
+                case Opcode.OP_RESERVED2:
                     raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_UNKNOWN_ERROR, "Division by zero"
+                        ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                        f"Encountered reserved/illegal opcode: {opcode.name}",
                     )
-                self.stack.push_num(int(a / b))
 
-            case Opcode.OP_MOD:
-                self._require_stack_min_size(2)
-                b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                if b == 0:
+                case Opcode.OP_NOP1:
+                    pass
+
+                case Opcode.OP_NOP4:
+                    pass
+
+                case Opcode.OP_NOP5:
+                    pass
+
+                case Opcode.OP_NOP6:
+                    pass
+
+                case Opcode.OP_NOP7:
+                    pass
+
+                case Opcode.OP_NOP8:
+                    pass
+
+                case Opcode.OP_NOP9:
+                    pass
+
+                case Opcode.OP_NOP10:
+                    pass
+
+                case Opcode.OP_INVALIDOPCODE:
                     raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_UNKNOWN_ERROR, "Modulo by zero"
+                        ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                        "Encountered OP_INVALIDOPCODE (0xFF)",
                     )
-                rem = a - int(a / b) * b
-                self.stack.push_num(rem)
 
-            case Opcode.OP_LSHIFT:
-                self._require_stack_min_size(2)
-                shift = self.stack.pop_num(require_minimal=False, max_size=1024)
-                value = self.stack.pop_num(require_minimal=False, max_size=1024)
-                if shift < 0:
+                case _:
                     raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
-                        "Shift amount must not be negative",
+                        ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                        f"Unhandled opcode: {opcode.name}",
                     )
-                self.stack.push_num(value << shift)
-
-            case Opcode.OP_RSHIFT:
-                self._require_stack_min_size(2)
-                shift = self.stack.pop_num(require_minimal=False, max_size=1024)
-                value = self.stack.pop_num(require_minimal=False, max_size=1024)
-                if shift < 0:
-                    raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
-                        "Shift amount must not be negative",
-                    )
-                sign = -1 if value < 0 else 1
-                result = (abs(value) >> shift) * sign
-                self.stack.push_num(result)
-
-            case Opcode.OP_BOOLAND:
-                self._require_stack_min_size(2)
-                b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_bool(a != 0 and b != 0)
-
-            case Opcode.OP_BOOLOR:
-                self._require_stack_min_size(2)
-                b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_bool(a != 0 or b != 0)
-
-            case Opcode.OP_NUMEQUAL:
-                self._require_stack_min_size(2)
-                b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_bool(a == b)
-
-            case Opcode.OP_NUMEQUALVERIFY:
-                self._require_stack_min_size(2)
-                b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                if a != b:
-                    raise ScriptExecutionError(ScriptError.SCRIPT_ERR_NUMEQUALVERIFY)
-
-            case Opcode.OP_NUMNOTEQUAL:
-                self._require_stack_min_size(2)
-                b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_bool(a != b)
-
-            case Opcode.OP_LESSTHAN:
-                self._require_stack_min_size(2)
-                b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_bool(a < b)
-
-            case Opcode.OP_GREATERTHAN:
-                self._require_stack_min_size(2)
-                b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_bool(a > b)
-
-            case Opcode.OP_LESSTHANOREQUAL:
-                self._require_stack_min_size(2)
-                b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_bool(a <= b)
-
-            case Opcode.OP_GREATERTHANOREQUAL:
-                self._require_stack_min_size(2)
-                b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_bool(a >= b)
-
-            case Opcode.OP_MIN:
-                self._require_stack_min_size(2)
-                b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(min(a, b))
-
-            case Opcode.OP_MAX:
-                self._require_stack_min_size(2)
-                b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_num(max(a, b))
-
-            case Opcode.OP_WITHIN:
-                self._require_stack_min_size(3)
-                max_value = self.stack.pop_num(require_minimal=False, max_size=1024)
-                min_value = self.stack.pop_num(require_minimal=False, max_size=1024)
-                x = self.stack.pop_num(require_minimal=False, max_size=1024)
-                self.stack.push_bool(min_value <= x < max_value)
-
-            case Opcode.OP_RIPEMD160:
-                self._require_stack_min_size(1)
-                self.stack.push(ScriptCrypto.ripemd160(self.stack.pop()))
-
-            case Opcode.OP_SHA1:
-                self._require_stack_min_size(1)
-                self.stack.push(ScriptCrypto.sha1(self.stack.pop()))
-
-            case Opcode.OP_SHA256:
-                self._require_stack_min_size(1)
-                self.stack.push(ScriptCrypto.sha256(self.stack.pop()))
-
-            case Opcode.OP_HASH160:
-                self._require_stack_min_size(1)
-                self.stack.push(ScriptCrypto.hash160(self.stack.pop()))
-
-            case Opcode.OP_HASH256:
-                self._require_stack_min_size(1)
-                self.stack.push(ScriptCrypto.hash256(self.stack.pop()))
-
-            case Opcode.OP_CODESEPARATOR:
-                raise NotImplementedError("TODO")
-
-            case Opcode.OP_CHECKSIG:
-                raise NotImplementedError("TODO")
-
-            case Opcode.OP_CHECKSIGVERIFY:
-                raise NotImplementedError("TODO")
-
-            case Opcode.OP_CHECKMULTISIG:
-                raise NotImplementedError("TODO")
-
-            case Opcode.OP_CHECKMULTISIGVERIFY:
-                raise NotImplementedError("TODO")
-
-            case Opcode.OP_CHECKSIGADD:
-                raise NotImplementedError("TODO")
-
-            case Opcode.OP_CHECKLOCKTIMEVERIFY:  # OP_NOP2
-                raise NotImplementedError("TODO")
-
-            case Opcode.OP_CHECKSEQUENCEVERIFY:  # OP_NOP3
-                raise NotImplementedError("TODO")
-
-            case Opcode.OP_RESERVED:
-                raise ScriptExecutionError(
-                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
-                    f"Encountered reserved/illegal opcode: {opcode.name}",
-                )
-
-            case Opcode.OP_VER:
-                raise ScriptExecutionError(
-                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
-                    f"Encountered reserved/illegal opcode: {opcode.name}",
-                )
-
-            case Opcode.OP_VERIF:
-                raise ScriptExecutionError(
-                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
-                    f"Encountered reserved/illegal opcode: {opcode.name}",
-                )
-
-            case Opcode.OP_VERNOTIF:
-                raise ScriptExecutionError(
-                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
-                    f"Encountered reserved/illegal opcode: {opcode.name}",
-                )
-
-            case Opcode.OP_RESERVED1:
-                raise ScriptExecutionError(
-                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
-                    f"Encountered reserved/illegal opcode: {opcode.name}",
-                )
-
-            case Opcode.OP_RESERVED2:
-                raise ScriptExecutionError(
-                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
-                    f"Encountered reserved/illegal opcode: {opcode.name}",
-                )
-
-            case Opcode.OP_NOP1:
-                pass
-
-            case Opcode.OP_NOP4:
-                pass
-
-            case Opcode.OP_NOP5:
-                pass
-
-            case Opcode.OP_NOP6:
-                pass
-
-            case Opcode.OP_NOP7:
-                pass
-
-            case Opcode.OP_NOP8:
-                pass
-
-            case Opcode.OP_NOP9:
-                pass
-
-            case Opcode.OP_NOP10:
-                pass
-
-            case Opcode.OP_INVALIDOPCODE:
-                raise ScriptExecutionError(
-                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
-                    "Encountered OP_INVALIDOPCODE (0xFF)",
-                )
-
-            case _:
-                raise ScriptExecutionError(
-                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
-                    f"Unhandled opcode: {opcode.name}",
-                )
+        except ScriptExecutionError as e:
+            self.state = self.Terminated(error=e.error)
 
     def _require_stack_min_size(self, min_size: int) -> None:
         if len(self.stack) < min_size:
