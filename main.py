@@ -1234,15 +1234,17 @@ class TransactionVerifier:
         raise NotImplementedError("TODO")
 
     @staticmethod
-    def verify_2012_BIP16(lock_script: bytes, unlock_script: bytes) -> bool:
+    def verify_2012_p2sh_bip16(lock_script: bytes, unlock_script: bytes) -> bool:
         raise NotImplementedError("TODO")
 
     @staticmethod
-    def verify_2017_BIP141_BIP143(lock_script: bytes, unlock_script: bytes) -> bool:
+    def verify_2017_segwit_bip141_bip143(
+        lock_script: bytes, unlock_script: bytes, witness: list[bytes]
+    ) -> bool:
         raise NotImplementedError("TODO")
 
     @staticmethod
-    def verify_2012_BIP340_BIP341_BIP342(
-        lock_script: bytes, unlock_script: bytes
+    def verify_2021_taproot_bip340_bip341_bip342(
+        lock_script: bytes, unlock_script: bytes, witness: list[bytes]
     ) -> bool:
         raise NotImplementedError("TODO")
