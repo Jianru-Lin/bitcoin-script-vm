@@ -1235,26 +1235,43 @@ class ValidationResult:
 
 
 class TransactionValidator:
+    @dataclass(frozen=True)
+    class Prevout:
+        amount: int
+        lock_script: bytes
+
     @staticmethod
     def validate_2009_satoshi(
-        lock_script: bytes, unlock_script: bytes
+        lock_script: bytes, unlock_script: bytes, tx: bytes, input_index: int
     ) -> ValidationResult:
         raise NotImplementedError("TODO")
 
     @staticmethod
     def validate_2012_p2sh_bip16(
-        lock_script: bytes, unlock_script: bytes
+        lock_script: bytes,
+        unlock_script: bytes,
+        tx: bytes,
+        input_index: int,
     ) -> ValidationResult:
         raise NotImplementedError("TODO")
 
     @staticmethod
     def validate_2017_segwit_bip141_bip143(
-        lock_script: bytes, unlock_script: bytes, witness: list[bytes]
+        lock_script: bytes,
+        unlock_script: bytes,
+        witness: list[bytes],
+        tx: bytes,
+        input_index: int,
+        amount: int,
     ) -> ValidationResult:
         raise NotImplementedError("TODO")
 
     @staticmethod
     def validate_2021_taproot_bip340_bip341_bip342(
-        lock_script: bytes, unlock_script: bytes, witness: list[bytes]
+        unlock_script: bytes,
+        witness: list[bytes],
+        tx: bytes,
+        input_index: int,
+        prevouts: list[Prevout],
     ) -> ValidationResult:
         raise NotImplementedError("TODO")
