@@ -1272,3 +1272,8 @@ class TransactionValidator:
         prevouts: list[Prevout],
     ) -> ScriptError:
         raise NotImplementedError("TODO")
+
+
+class BlockValidator:
+    # TODO
+    pass
