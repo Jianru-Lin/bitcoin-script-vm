@@ -1226,3 +1226,23 @@ class ScriptInterpreter:
             raise ScriptExecutionError(
                 ScriptError.SCRIPT_ERR_INVALID_ALTSTACK_OPERATION
             )
+
+
+class TransactionVerifier:
+    @staticmethod
+    def verify_2009_satoshi(lock_script: bytes, unlock_script: bytes) -> bool:
+        raise NotImplementedError("TODO")
+
+    @staticmethod
+    def verify_2012_BIP16(lock_script: bytes, unlock_script: bytes) -> bool:
+        raise NotImplementedError("TODO")
+
+    @staticmethod
+    def verify_2017_BIP141_BIP143(lock_script: bytes, unlock_script: bytes) -> bool:
+        raise NotImplementedError("TODO")
+
+    @staticmethod
+    def verify_2012_BIP340_BIP341_BIP342(
+        lock_script: bytes, unlock_script: bytes
+    ) -> bool:
+        raise NotImplementedError("TODO")
