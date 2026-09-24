@@ -1228,23 +1228,33 @@ class ScriptInterpreter:
             )
 
 
-class TransactionVerifier:
+@dataclass(frozen=True)
+class ValidationResult:
+    is_valid: bool
+    error: ScriptError
+
+
+class TransactionValidator:
     @staticmethod
-    def verify_2009_satoshi(lock_script: bytes, unlock_script: bytes) -> bool:
+    def validate_2009_satoshi(
+        lock_script: bytes, unlock_script: bytes
+    ) -> ValidationResult:
         raise NotImplementedError("TODO")
 
     @staticmethod
-    def verify_2012_p2sh_bip16(lock_script: bytes, unlock_script: bytes) -> bool:
+    def validate_2012_p2sh_bip16(
+        lock_script: bytes, unlock_script: bytes
+    ) -> ValidationResult:
         raise NotImplementedError("TODO")
 
     @staticmethod
-    def verify_2017_segwit_bip141_bip143(
+    def validate_2017_segwit_bip141_bip143(
         lock_script: bytes, unlock_script: bytes, witness: list[bytes]
-    ) -> bool:
+    ) -> ValidationResult:
         raise NotImplementedError("TODO")
 
     @staticmethod
-    def verify_2021_taproot_bip340_bip341_bip342(
+    def validate_2021_taproot_bip340_bip341_bip342(
         lock_script: bytes, unlock_script: bytes, witness: list[bytes]
-    ) -> bool:
+    ) -> ValidationResult:
         raise NotImplementedError("TODO")
