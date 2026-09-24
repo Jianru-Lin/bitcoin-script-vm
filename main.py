@@ -1,7 +1,8 @@
 import hashlib
+from abc import ABC
 from collections.abc import Iterator
 from dataclasses import dataclass
-from enum import IntEnum
+from enum import IntEnum, StrEnum
 from typing import NamedTuple, Self, TypedDict, override
 
 from btclib.ecc import dsa, ssa
@@ -1277,3 +1278,77 @@ class TransactionValidator:
 class BlockValidator:
     # TODO
     pass
+
+
+@dataclass(frozen=True)
+class NetworkConfig:
+    name: str
+    magic: bytes
+    default_port: int
+    genesis_hash: bytes
+    dns_seeds: list[str]
+
+
+class Network(ABC):
+    config: NetworkConfig
+
+    def __init__(self, config: NetworkConfig) -> None:
+        self.config = config
+
+
+# Check here https://github.com/bitcoin/bitcoin/blob/bfdcd9797cd1a1345bdaf7ee7ef48f94028262da/src/kernel/chainparams.cpp
+class Mainnet(Network):
+    def __init__(self) -> None:
+        super().__init__(
+            NetworkConfig(
+                name="mainnet",
+                magic=b"\xf9\xbe\xb4\xd9",
+                default_port=8333,
+                genesis_hash=bytes.fromhex(
+                    "000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"
+                )[::-1],
+                dns_seeds=[
+                    "dnsseed.bluematt.me",
+                    "seed.bitcoin.jonasschnelli.ch",
+                    "seed.btc.petertodd.net",
+                    "seed.bitcoin.sprovoost.nl",
+                    "dnsseed.emzy.de",
+                    "seed.bitcoin.wiz.biz",
+                    "seed.mainnet.achownodes.xyz",
+                ],
+            )
+        )
+
+
+# Check here https://github.com/bitcoin/bitcoin/blob/bfdcd9797cd1a1345bdaf7ee7ef48f94028262da/src/kernel/chainparams.cpp
+class Testnet4(Network):
+    def __init__(self) -> None:
+        super().__init__(
+            NetworkConfig(
+                name="testnet4",
+                magic=b"\x1c\x16\x3f\x28",
+                default_port=48333,
+                genesis_hash=bytes.fromhex(
+                    "00000000da84f2bafbbc53dee25a72ae507ff4914b867c565be350b0da8bf043"
+                )[::-1],
+                dns_seeds=[
+                    "seed.testnet4.bitcoin.sprovoost.nl",
+                    "seed.testnet4.wiz.biz",
+                ],
+            )
+        )
+
+
+class RegTest(Network):
+    def __init__(self) -> None:
+        super().__init__(
+            NetworkConfig(
+                name="regtest",
+                magic=b"\xfa\xbf\xb5\xda",
+                default_port=18444,
+                genesis_hash=bytes.fromhex(
+                    "0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"
+                )[::-1],
+                dns_seeds=[],
+            )
+        )
