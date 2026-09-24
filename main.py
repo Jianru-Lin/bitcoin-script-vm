@@ -1236,12 +1236,13 @@ class Prevout(TypedDict):
 class TransactionValidator:
     @staticmethod
     def validate_2009_satoshi(
-        lock_script: bytes, unlock_script: bytes, tx: bytes, input_index: int
+        *, lock_script: bytes, unlock_script: bytes, tx: bytes, input_index: int
     ) -> ScriptError:
         raise NotImplementedError("TODO")
 
     @staticmethod
     def validate_2012_p2sh_bip16(
+        *,
         lock_script: bytes,
         unlock_script: bytes,
         tx: bytes,
@@ -1251,6 +1252,7 @@ class TransactionValidator:
 
     @staticmethod
     def validate_2017_segwit_bip141_bip143(
+        *,
         lock_script: bytes,
         unlock_script: bytes,
         witness: list[bytes],
@@ -1262,6 +1264,7 @@ class TransactionValidator:
 
     @staticmethod
     def validate_2021_taproot_bip340_bip341_bip342(
+        *,
         unlock_script: bytes,
         witness: list[bytes],
         tx: bytes,
