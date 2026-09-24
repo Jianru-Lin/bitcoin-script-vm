@@ -1280,19 +1280,18 @@ class BlockValidator:
     pass
 
 
-@dataclass(frozen=True)
-class NetworkConfig:
-    name: str
-    magic: bytes
-    default_port: int
-    genesis_hash: bytes
-    dns_seeds: list[str]
-
-
 class Network(ABC):
-    config: NetworkConfig
+    @dataclass(frozen=True)
+    class Config:
+        name: str
+        magic: bytes
+        default_port: int
+        genesis_hash: bytes
+        dns_seeds: list[str]
 
-    def __init__(self, config: NetworkConfig) -> None:
+    config: Config
+
+    def __init__(self, config: Config) -> None:
         self.config = config
 
 
@@ -1300,7 +1299,7 @@ class Network(ABC):
 class Mainnet(Network):
     def __init__(self) -> None:
         super().__init__(
-            NetworkConfig(
+            Network.Config(
                 name="mainnet",
                 magic=b"\xf9\xbe\xb4\xd9",
                 default_port=8333,
@@ -1324,7 +1323,7 @@ class Mainnet(Network):
 class Testnet4(Network):
     def __init__(self) -> None:
         super().__init__(
-            NetworkConfig(
+            Network.Config(
                 name="testnet4",
                 magic=b"\x1c\x16\x3f\x28",
                 default_port=48333,
@@ -1342,7 +1341,7 @@ class Testnet4(Network):
 class RegTest(Network):
     def __init__(self) -> None:
         super().__init__(
-            NetworkConfig(
+            Network.Config(
                 name="regtest",
                 magic=b"\xfa\xbf\xb5\xda",
                 default_port=18444,
