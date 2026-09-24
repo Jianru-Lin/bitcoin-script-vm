@@ -2,7 +2,7 @@ import hashlib
 from collections.abc import Iterator
 from dataclasses import dataclass
 from enum import IntEnum
-from typing import ClassVar, NamedTuple, Self, override
+from typing import NamedTuple, Self, TypedDict, override
 
 from btclib.ecc import dsa, ssa
 
@@ -1234,12 +1234,12 @@ class ValidationResult:
     error: ScriptError
 
 
-class TransactionValidator:
-    @dataclass(frozen=True)
-    class Prevout:
-        amount: int
-        lock_script: bytes
+class Prevout(TypedDict):
+    amount: int
+    lock_script: bytes
 
+
+class TransactionValidator:
     @staticmethod
     def validate_2009_satoshi(
         lock_script: bytes, unlock_script: bytes, tx: bytes, input_index: int
