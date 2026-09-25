@@ -590,13 +590,13 @@ class ScriptInterpreter:
 
     stack: ScriptStack
     altstack: ScriptStack
-    vf_exec: list[bool]
+    branch_stack: list[bool]
     state: State
 
     def __init__(self, stack: ScriptStack | None = None) -> None:
         self.stack = stack if stack is not None else ScriptStack()
         self.altstack = ScriptStack()
-        self.vf_exec = []
+        self.branch_stack = []
         self.state = self.Ready()
 
     def execute(self, script_bytes: bytes) -> Terminated:
@@ -606,12 +606,30 @@ class ScriptInterpreter:
             self._step(token)
             if isinstance(self.state, self.Terminated):
                 return self.state
-        self.state = self.Terminated(error=ScriptError.SCRIPT_ERR_OK)
+
+        if self.branch_stack:
+            self.state = self.Terminated(
+                error=ScriptError.SCRIPT_ERR_UNBALANCED_CONDITIONAL
+            )
+        else:
+            self.state = self.Terminated(error=ScriptError.SCRIPT_ERR_OK)
         return self.state
 
     def _step(self, token: ScriptToken) -> None:
         try:
             opcode = token.opcode
+            branch_flag = all(
+                self.branch_stack
+            )  # [] => True, [True] => True, [True, ..., True] => True
+
+            if not branch_flag and opcode not in (
+                Opcode.OP_IF,
+                Opcode.OP_NOTIF,
+                Opcode.OP_ELSE,
+                Opcode.OP_ENDIF,
+            ):
+                return
+
             match opcode:
                 case Opcode.OP_PUSHDATA_DIRECT:
                     assert token.data is not None
@@ -687,16 +705,31 @@ class ScriptInterpreter:
                     pass
 
                 case Opcode.OP_IF:
-                    raise NotImplementedError("TODO")
+                    if branch_flag:
+                        self._require_stack_min_size(1)
+                        condition = self.stack.pop_bool()
+                        self.branch_stack.append(condition)
+                    else:
+                        self.branch_stack.append(False)
 
                 case Opcode.OP_NOTIF:
-                    raise NotImplementedError("TODO")
+                    if branch_flag:
+                        self._require_stack_min_size(1)
+                        condition = not self.stack.pop_bool()
+                        self.branch_stack.append(condition)
+                    else:
+                        self.branch_stack.append(False)
 
                 case Opcode.OP_ELSE:
                     raise NotImplementedError("TODO")
 
                 case Opcode.OP_ENDIF:
-                    raise NotImplementedError("TODO")
+                    if not self.branch_stack:
+                        raise ScriptExecutionError(
+                            ScriptError.SCRIPT_ERR_UNBALANCED_CONDITIONAL,
+                            "OP_ENDIF without matching OP_IF",
+                        )
+                    _ = self.branch_stack.pop()
 
                 case Opcode.OP_VERIFY:
                     self._require_stack_min_size(1)
