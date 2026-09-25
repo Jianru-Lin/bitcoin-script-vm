@@ -721,6 +721,11 @@ class ScriptInterpreter:
                         self.branch_stack.append(False)
 
                 case Opcode.OP_ELSE:
+                    if not self.branch_stack:
+                        raise ScriptExecutionError(
+                            ScriptError.SCRIPT_ERR_UNBALANCED_CONDITIONAL,
+                            "OP_ELSE without matching OP_IF",
+                        )
                     raise NotImplementedError("TODO")
 
                 case Opcode.OP_ENDIF:
