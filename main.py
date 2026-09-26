@@ -1,4 +1,5 @@
 import hashlib
+import random
 import socket
 from abc import ABC
 from collections.abc import Iterator
@@ -1367,8 +1368,8 @@ class DnsSeed:
 
     def query(self, service_flags: ServiceFlags, default_port: int) -> list[Peer]:
         dns_prefix = service_flags.to_dns_prefix()
-        dns_host = self.host if not dns_prefix else f"{dns_prefix}.{self.host}"
-        peers = DNS.resolve(dns_host)
+        target_host = self.host if not dns_prefix else f"{dns_prefix}.{self.host}"
+        peers = DNS.resolve(target_host)
         return [Peer(host, default_port) for host in peers]
 
 
@@ -1389,8 +1390,21 @@ class Network(ABC):
     def dns_seed_list(self) -> list[DnsSeed]:
         return [DnsSeed(host) for host in self.config.dns_seeds]
 
-    # def peer_discovery(self) -> list[Peer]:
-    #     DnsSeed.query()
+    def peer_discovery(
+        self,
+        service_flags: ServiceFlags = ServiceFlags.NODE_NETWORK
+        | ServiceFlags.NODE_WITNESS,
+    ) -> list[Peer]:
+        peers: list[Peer] = []
+        for seed in self.dns_seed_list():
+            peers.extend(
+                seed.query(
+                    default_port=self.config.default_port, service_flags=service_flags
+                )
+            )
+        unique_peers = list({peer.host: peer for peer in peers}.values())
+        random.shuffle(unique_peers)
+        return unique_peers
 
 
 # Check here https://github.com/bitcoin/bitcoin/blob/bfdcd9797cd1a1345bdaf7ee7ef48f94028262da/src/kernel/chainparams.cpp
