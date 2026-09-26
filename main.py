@@ -1320,13 +1320,10 @@ class BlockValidator:
     pass
 
 
+@dataclass(frozen=True)
 class Peer:
     host: str
     port: int
-
-    def __init__(self, host: str, port: int) -> None:
-        self.host = host
-        self.port = port
 
 
 class DNS:
@@ -1360,11 +1357,9 @@ class ServiceFlags(IntFlag):
         return f"x{self.value:x}"
 
 
+@dataclass(frozen=True)
 class DnsSeed:
     host: str
-
-    def __init__(self, host: str) -> None:
-        self.host = host
 
     def query(self, service_flags: ServiceFlags, default_port: int) -> list[Peer]:
         dns_prefix = service_flags.to_dns_prefix()
@@ -1402,7 +1397,7 @@ class Network(ABC):
                     default_port=self.config.default_port, service_flags=service_flags
                 )
             )
-        unique_peers = list({peer.host: peer for peer in peers}.values())
+        unique_peers = list(set(peers))
         random.shuffle(unique_peers)
         return unique_peers
 
