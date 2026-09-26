@@ -1332,8 +1332,7 @@ class DNS:
         # UNKNOWN LIMIT: the OS may cache the query result
         try:
             infos = socket.getaddrinfo(
-                host,
-                0,
+                host, 0, family=socket.AF_INET, type=socket.SOCK_STREAM
             )
         except socket.gaierror:
             return []
@@ -1363,7 +1362,8 @@ class DnsSeed:
 
     def query(self, service_flags: ServiceFlags, default_port: int) -> list[Peer]:
         dns_prefix = service_flags.to_dns_prefix()
-        target_host = self.host if not dns_prefix else f"{dns_prefix}.{self.host}"
+        target_host = f"{dns_prefix}.{self.host}" if dns_prefix else self.host
+        print(target_host)
         peers = DNS.resolve(target_host)
         return [Peer(host, default_port) for host in peers]
 
@@ -1386,9 +1386,7 @@ class Network(ABC):
         return [DnsSeed(host) for host in self.config.dns_seeds]
 
     def peer_discovery(
-        self,
-        service_flags: ServiceFlags = ServiceFlags.NODE_NETWORK
-        | ServiceFlags.NODE_WITNESS,
+        self, service_flags: ServiceFlags = ServiceFlags.NODE_NONE
     ) -> list[Peer]:
         peers: list[Peer] = []
         for seed in self.dns_seed_list():
