@@ -1319,23 +1319,36 @@ class BlockValidator:
     pass
 
 
-class DNSSeed:
+class Peer:
     host: str
+    port: int
 
-    def __init__(self, host: str) -> None:
+    def __init__(self, host: str, port: int) -> None:
         self.host = host
+        self.port = port
 
 
 class DNS:
     @staticmethod
     def resolve(host: str) -> list[str]:
-        # TODO remove cache
+        # UNKNOWN LIMIT: the OS may cache the query result
         infos = socket.getaddrinfo(
             host,
             0,
         )
         unique_ips = {ip for item in infos if isinstance((ip := item[4][0]), str)}
         return list(unique_ips)
+
+
+class DnsSeed:
+    host: str
+
+    def __init__(self, host: str) -> None:
+        self.host = host
+
+    def query(self, default_port: int) -> list[Peer]:
+        peers = DNS.resolve(self.host)
+        return [Peer(host, default_port) for host in peers]
 
 
 class Network(ABC):
@@ -1351,6 +1364,12 @@ class Network(ABC):
 
     def __init__(self, config: Config) -> None:
         self.config = config
+
+    def dns_seed_list(self) -> list[DnsSeed]:
+        return [DnsSeed(host) for host in self.config.dns_seeds]
+
+    # def peer_discovery(self) -> list[Peer]:
+    #     DnsSeed.query()
 
 
 # Check here https://github.com/bitcoin/bitcoin/blob/bfdcd9797cd1a1345bdaf7ee7ef48f94028262da/src/kernel/chainparams.cpp
