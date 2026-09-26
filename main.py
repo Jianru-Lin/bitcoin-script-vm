@@ -1368,6 +1368,7 @@ class DnsSeed:
         return [Peer(host, default_port) for host in peers]
 
 
+@dataclass(frozen=True)
 class Network(ABC):
     @dataclass(frozen=True)
     class Config:
