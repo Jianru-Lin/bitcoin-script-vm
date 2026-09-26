@@ -1,4 +1,5 @@
 import hashlib
+import socket
 from abc import ABC
 from collections.abc import Iterator
 from dataclasses import dataclass
@@ -1316,6 +1317,25 @@ class TransactionValidator:
 class BlockValidator:
     # TODO
     pass
+
+
+class DNSSeed:
+    host: str
+
+    def __init__(self, host: str) -> None:
+        self.host = host
+
+
+class DNS:
+    @staticmethod
+    def resolve(host: str) -> list[str]:
+        # TODO remove cache
+        infos = socket.getaddrinfo(
+            host,
+            0,
+        )
+        unique_ips = {ip for item in infos if isinstance((ip := item[4][0]), str)}
+        return list(unique_ips)
 
 
 class Network(ABC):
