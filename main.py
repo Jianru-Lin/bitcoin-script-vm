@@ -3,7 +3,7 @@ import socket
 from abc import ABC
 from collections.abc import Iterator
 from dataclasses import dataclass
-from enum import IntEnum, StrEnum
+from enum import IntEnum, IntFlag
 from typing import NamedTuple, Self, TypedDict, override
 
 from btclib.ecc import dsa, ssa
@@ -1332,12 +1332,31 @@ class DNS:
     @staticmethod
     def resolve(host: str) -> list[str]:
         # UNKNOWN LIMIT: the OS may cache the query result
-        infos = socket.getaddrinfo(
-            host,
-            0,
-        )
+        try:
+            infos = socket.getaddrinfo(
+                host,
+                0,
+            )
+        except socket.gaierror:
+            return []
         unique_ips = {ip for item in infos if isinstance((ip := item[4][0]), str)}
         return list(unique_ips)
+
+
+# Check here https://github.com/bitcoin/bitcoin/blob/master/src/protocol.h
+class ServiceFlags(IntFlag):
+    NODE_NONE = 0
+    NODE_NETWORK = 1 << 0
+    NODE_BLOOM = 1 << 2
+    NODE_WITNESS = 1 << 3
+    NODE_COMPACT_FILTERS = 1 << 6
+    NODE_NETWORK_LIMITED = 1 << 10
+    NODE_P2P_V2 = 1 << 11
+
+    def to_dns_prefix(self) -> str:
+        if self.value == 0:
+            return ""
+        return f"x{self.value:x}"
 
 
 class DnsSeed:
@@ -1346,8 +1365,10 @@ class DnsSeed:
     def __init__(self, host: str) -> None:
         self.host = host
 
-    def query(self, default_port: int) -> list[Peer]:
-        peers = DNS.resolve(self.host)
+    def query(self, service_flags: ServiceFlags, default_port: int) -> list[Peer]:
+        dns_prefix = service_flags.to_dns_prefix()
+        dns_host = self.host if not dns_prefix else f"{dns_prefix}.{self.host}"
+        peers = DNS.resolve(dns_host)
         return [Peer(host, default_port) for host in peers]
 
 
