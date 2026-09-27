@@ -1380,9 +1380,6 @@ class Network(ABC):
 
     config: Config
 
-    def __init__(self, config: Config) -> None:
-        self.config = config
-
     def dns_seed_list(self) -> list[DnsSeed]:
         return [DnsSeed(host) for host in self.config.dns_seeds]
 
