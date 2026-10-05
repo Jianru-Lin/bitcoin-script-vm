@@ -630,6 +630,7 @@ class BaseOp(ABC):
 class OP_PUSHDATA_DIRECT(BaseOp):
     opcode: Opcode = Opcode.OP_PUSHDATA_DIRECT
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         assert ctx.current_token is not None and ctx.current_token.data is not None
         data = ctx.current_token.data
@@ -640,6 +641,7 @@ class OP_PUSHDATA_DIRECT(BaseOp):
 class OP_PUSHDATA1(BaseOp):
     opcode: Opcode = Opcode.OP_PUSHDATA1
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         assert ctx.current_token is not None and ctx.current_token.data is not None
         data = ctx.current_token.data
@@ -650,6 +652,7 @@ class OP_PUSHDATA1(BaseOp):
 class OP_PUSHDATA2(BaseOp):
     opcode: Opcode = Opcode.OP_PUSHDATA2
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         assert ctx.current_token is not None and ctx.current_token.data is not None
         data = ctx.current_token.data
@@ -660,6 +663,7 @@ class OP_PUSHDATA2(BaseOp):
 class OP_PUSHDATA4(BaseOp):
     opcode: Opcode = Opcode.OP_PUSHDATA4
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         assert ctx.current_token is not None and ctx.current_token.data is not None
         data = ctx.current_token.data
@@ -670,6 +674,7 @@ class OP_PUSHDATA4(BaseOp):
 class OP_1NEGATE(BaseOp):
     opcode: Opcode = Opcode.OP_1NEGATE
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(-1)
 
@@ -678,6 +683,7 @@ class OP_1NEGATE(BaseOp):
 class OP_0(BaseOp):  # OP_FALSE
     opcode: Opcode = Opcode.OP_0
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(0)
 
@@ -686,6 +692,7 @@ class OP_0(BaseOp):  # OP_FALSE
 class OP_1(BaseOp):  # OP_TRUE
     opcode: Opcode = Opcode.OP_1
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(1)
 
@@ -694,6 +701,7 @@ class OP_1(BaseOp):  # OP_TRUE
 class OP_2(BaseOp):
     opcode: Opcode = Opcode.OP_2
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(2)
 
@@ -702,6 +710,7 @@ class OP_2(BaseOp):
 class OP_3(BaseOp):
     opcode: Opcode = Opcode.OP_3
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(3)
 
@@ -710,6 +719,7 @@ class OP_3(BaseOp):
 class OP_4(BaseOp):
     opcode: Opcode = Opcode.OP_4
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(4)
 
@@ -718,6 +728,7 @@ class OP_4(BaseOp):
 class OP_5(BaseOp):
     opcode: Opcode = Opcode.OP_5
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(5)
 
@@ -726,6 +737,7 @@ class OP_5(BaseOp):
 class OP_6(BaseOp):
     opcode: Opcode = Opcode.OP_6
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(6)
 
@@ -734,6 +746,7 @@ class OP_6(BaseOp):
 class OP_7(BaseOp):
     opcode: Opcode = Opcode.OP_7
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(7)
 
@@ -742,6 +755,7 @@ class OP_7(BaseOp):
 class OP_8(BaseOp):
     opcode: Opcode = Opcode.OP_8
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(8)
 
@@ -750,6 +764,7 @@ class OP_8(BaseOp):
 class OP_9(BaseOp):
     opcode: Opcode = Opcode.OP_9
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(9)
 
@@ -758,6 +773,7 @@ class OP_9(BaseOp):
 class OP_10(BaseOp):
     opcode: Opcode = Opcode.OP_10
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(10)
 
@@ -766,6 +782,7 @@ class OP_10(BaseOp):
 class OP_11(BaseOp):
     opcode: Opcode = Opcode.OP_11
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(11)
 
@@ -774,6 +791,7 @@ class OP_11(BaseOp):
 class OP_12(BaseOp):
     opcode: Opcode = Opcode.OP_12
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(12)
 
@@ -782,6 +800,7 @@ class OP_12(BaseOp):
 class OP_13(BaseOp):
     opcode: Opcode = Opcode.OP_13
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(13)
 
@@ -790,6 +809,7 @@ class OP_13(BaseOp):
 class OP_14(BaseOp):
     opcode: Opcode = Opcode.OP_14
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(14)
 
@@ -798,6 +818,7 @@ class OP_14(BaseOp):
 class OP_15(BaseOp):
     opcode: Opcode = Opcode.OP_15
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(15)
 
@@ -806,6 +827,7 @@ class OP_15(BaseOp):
 class OP_16(BaseOp):
     opcode: Opcode = Opcode.OP_16
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(16)
 
@@ -814,6 +836,7 @@ class OP_16(BaseOp):
 class OP_NOP(BaseOp):
     opcode: Opcode = Opcode.OP_NOP
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         pass
 
@@ -822,6 +845,7 @@ class OP_NOP(BaseOp):
 class OP_IF(BaseOp):
     opcode: Opcode = Opcode.OP_IF
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         if ctx.branch_flag():
             ctx.require_stack_min_size(1)
@@ -835,6 +859,7 @@ class OP_IF(BaseOp):
 class OP_NOTIF(BaseOp):
     opcode: Opcode = Opcode.OP_NOTIF
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         if ctx.branch_flag():
             ctx.require_stack_min_size(1)
@@ -848,6 +873,7 @@ class OP_NOTIF(BaseOp):
 class OP_ELSE(BaseOp):
     opcode: Opcode = Opcode.OP_ELSE
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         if not ctx.branch_stack:
             raise ScriptExecutionError(
@@ -861,6 +887,7 @@ class OP_ELSE(BaseOp):
 class OP_ENDIF(BaseOp):
     opcode: Opcode = Opcode.OP_ENDIF
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         if not ctx.branch_stack:
             raise ScriptExecutionError(
@@ -874,6 +901,7 @@ class OP_ENDIF(BaseOp):
 class OP_VERIFY(BaseOp):
     opcode: Opcode = Opcode.OP_VERIFY
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         value = ctx.stack.pop_bool()
@@ -888,6 +916,7 @@ class OP_VERIFY(BaseOp):
 class OP_RETURN(BaseOp):
     opcode: Opcode = Opcode.OP_RETURN
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         # TODO consider IF branche
         raise ScriptExecutionError(
@@ -900,6 +929,7 @@ class OP_RETURN(BaseOp):
 class OP_TOALTSTACK(BaseOp):
     opcode: Opcode = Opcode.OP_TOALTSTACK
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         ctx.altstack.push(ctx.stack.pop())
@@ -909,6 +939,7 @@ class OP_TOALTSTACK(BaseOp):
 class OP_FROMALTSTACK(BaseOp):
     opcode: Opcode = Opcode.OP_FROMALTSTACK
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_altstack_min_size(1)
         ctx.stack.push(ctx.altstack.pop())
@@ -918,6 +949,7 @@ class OP_FROMALTSTACK(BaseOp):
 class OP_IFDUP(BaseOp):
     opcode: Opcode = Opcode.OP_IFDUP
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         if ctx.stack.peek_bool():
@@ -928,6 +960,7 @@ class OP_IFDUP(BaseOp):
 class OP_DEPTH(BaseOp):
     opcode: Opcode = Opcode.OP_DEPTH
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.stack.push_num(len(ctx.stack))
 
@@ -936,6 +969,7 @@ class OP_DEPTH(BaseOp):
 class OP_DROP(BaseOp):
     opcode: Opcode = Opcode.OP_DROP
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         _ = ctx.stack.pop()
@@ -945,6 +979,7 @@ class OP_DROP(BaseOp):
 class OP_DUP(BaseOp):
     opcode: Opcode = Opcode.OP_DUP
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         ctx.stack.push(ctx.stack.peek())
@@ -954,6 +989,7 @@ class OP_DUP(BaseOp):
 class OP_NIP(BaseOp):
     opcode: Opcode = Opcode.OP_NIP
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         # [..., a, b] => [..., b]
         ctx.require_stack_min_size(2)
@@ -964,6 +1000,7 @@ class OP_NIP(BaseOp):
 class OP_OVER(BaseOp):
     opcode: Opcode = Opcode.OP_OVER
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         # [..., a, b] => [..., a, b, a]
         ctx.require_stack_min_size(2)
@@ -974,6 +1011,7 @@ class OP_OVER(BaseOp):
 class OP_PICK(BaseOp):
     opcode: Opcode = Opcode.OP_PICK
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         # [..., item(depth=n), ...] => [..., item(depth=n), ..., item]
         ctx.require_stack_min_size(1)
@@ -987,6 +1025,7 @@ class OP_PICK(BaseOp):
 class OP_ROLL(BaseOp):
     opcode: Opcode = Opcode.OP_ROLL
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         # [..., item(depth=n), ...] => [..., (removed), ..., item]
         ctx.require_stack_min_size(1)
@@ -1000,6 +1039,7 @@ class OP_ROLL(BaseOp):
 class OP_ROT(BaseOp):
     opcode: Opcode = Opcode.OP_ROT
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         # [..., a, b, c] => [..., b, c, a]
         ctx.require_stack_min_size(3)
@@ -1010,6 +1050,7 @@ class OP_ROT(BaseOp):
 class OP_SWAP(BaseOp):
     opcode: Opcode = Opcode.OP_SWAP
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         # [..., a, b] => [..., b, a]
         ctx.require_stack_min_size(2)
@@ -1023,6 +1064,7 @@ class OP_SWAP(BaseOp):
 class OP_TUCK(BaseOp):
     opcode: Opcode = Opcode.OP_TUCK
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         # [..., a, b] => [..., b, a, b]
         ctx.require_stack_min_size(2)
@@ -1034,6 +1076,7 @@ class OP_TUCK(BaseOp):
 class OP_2DROP(BaseOp):
     opcode: Opcode = Opcode.OP_2DROP
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         # [..., a, b] => [...]
         ctx.require_stack_min_size(2)
@@ -1045,6 +1088,7 @@ class OP_2DROP(BaseOp):
 class OP_2DUP(BaseOp):
     opcode: Opcode = Opcode.OP_2DUP
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         # [..., a, b] => [..., a, b, a, b]
         ctx.require_stack_min_size(2)
@@ -1058,6 +1102,7 @@ class OP_2DUP(BaseOp):
 class OP_3DUP(BaseOp):
     opcode: Opcode = Opcode.OP_3DUP
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         # [..., a, b, c] => [..., a, b, c, a, b, c]
         ctx.require_stack_min_size(3)
@@ -1073,6 +1118,7 @@ class OP_3DUP(BaseOp):
 class OP_2OVER(BaseOp):
     opcode: Opcode = Opcode.OP_2OVER
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         # [..., a, b, c, d] => [..., a, b, c, d, a, b]
         ctx.require_stack_min_size(4)
@@ -1086,6 +1132,7 @@ class OP_2OVER(BaseOp):
 class OP_2ROT(BaseOp):
     opcode: Opcode = Opcode.OP_2ROT
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         # [..., a, b, c, d, e, f] => [..., c, d, e, f, a, b]
         ctx.require_stack_min_size(6)
@@ -1099,6 +1146,7 @@ class OP_2ROT(BaseOp):
 class OP_2SWAP(BaseOp):
     opcode: Opcode = Opcode.OP_2SWAP
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         # [..., a, b, c, d] => [..., c, d, a, b]
         ctx.require_stack_min_size(4)
@@ -1112,6 +1160,7 @@ class OP_2SWAP(BaseOp):
 class OP_CAT(BaseOp):
     opcode: Opcode = Opcode.OP_CAT
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop()
@@ -1123,6 +1172,7 @@ class OP_CAT(BaseOp):
 class OP_SUBSTR(BaseOp):
     opcode: Opcode = Opcode.OP_SUBSTR
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(3)
         size = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1137,6 +1187,7 @@ class OP_SUBSTR(BaseOp):
 class OP_LEFT(BaseOp):
     opcode: Opcode = Opcode.OP_LEFT
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         size = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1150,6 +1201,7 @@ class OP_LEFT(BaseOp):
 class OP_RIGHT(BaseOp):
     opcode: Opcode = Opcode.OP_RIGHT
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         size = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1163,6 +1215,7 @@ class OP_RIGHT(BaseOp):
 class OP_SIZE(BaseOp):
     opcode: Opcode = Opcode.OP_SIZE
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         ctx.stack.push_num(len(ctx.stack.peek()))
@@ -1172,6 +1225,7 @@ class OP_SIZE(BaseOp):
 class OP_INVERT(BaseOp):
     opcode: Opcode = Opcode.OP_INVERT
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         data = ctx.stack.pop()
@@ -1182,6 +1236,7 @@ class OP_INVERT(BaseOp):
 class OP_AND(BaseOp):
     opcode: Opcode = Opcode.OP_AND
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop()
@@ -1198,6 +1253,7 @@ class OP_AND(BaseOp):
 class OP_OR(BaseOp):
     opcode: Opcode = Opcode.OP_OR
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop()
@@ -1214,6 +1270,7 @@ class OP_OR(BaseOp):
 class OP_XOR(BaseOp):
     opcode: Opcode = Opcode.OP_XOR
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop()
@@ -1230,6 +1287,7 @@ class OP_XOR(BaseOp):
 class OP_EQUAL(BaseOp):
     opcode: Opcode = Opcode.OP_EQUAL
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop()
@@ -1241,6 +1299,7 @@ class OP_EQUAL(BaseOp):
 class OP_EQUALVERIFY(BaseOp):
     opcode: Opcode = Opcode.OP_EQUALVERIFY
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop()
@@ -1253,6 +1312,7 @@ class OP_EQUALVERIFY(BaseOp):
 class OP_1ADD(BaseOp):
     opcode: Opcode = Opcode.OP_1ADD
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1263,6 +1323,7 @@ class OP_1ADD(BaseOp):
 class OP_1SUB(BaseOp):
     opcode: Opcode = Opcode.OP_1SUB
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1273,6 +1334,7 @@ class OP_1SUB(BaseOp):
 class OP_2MUL(BaseOp):
     opcode: Opcode = Opcode.OP_2MUL
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1283,6 +1345,7 @@ class OP_2MUL(BaseOp):
 class OP_2DIV(BaseOp):
     opcode: Opcode = Opcode.OP_2DIV
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1293,6 +1356,7 @@ class OP_2DIV(BaseOp):
 class OP_NEGATE(BaseOp):
     opcode: Opcode = Opcode.OP_NEGATE
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1303,6 +1367,7 @@ class OP_NEGATE(BaseOp):
 class OP_ABS(BaseOp):
     opcode: Opcode = Opcode.OP_ABS
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1313,6 +1378,7 @@ class OP_ABS(BaseOp):
 class OP_NOT(BaseOp):
     opcode: Opcode = Opcode.OP_NOT
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1323,6 +1389,7 @@ class OP_NOT(BaseOp):
 class OP_0NOTEQUAL(BaseOp):
     opcode: Opcode = Opcode.OP_0NOTEQUAL
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1333,6 +1400,7 @@ class OP_0NOTEQUAL(BaseOp):
 class OP_ADD(BaseOp):
     opcode: Opcode = Opcode.OP_ADD
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1344,6 +1412,7 @@ class OP_ADD(BaseOp):
 class OP_SUB(BaseOp):
     opcode: Opcode = Opcode.OP_SUB
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1355,6 +1424,7 @@ class OP_SUB(BaseOp):
 class OP_MUL(BaseOp):
     opcode: Opcode = Opcode.OP_MUL
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1366,6 +1436,7 @@ class OP_MUL(BaseOp):
 class OP_DIV(BaseOp):
     opcode: Opcode = Opcode.OP_DIV
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1381,6 +1452,7 @@ class OP_DIV(BaseOp):
 class OP_MOD(BaseOp):
     opcode: Opcode = Opcode.OP_MOD
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1397,6 +1469,7 @@ class OP_MOD(BaseOp):
 class OP_LSHIFT(BaseOp):
     opcode: Opcode = Opcode.OP_LSHIFT
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         shift = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1413,6 +1486,7 @@ class OP_LSHIFT(BaseOp):
 class OP_RSHIFT(BaseOp):
     opcode: Opcode = Opcode.OP_RSHIFT
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         shift = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1431,6 +1505,7 @@ class OP_RSHIFT(BaseOp):
 class OP_BOOLAND(BaseOp):
     opcode: Opcode = Opcode.OP_BOOLAND
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1442,6 +1517,7 @@ class OP_BOOLAND(BaseOp):
 class OP_BOOLOR(BaseOp):
     opcode: Opcode = Opcode.OP_BOOLOR
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1453,6 +1529,7 @@ class OP_BOOLOR(BaseOp):
 class OP_NUMEQUAL(BaseOp):
     opcode: Opcode = Opcode.OP_NUMEQUAL
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1464,6 +1541,7 @@ class OP_NUMEQUAL(BaseOp):
 class OP_NUMEQUALVERIFY(BaseOp):
     opcode: Opcode = Opcode.OP_NUMEQUALVERIFY
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1476,6 +1554,7 @@ class OP_NUMEQUALVERIFY(BaseOp):
 class OP_NUMNOTEQUAL(BaseOp):
     opcode: Opcode = Opcode.OP_NUMNOTEQUAL
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1487,6 +1566,7 @@ class OP_NUMNOTEQUAL(BaseOp):
 class OP_LESSTHAN(BaseOp):
     opcode: Opcode = Opcode.OP_LESSTHAN
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1498,6 +1578,7 @@ class OP_LESSTHAN(BaseOp):
 class OP_GREATERTHAN(BaseOp):
     opcode: Opcode = Opcode.OP_GREATERTHAN
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1509,6 +1590,7 @@ class OP_GREATERTHAN(BaseOp):
 class OP_LESSTHANOREQUAL(BaseOp):
     opcode: Opcode = Opcode.OP_LESSTHANOREQUAL
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1520,6 +1602,7 @@ class OP_LESSTHANOREQUAL(BaseOp):
 class OP_GREATERTHANOREQUAL(BaseOp):
     opcode: Opcode = Opcode.OP_GREATERTHANOREQUAL
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1531,6 +1614,7 @@ class OP_GREATERTHANOREQUAL(BaseOp):
 class OP_MIN(BaseOp):
     opcode: Opcode = Opcode.OP_MIN
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1542,6 +1626,7 @@ class OP_MIN(BaseOp):
 class OP_MAX(BaseOp):
     opcode: Opcode = Opcode.OP_MAX
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
         b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1553,6 +1638,7 @@ class OP_MAX(BaseOp):
 class OP_WITHIN(BaseOp):
     opcode: Opcode = Opcode.OP_WITHIN
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(3)
         max_value = ctx.stack.pop_num(require_minimal=False, max_size=1024)
@@ -1565,6 +1651,7 @@ class OP_WITHIN(BaseOp):
 class OP_RIPEMD160(BaseOp):
     opcode: Opcode = Opcode.OP_RIPEMD160
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         ctx.stack.push(ScriptCrypto.ripemd160(ctx.stack.pop()))
@@ -1574,6 +1661,7 @@ class OP_RIPEMD160(BaseOp):
 class OP_SHA1(BaseOp):
     opcode: Opcode = Opcode.OP_SHA1
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         ctx.stack.push(ScriptCrypto.sha1(ctx.stack.pop()))
@@ -1583,6 +1671,7 @@ class OP_SHA1(BaseOp):
 class OP_SHA256(BaseOp):
     opcode: Opcode = Opcode.OP_SHA256
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         ctx.stack.push(ScriptCrypto.sha256(ctx.stack.pop()))
@@ -1592,6 +1681,7 @@ class OP_SHA256(BaseOp):
 class OP_HASH160(BaseOp):
     opcode: Opcode = Opcode.OP_HASH160
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         ctx.stack.push(ScriptCrypto.hash160(ctx.stack.pop()))
@@ -1601,6 +1691,7 @@ class OP_HASH160(BaseOp):
 class OP_HASH256(BaseOp):
     opcode: Opcode = Opcode.OP_HASH256
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
         ctx.stack.push(ScriptCrypto.hash256(ctx.stack.pop()))
@@ -1610,6 +1701,7 @@ class OP_HASH256(BaseOp):
 class OP_CODESEPARATOR(BaseOp):
     opcode: Opcode = Opcode.OP_CODESEPARATOR
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         raise NotImplementedError("TODO")
 
@@ -1618,6 +1710,7 @@ class OP_CODESEPARATOR(BaseOp):
 class OP_CHECKSIG(BaseOp):
     opcode: Opcode = Opcode.OP_CHECKSIG
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         raise NotImplementedError("TODO")
 
@@ -1626,6 +1719,7 @@ class OP_CHECKSIG(BaseOp):
 class OP_CHECKSIGVERIFY(BaseOp):
     opcode: Opcode = Opcode.OP_CHECKSIGVERIFY
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         raise NotImplementedError("TODO")
 
@@ -1634,6 +1728,7 @@ class OP_CHECKSIGVERIFY(BaseOp):
 class OP_CHECKMULTISIG(BaseOp):
     opcode: Opcode = Opcode.OP_CHECKMULTISIG
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         raise NotImplementedError("TODO")
 
@@ -1642,6 +1737,7 @@ class OP_CHECKMULTISIG(BaseOp):
 class OP_CHECKMULTISIGVERIFY(BaseOp):
     opcode: Opcode = Opcode.OP_CHECKMULTISIGVERIFY
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         raise NotImplementedError("TODO")
 
@@ -1650,6 +1746,7 @@ class OP_CHECKMULTISIGVERIFY(BaseOp):
 class OP_CHECKSIGADD(BaseOp):
     opcode: Opcode = Opcode.OP_CHECKSIGADD
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         raise NotImplementedError("TODO")
 
@@ -1658,6 +1755,7 @@ class OP_CHECKSIGADD(BaseOp):
 class OP_CHECKLOCKTIMEVERIFY(BaseOp):  # OP_NOP2
     opcode: Opcode = Opcode.OP_CHECKLOCKTIMEVERIFY
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         raise NotImplementedError("TODO")
 
@@ -1666,6 +1764,7 @@ class OP_CHECKLOCKTIMEVERIFY(BaseOp):  # OP_NOP2
 class OP_CHECKSEQUENCEVERIFY(BaseOp):  # OP_NOP3
     opcode: Opcode = Opcode.OP_CHECKSEQUENCEVERIFY
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         raise NotImplementedError("TODO")
 
@@ -1674,6 +1773,7 @@ class OP_CHECKSEQUENCEVERIFY(BaseOp):  # OP_NOP3
 class OP_RESERVED(BaseOp):
     opcode: Opcode = Opcode.OP_RESERVED
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         raise ScriptExecutionError(
             ScriptError.SCRIPT_ERR_BAD_OPCODE,
@@ -1685,6 +1785,7 @@ class OP_RESERVED(BaseOp):
 class OP_VER(BaseOp):
     opcode: Opcode = Opcode.OP_VER
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         raise ScriptExecutionError(
             ScriptError.SCRIPT_ERR_BAD_OPCODE,
@@ -1696,6 +1797,7 @@ class OP_VER(BaseOp):
 class OP_VERIF(BaseOp):
     opcode: Opcode = Opcode.OP_VERIF
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         raise ScriptExecutionError(
             ScriptError.SCRIPT_ERR_BAD_OPCODE,
@@ -1707,6 +1809,7 @@ class OP_VERIF(BaseOp):
 class OP_VERNOTIF(BaseOp):
     opcode: Opcode = Opcode.OP_VERNOTIF
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         raise ScriptExecutionError(
             ScriptError.SCRIPT_ERR_BAD_OPCODE,
@@ -1718,6 +1821,7 @@ class OP_VERNOTIF(BaseOp):
 class OP_RESERVED1(BaseOp):
     opcode: Opcode = Opcode.OP_RESERVED1
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         raise ScriptExecutionError(
             ScriptError.SCRIPT_ERR_BAD_OPCODE,
@@ -1729,6 +1833,7 @@ class OP_RESERVED1(BaseOp):
 class OP_RESERVED2(BaseOp):
     opcode: Opcode = Opcode.OP_RESERVED2
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         raise ScriptExecutionError(
             ScriptError.SCRIPT_ERR_BAD_OPCODE,
@@ -1740,6 +1845,7 @@ class OP_RESERVED2(BaseOp):
 class OP_NOP1(BaseOp):
     opcode: Opcode = Opcode.OP_NOP1
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         pass
 
@@ -1748,6 +1854,7 @@ class OP_NOP1(BaseOp):
 class OP_NOP4(BaseOp):
     opcode: Opcode = Opcode.OP_NOP4
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         pass
 
@@ -1756,6 +1863,7 @@ class OP_NOP4(BaseOp):
 class OP_NOP5(BaseOp):
     opcode: Opcode = Opcode.OP_NOP5
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         pass
 
@@ -1764,6 +1872,7 @@ class OP_NOP5(BaseOp):
 class OP_NOP6(BaseOp):
     opcode: Opcode = Opcode.OP_NOP6
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         pass
 
@@ -1772,6 +1881,7 @@ class OP_NOP6(BaseOp):
 class OP_NOP7(BaseOp):
     opcode: Opcode = Opcode.OP_NOP7
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         pass
 
@@ -1780,6 +1890,7 @@ class OP_NOP7(BaseOp):
 class OP_NOP8(BaseOp):
     opcode: Opcode = Opcode.OP_NOP8
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         pass
 
@@ -1788,6 +1899,7 @@ class OP_NOP8(BaseOp):
 class OP_NOP9(BaseOp):
     opcode: Opcode = Opcode.OP_NOP9
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         pass
 
@@ -1796,6 +1908,7 @@ class OP_NOP9(BaseOp):
 class OP_NOP10(BaseOp):
     opcode: Opcode = Opcode.OP_NOP10
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         pass
 
@@ -1804,6 +1917,7 @@ class OP_NOP10(BaseOp):
 class OP_INVALIDOPCODE(BaseOp):
     opcode: Opcode = Opcode.OP_INVALIDOPCODE
 
+    @override
     def execute(self, ctx: ScriptContext) -> None:
         raise ScriptExecutionError(
             ScriptError.SCRIPT_ERR_BAD_OPCODE,
