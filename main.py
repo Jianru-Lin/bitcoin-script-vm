@@ -620,6 +620,7 @@ class ScriptContext:
 
 class BaseOp(ABC):
     opcode: Opcode
+    disabled: bool = False
 
     @abstractmethod
     def execute(self, ctx: ScriptContext) -> None:
