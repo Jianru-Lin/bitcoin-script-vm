@@ -2270,6 +2270,12 @@ class ScriptInterpreter:
                     f"Unhandled opcode: {opcode.name}",
                 )
 
+            if op.disabled:
+                raise ScriptExecutionError(
+                    ScriptError.SCRIPT_ERR_DISABLED_OPCODE,
+                    f"Opcode {opcode.name} is disabled",
+                )
+
             op.execute(self.ctx)
 
         except ScriptExecutionError as e:
