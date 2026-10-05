@@ -1010,12 +1010,16 @@ class OP_OVER(BaseOp):
 @dataclass(frozen=True)
 class OP_PICK(BaseOp):
     opcode: Opcode = Opcode.OP_PICK
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         # [..., item(depth=n), ...] => [..., item(depth=n), ..., item]
         ctx.require_stack_min_size(1)
-        n = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        n = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         if n < 0 or n >= len(ctx.stack):
             raise ScriptExecutionError(ScriptError.SCRIPT_ERR_INVALID_STACK_OPERATION)
         ctx.stack.push(ctx.stack.peek(n))
@@ -1024,12 +1028,16 @@ class OP_PICK(BaseOp):
 @dataclass(frozen=True)
 class OP_ROLL(BaseOp):
     opcode: Opcode = Opcode.OP_ROLL
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         # [..., item(depth=n), ...] => [..., (removed), ..., item]
         ctx.require_stack_min_size(1)
-        n = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        n = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         if n < 0 or n >= len(ctx.stack):
             raise ScriptExecutionError(ScriptError.SCRIPT_ERR_INVALID_STACK_OPERATION)
         ctx.stack.push(ctx.stack.remove_at(n))
@@ -1171,12 +1179,18 @@ class OP_CAT(BaseOp):
 @dataclass(frozen=True)
 class OP_SUBSTR(BaseOp):
     opcode: Opcode = Opcode.OP_SUBSTR
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(3)
-        size = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        begin = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        size = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        begin = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         if begin < 0 or size < 0:
             raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
         data = ctx.stack.pop()
@@ -1186,11 +1200,15 @@ class OP_SUBSTR(BaseOp):
 @dataclass(frozen=True)
 class OP_LEFT(BaseOp):
     opcode: Opcode = Opcode.OP_LEFT
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        size = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        size = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         if size < 0:
             raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
         data = ctx.stack.pop()
@@ -1200,11 +1218,15 @@ class OP_LEFT(BaseOp):
 @dataclass(frozen=True)
 class OP_RIGHT(BaseOp):
     opcode: Opcode = Opcode.OP_RIGHT
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        size = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        size = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         if size < 0:
             raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
         data = ctx.stack.pop()
@@ -1311,136 +1333,192 @@ class OP_EQUALVERIFY(BaseOp):
 @dataclass(frozen=True)
 class OP_1ADD(BaseOp):
     opcode: Opcode = Opcode.OP_1ADD
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_num(a + 1)
 
 
 @dataclass(frozen=True)
 class OP_1SUB(BaseOp):
     opcode: Opcode = Opcode.OP_1SUB
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_num(a - 1)
 
 
 @dataclass(frozen=True)
 class OP_2MUL(BaseOp):
     opcode: Opcode = Opcode.OP_2MUL
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_num(a * 2)
 
 
 @dataclass(frozen=True)
 class OP_2DIV(BaseOp):
     opcode: Opcode = Opcode.OP_2DIV
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_num(int(a / 2))
 
 
 @dataclass(frozen=True)
 class OP_NEGATE(BaseOp):
     opcode: Opcode = Opcode.OP_NEGATE
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_num(-a)
 
 
 @dataclass(frozen=True)
 class OP_ABS(BaseOp):
     opcode: Opcode = Opcode.OP_ABS
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_num(abs(a))
 
 
 @dataclass(frozen=True)
 class OP_NOT(BaseOp):
     opcode: Opcode = Opcode.OP_NOT
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_bool(a == 0)
 
 
 @dataclass(frozen=True)
 class OP_0NOTEQUAL(BaseOp):
     opcode: Opcode = Opcode.OP_0NOTEQUAL
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(1)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_bool(a != 0)
 
 
 @dataclass(frozen=True)
 class OP_ADD(BaseOp):
     opcode: Opcode = Opcode.OP_ADD
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        b = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_num(a + b)
 
 
 @dataclass(frozen=True)
 class OP_SUB(BaseOp):
     opcode: Opcode = Opcode.OP_SUB
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        b = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_num(a - b)
 
 
 @dataclass(frozen=True)
 class OP_MUL(BaseOp):
     opcode: Opcode = Opcode.OP_MUL
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        b = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_num(a * b)
 
 
 @dataclass(frozen=True)
 class OP_DIV(BaseOp):
     opcode: Opcode = Opcode.OP_DIV
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        b = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         if b == 0:
             raise ScriptExecutionError(
                 ScriptError.SCRIPT_ERR_UNKNOWN_ERROR, "Division by zero"
@@ -1451,12 +1529,18 @@ class OP_DIV(BaseOp):
 @dataclass(frozen=True)
 class OP_MOD(BaseOp):
     opcode: Opcode = Opcode.OP_MOD
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        b = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         if b == 0:
             raise ScriptExecutionError(
                 ScriptError.SCRIPT_ERR_UNKNOWN_ERROR, "Modulo by zero"
@@ -1468,12 +1552,18 @@ class OP_MOD(BaseOp):
 @dataclass(frozen=True)
 class OP_LSHIFT(BaseOp):
     opcode: Opcode = Opcode.OP_LSHIFT
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        shift = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        value = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        shift = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        value = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         if shift < 0:
             raise ScriptExecutionError(
                 ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
@@ -1485,12 +1575,18 @@ class OP_LSHIFT(BaseOp):
 @dataclass(frozen=True)
 class OP_RSHIFT(BaseOp):
     opcode: Opcode = Opcode.OP_RSHIFT
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        shift = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        value = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        shift = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        value = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         if shift < 0:
             raise ScriptExecutionError(
                 ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
@@ -1504,48 +1600,72 @@ class OP_RSHIFT(BaseOp):
 @dataclass(frozen=True)
 class OP_BOOLAND(BaseOp):
     opcode: Opcode = Opcode.OP_BOOLAND
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        b = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_bool(a != 0 and b != 0)
 
 
 @dataclass(frozen=True)
 class OP_BOOLOR(BaseOp):
     opcode: Opcode = Opcode.OP_BOOLOR
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        b = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_bool(a != 0 or b != 0)
 
 
 @dataclass(frozen=True)
 class OP_NUMEQUAL(BaseOp):
     opcode: Opcode = Opcode.OP_NUMEQUAL
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        b = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_bool(a == b)
 
 
 @dataclass(frozen=True)
 class OP_NUMEQUALVERIFY(BaseOp):
     opcode: Opcode = Opcode.OP_NUMEQUALVERIFY
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        b = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         if a != b:
             raise ScriptExecutionError(ScriptError.SCRIPT_ERR_NUMEQUALVERIFY)
 
@@ -1553,97 +1673,147 @@ class OP_NUMEQUALVERIFY(BaseOp):
 @dataclass(frozen=True)
 class OP_NUMNOTEQUAL(BaseOp):
     opcode: Opcode = Opcode.OP_NUMNOTEQUAL
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        b = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_bool(a != b)
 
 
 @dataclass(frozen=True)
 class OP_LESSTHAN(BaseOp):
     opcode: Opcode = Opcode.OP_LESSTHAN
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        b = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_bool(a < b)
 
 
 @dataclass(frozen=True)
 class OP_GREATERTHAN(BaseOp):
     opcode: Opcode = Opcode.OP_GREATERTHAN
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        b = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_bool(a > b)
 
 
 @dataclass(frozen=True)
 class OP_LESSTHANOREQUAL(BaseOp):
     opcode: Opcode = Opcode.OP_LESSTHANOREQUAL
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        b = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_bool(a <= b)
 
 
 @dataclass(frozen=True)
 class OP_GREATERTHANOREQUAL(BaseOp):
     opcode: Opcode = Opcode.OP_GREATERTHANOREQUAL
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        b = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_bool(a >= b)
 
 
 @dataclass(frozen=True)
 class OP_MIN(BaseOp):
     opcode: Opcode = Opcode.OP_MIN
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        b = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_num(min(a, b))
 
 
 @dataclass(frozen=True)
 class OP_MAX(BaseOp):
     opcode: Opcode = Opcode.OP_MAX
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(2)
-        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        b = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        a = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_num(max(a, b))
 
 
 @dataclass(frozen=True)
 class OP_WITHIN(BaseOp):
     opcode: Opcode = Opcode.OP_WITHIN
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
         ctx.require_stack_min_size(3)
-        max_value = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        min_value = ctx.stack.pop_num(require_minimal=False, max_size=1024)
-        x = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        max_value = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        min_value = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        x = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
         ctx.stack.push_bool(min_value <= x < max_value)
 
 
