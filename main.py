@@ -575,7 +575,7 @@ class ScriptExecutionError(Exception):
         self.error = error
 
 
-class ScriptInterpreter:
+class ScriptContext:
     @dataclass(frozen=True)
     class Ready:
         pass
@@ -601,30 +601,1340 @@ class ScriptInterpreter:
         self.branch_stack = []
         self.state = self.Ready()
 
-    def execute(self, script_bytes: bytes) -> Terminated:
-        self.state = self.Running()
+    def require_stack_min_size(self, min_size: int) -> None:
+        if len(self.stack) < min_size:
+            raise ScriptExecutionError(ScriptError.SCRIPT_ERR_INVALID_STACK_OPERATION)
+
+    def require_altstack_min_size(self, min_size: int) -> None:
+        if len(self.altstack) < min_size:
+            raise ScriptExecutionError(
+                ScriptError.SCRIPT_ERR_INVALID_ALTSTACK_OPERATION
+            )
+
+    def branch_flag(self) -> bool:
+        return all(
+            self.branch_stack
+        )  # [] => True, [True] => True, [True, ..., True] => True
+
+
+@dataclass(frozen=True)
+class OP_PUSHDATA_DIRECT:
+    opcode: Opcode = Opcode.OP_PUSHDATA_DIRECT
+
+    def execute(self, ctx: ScriptContext, data: bytes) -> None:
+        ctx.stack.push(data)
+
+
+@dataclass(frozen=True)
+class OP_PUSHDATA1:
+    opcode: Opcode = Opcode.OP_PUSHDATA1
+
+    def execute(self, ctx: ScriptContext, data: bytes) -> None:
+        ctx.stack.push(data)
+
+
+@dataclass(frozen=True)
+class OP_PUSHDATA2:
+    opcode: Opcode = Opcode.OP_PUSHDATA2
+
+    def execute(self, ctx: ScriptContext, data: bytes) -> None:
+        ctx.stack.push(data)
+
+
+@dataclass(frozen=True)
+class OP_PUSHDATA4:
+    opcode: Opcode = Opcode.OP_PUSHDATA4
+
+    def execute(self, ctx: ScriptContext, data: bytes) -> None:
+        ctx.stack.push(data)
+
+
+@dataclass(frozen=True)
+class OP_1NEGATE:
+    opcode: Opcode = Opcode.OP_1NEGATE
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(-1)
+
+
+@dataclass(frozen=True)
+class OP_0:  # OP_FALSE
+    opcode: Opcode = Opcode.OP_0
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(0)
+
+
+@dataclass(frozen=True)
+class OP_1:  # OP_TRUE
+    opcode: Opcode = Opcode.OP_1
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(1)
+
+
+@dataclass(frozen=True)
+class OP_2:
+    opcode: Opcode = Opcode.OP_2
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(2)
+
+
+@dataclass(frozen=True)
+class OP_3:
+    opcode: Opcode = Opcode.OP_3
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(3)
+
+
+@dataclass(frozen=True)
+class OP_4:
+    opcode: Opcode = Opcode.OP_4
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(4)
+
+
+@dataclass(frozen=True)
+class OP_5:
+    opcode: Opcode = Opcode.OP_5
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(5)
+
+
+@dataclass(frozen=True)
+class OP_6:
+    opcode: Opcode = Opcode.OP_6
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(6)
+
+
+@dataclass(frozen=True)
+class OP_7:
+    opcode: Opcode = Opcode.OP_7
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(7)
+
+
+@dataclass(frozen=True)
+class OP_8:
+    opcode: Opcode = Opcode.OP_8
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(8)
+
+
+@dataclass(frozen=True)
+class OP_9:
+    opcode: Opcode = Opcode.OP_9
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(9)
+
+
+@dataclass(frozen=True)
+class OP_10:
+    opcode: Opcode = Opcode.OP_10
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(10)
+
+
+@dataclass(frozen=True)
+class OP_11:
+    opcode: Opcode = Opcode.OP_11
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(11)
+
+
+@dataclass(frozen=True)
+class OP_12:
+    opcode: Opcode = Opcode.OP_12
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(12)
+
+
+@dataclass(frozen=True)
+class OP_13:
+    opcode: Opcode = Opcode.OP_13
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(13)
+
+
+@dataclass(frozen=True)
+class OP_14:
+    opcode: Opcode = Opcode.OP_14
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(14)
+
+
+@dataclass(frozen=True)
+class OP_15:
+    opcode: Opcode = Opcode.OP_15
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(15)
+
+
+@dataclass(frozen=True)
+class OP_16:
+    opcode: Opcode = Opcode.OP_16
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(16)
+
+
+@dataclass(frozen=True)
+class OP_NOP:
+    opcode: Opcode = Opcode.OP_NOP
+
+    def execute(self, ctx: ScriptContext) -> None:
+        pass
+
+
+@dataclass(frozen=True)
+class OP_IF:
+    opcode: Opcode = Opcode.OP_IF
+
+    def execute(self, ctx: ScriptContext) -> None:
+        if ctx.branch_flag():
+            ctx.require_stack_min_size(1)
+            condition = ctx.stack.pop_bool()
+            ctx.branch_stack.append(condition)
+        else:
+            ctx.branch_stack.append(False)
+
+
+@dataclass(frozen=True)
+class OP_NOTIF:
+    opcode: Opcode = Opcode.OP_NOTIF
+
+    def execute(self, ctx: ScriptContext) -> None:
+        if ctx.branch_flag():
+            ctx.require_stack_min_size(1)
+            condition = not ctx.stack.pop_bool()
+            ctx.branch_stack.append(condition)
+        else:
+            ctx.branch_stack.append(False)
+
+
+@dataclass(frozen=True)
+class OP_ELSE:
+    opcode: Opcode = Opcode.OP_ELSE
+
+    def execute(self, ctx: ScriptContext) -> None:
+        if not ctx.branch_stack:
+            raise ScriptExecutionError(
+                ScriptError.SCRIPT_ERR_UNBALANCED_CONDITIONAL,
+                "OP_ELSE without matching OP_IF",
+            )
+        raise NotImplementedError("TODO")
+
+
+@dataclass(frozen=True)
+class OP_ENDIF:
+    opcode: Opcode = Opcode.OP_ENDIF
+
+    def execute(self, ctx: ScriptContext) -> None:
+        if not ctx.branch_stack:
+            raise ScriptExecutionError(
+                ScriptError.SCRIPT_ERR_UNBALANCED_CONDITIONAL,
+                "OP_ENDIF without matching OP_IF",
+            )
+        _ = ctx.branch_stack.pop()
+
+
+@dataclass(frozen=True)
+class OP_VERIFY:
+    opcode: Opcode = Opcode.OP_VERIFY
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        value = ctx.stack.pop_bool()
+        if not value:
+            raise ScriptExecutionError(
+                ScriptError.SCRIPT_ERR_VERIFY,
+                "OP_VERIFY failed: top stack item evaluated to false",
+            )
+
+
+@dataclass(frozen=True)
+class OP_RETURN:
+    opcode: Opcode = Opcode.OP_RETURN
+
+    def execute(self, ctx: ScriptContext) -> None:
+        # TODO consider IF branche
+        raise ScriptExecutionError(
+            ScriptError.SCRIPT_ERR_OP_RETURN,
+            "Encountered OP_RETURN",
+        )
+
+
+@dataclass(frozen=True)
+class OP_TOALTSTACK:
+    opcode: Opcode = Opcode.OP_TOALTSTACK
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        ctx.altstack.push(ctx.stack.pop())
+
+
+@dataclass(frozen=True)
+class OP_FROMALTSTACK:
+    opcode: Opcode = Opcode.OP_FROMALTSTACK
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_altstack_min_size(1)
+        ctx.stack.push(ctx.altstack.pop())
+
+
+@dataclass(frozen=True)
+class OP_IFDUP:
+    opcode: Opcode = Opcode.OP_IFDUP
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        if ctx.stack.peek_bool():
+            ctx.stack.push(ctx.stack.peek())
+
+
+@dataclass(frozen=True)
+class OP_DEPTH:
+    opcode: Opcode = Opcode.OP_DEPTH
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.stack.push_num(len(ctx.stack))
+
+
+@dataclass(frozen=True)
+class OP_DROP:
+    opcode: Opcode = Opcode.OP_DROP
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        _ = ctx.stack.pop()
+
+
+@dataclass(frozen=True)
+class OP_DUP:
+    opcode: Opcode = Opcode.OP_DUP
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        ctx.stack.push(ctx.stack.peek())
+
+
+@dataclass(frozen=True)
+class OP_NIP:
+    opcode: Opcode = Opcode.OP_NIP
+
+    def execute(self, ctx: ScriptContext) -> None:
+        # [..., a, b] => [..., b]
+        ctx.require_stack_min_size(2)
+        _ = ctx.stack.remove_at(1)
+
+
+@dataclass(frozen=True)
+class OP_OVER:
+    opcode: Opcode = Opcode.OP_OVER
+
+    def execute(self, ctx: ScriptContext) -> None:
+        # [..., a, b] => [..., a, b, a]
+        ctx.require_stack_min_size(2)
+        ctx.stack.push(ctx.stack.peek(1))
+
+
+@dataclass(frozen=True)
+class OP_PICK:
+    opcode: Opcode = Opcode.OP_PICK
+
+    def execute(self, ctx: ScriptContext) -> None:
+        # [..., item(depth=n), ...] => [..., item(depth=n), ..., item]
+        ctx.require_stack_min_size(1)
+        n = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        if n < 0 or n >= len(ctx.stack):
+            raise ScriptExecutionError(ScriptError.SCRIPT_ERR_INVALID_STACK_OPERATION)
+        ctx.stack.push(ctx.stack.peek(n))
+
+
+@dataclass(frozen=True)
+class OP_ROLL:
+    opcode: Opcode = Opcode.OP_ROLL
+
+    def execute(self, ctx: ScriptContext) -> None:
+        # [..., item(depth=n), ...] => [..., (removed), ..., item]
+        ctx.require_stack_min_size(1)
+        n = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        if n < 0 or n >= len(ctx.stack):
+            raise ScriptExecutionError(ScriptError.SCRIPT_ERR_INVALID_STACK_OPERATION)
+        ctx.stack.push(ctx.stack.remove_at(n))
+
+
+@dataclass(frozen=True)
+class OP_ROT:
+    opcode: Opcode = Opcode.OP_ROT
+
+    def execute(self, ctx: ScriptContext) -> None:
+        # [..., a, b, c] => [..., b, c, a]
+        ctx.require_stack_min_size(3)
+        ctx.stack.push(ctx.stack.remove_at(2))
+
+
+@dataclass(frozen=True)
+class OP_SWAP:
+    opcode: Opcode = Opcode.OP_SWAP
+
+    def execute(self, ctx: ScriptContext) -> None:
+        # [..., a, b] => [..., b, a]
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop()
+        a = ctx.stack.pop()
+        ctx.stack.push(b)
+        ctx.stack.push(a)
+
+
+@dataclass(frozen=True)
+class OP_TUCK:
+    opcode: Opcode = Opcode.OP_TUCK
+
+    def execute(self, ctx: ScriptContext) -> None:
+        # [..., a, b] => [..., b, a, b]
+        ctx.require_stack_min_size(2)
+        top = ctx.stack.peek(0)
+        ctx.stack.insert_at(2, top)
+
+
+@dataclass(frozen=True)
+class OP_2DROP:
+    opcode: Opcode = Opcode.OP_2DROP
+
+    def execute(self, ctx: ScriptContext) -> None:
+        # [..., a, b] => [...]
+        ctx.require_stack_min_size(2)
+        _ = ctx.stack.pop()
+        _ = ctx.stack.pop()
+
+
+@dataclass(frozen=True)
+class OP_2DUP:
+    opcode: Opcode = Opcode.OP_2DUP
+
+    def execute(self, ctx: ScriptContext) -> None:
+        # [..., a, b] => [..., a, b, a, b]
+        ctx.require_stack_min_size(2)
+        a = ctx.stack.peek(1)
+        b = ctx.stack.peek(0)
+        ctx.stack.push(a)
+        ctx.stack.push(b)
+
+
+@dataclass(frozen=True)
+class OP_3DUP:
+    opcode: Opcode = Opcode.OP_3DUP
+
+    def execute(self, ctx: ScriptContext) -> None:
+        # [..., a, b, c] => [..., a, b, c, a, b, c]
+        ctx.require_stack_min_size(3)
+        a = ctx.stack.peek(2)
+        b = ctx.stack.peek(1)
+        c = ctx.stack.peek(0)
+        ctx.stack.push(a)
+        ctx.stack.push(b)
+        ctx.stack.push(c)
+
+
+@dataclass(frozen=True)
+class OP_2OVER:
+    opcode: Opcode = Opcode.OP_2OVER
+
+    def execute(self, ctx: ScriptContext) -> None:
+        # [..., a, b, c, d] => [..., a, b, c, d, a, b]
+        ctx.require_stack_min_size(4)
+        a = ctx.stack.peek(3)
+        b = ctx.stack.peek(2)
+        ctx.stack.push(a)
+        ctx.stack.push(b)
+
+
+@dataclass(frozen=True)
+class OP_2ROT:
+    opcode: Opcode = Opcode.OP_2ROT
+
+    def execute(self, ctx: ScriptContext) -> None:
+        # [..., a, b, c, d, e, f] => [..., c, d, e, f, a, b]
+        ctx.require_stack_min_size(6)
+        a = ctx.stack.remove_at(5)
+        b = ctx.stack.remove_at(4)
+        ctx.stack.push(a)
+        ctx.stack.push(b)
+
+
+@dataclass(frozen=True)
+class OP_2SWAP:
+    opcode: Opcode = Opcode.OP_2SWAP
+
+    def execute(self, ctx: ScriptContext) -> None:
+        # [..., a, b, c, d] => [..., c, d, a, b]
+        ctx.require_stack_min_size(4)
+        a = ctx.stack.remove_at(3)
+        b = ctx.stack.remove_at(2)
+        ctx.stack.push(a)
+        ctx.stack.push(b)
+
+
+@dataclass(frozen=True)
+class OP_CAT:
+    opcode: Opcode = Opcode.OP_CAT
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop()
+        a = ctx.stack.pop()
+        ctx.stack.push(a + b)
+
+
+@dataclass(frozen=True)
+class OP_SUBSTR:
+    opcode: Opcode = Opcode.OP_SUBSTR
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(3)
+        size = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        begin = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        if begin < 0 or size < 0:
+            raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
+        data = ctx.stack.pop()
+        ctx.stack.push(data[begin : begin + size])
+
+
+@dataclass(frozen=True)
+class OP_LEFT:
+    opcode: Opcode = Opcode.OP_LEFT
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        size = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        if size < 0:
+            raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
+        data = ctx.stack.pop()
+        ctx.stack.push(data[:size])
+
+
+@dataclass(frozen=True)
+class OP_RIGHT:
+    opcode: Opcode = Opcode.OP_RIGHT
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        size = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        if size < 0:
+            raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
+        data = ctx.stack.pop()
+        ctx.stack.push(data[-size:] if size else b"")
+
+
+@dataclass(frozen=True)
+class OP_SIZE:
+    opcode: Opcode = Opcode.OP_SIZE
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        ctx.stack.push_num(len(ctx.stack.peek()))
+
+
+@dataclass(frozen=True)
+class OP_INVERT:
+    opcode: Opcode = Opcode.OP_INVERT
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        data = ctx.stack.pop()
+        ctx.stack.push(bytes(~b & 0xFF for b in data))
+
+
+@dataclass(frozen=True)
+class OP_AND:
+    opcode: Opcode = Opcode.OP_AND
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop()
+        a = ctx.stack.pop()
+        if len(a) != len(b):
+            raise ScriptExecutionError(
+                ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
+                "Bitwise operands must have equal lengths",
+            )
+        ctx.stack.push(bytes(x & y for x, y in zip(a, b)))
+
+
+@dataclass(frozen=True)
+class OP_OR:
+    opcode: Opcode = Opcode.OP_OR
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop()
+        a = ctx.stack.pop()
+        if len(a) != len(b):
+            raise ScriptExecutionError(
+                ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
+                "Bitwise operands must have equal lengths",
+            )
+        ctx.stack.push(bytes(x | y for x, y in zip(a, b)))
+
+
+@dataclass(frozen=True)
+class OP_XOR:
+    opcode: Opcode = Opcode.OP_XOR
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop()
+        a = ctx.stack.pop()
+        if len(a) != len(b):
+            raise ScriptExecutionError(
+                ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
+                "Bitwise operands must have equal lengths",
+            )
+        ctx.stack.push(bytes(x ^ y for x, y in zip(a, b)))
+
+
+@dataclass(frozen=True)
+class OP_EQUAL:
+    opcode: Opcode = Opcode.OP_EQUAL
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop()
+        a = ctx.stack.pop()
+        ctx.stack.push_bool(a == b)
+
+
+@dataclass(frozen=True)
+class OP_EQUALVERIFY:
+    opcode: Opcode = Opcode.OP_EQUALVERIFY
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop()
+        a = ctx.stack.pop()
+        if a != b:
+            raise ScriptExecutionError(ScriptError.SCRIPT_ERR_EQUALVERIFY)
+
+
+@dataclass(frozen=True)
+class OP_1ADD:
+    opcode: Opcode = Opcode.OP_1ADD
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_num(a + 1)
+
+
+@dataclass(frozen=True)
+class OP_1SUB:
+    opcode: Opcode = Opcode.OP_1SUB
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_num(a - 1)
+
+
+@dataclass(frozen=True)
+class OP_2MUL:
+    opcode: Opcode = Opcode.OP_2MUL
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_num(a * 2)
+
+
+@dataclass(frozen=True)
+class OP_2DIV:
+    opcode: Opcode = Opcode.OP_2DIV
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_num(int(a / 2))
+
+
+@dataclass(frozen=True)
+class OP_NEGATE:
+    opcode: Opcode = Opcode.OP_NEGATE
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_num(-a)
+
+
+@dataclass(frozen=True)
+class OP_ABS:
+    opcode: Opcode = Opcode.OP_ABS
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_num(abs(a))
+
+
+@dataclass(frozen=True)
+class OP_NOT:
+    opcode: Opcode = Opcode.OP_NOT
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_bool(a == 0)
+
+
+@dataclass(frozen=True)
+class OP_0NOTEQUAL:
+    opcode: Opcode = Opcode.OP_0NOTEQUAL
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_bool(a != 0)
+
+
+@dataclass(frozen=True)
+class OP_ADD:
+    opcode: Opcode = Opcode.OP_ADD
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_num(a + b)
+
+
+@dataclass(frozen=True)
+class OP_SUB:
+    opcode: Opcode = Opcode.OP_SUB
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_num(a - b)
+
+
+@dataclass(frozen=True)
+class OP_MUL:
+    opcode: Opcode = Opcode.OP_MUL
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_num(a * b)
+
+
+@dataclass(frozen=True)
+class OP_DIV:
+    opcode: Opcode = Opcode.OP_DIV
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        if b == 0:
+            raise ScriptExecutionError(
+                ScriptError.SCRIPT_ERR_UNKNOWN_ERROR, "Division by zero"
+            )
+        ctx.stack.push_num(int(a / b))
+
+
+@dataclass(frozen=True)
+class OP_MOD:
+    opcode: Opcode = Opcode.OP_MOD
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        if b == 0:
+            raise ScriptExecutionError(
+                ScriptError.SCRIPT_ERR_UNKNOWN_ERROR, "Modulo by zero"
+            )
+        rem = a - int(a / b) * b
+        ctx.stack.push_num(rem)
+
+
+@dataclass(frozen=True)
+class OP_LSHIFT:
+    opcode: Opcode = Opcode.OP_LSHIFT
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        shift = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        value = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        if shift < 0:
+            raise ScriptExecutionError(
+                ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
+                "Shift amount must not be negative",
+            )
+        ctx.stack.push_num(value << shift)
+
+
+@dataclass(frozen=True)
+class OP_RSHIFT:
+    opcode: Opcode = Opcode.OP_RSHIFT
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        shift = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        value = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        if shift < 0:
+            raise ScriptExecutionError(
+                ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
+                "Shift amount must not be negative",
+            )
+        sign = -1 if value < 0 else 1
+        result = (abs(value) >> shift) * sign
+        ctx.stack.push_num(result)
+
+
+@dataclass(frozen=True)
+class OP_BOOLAND:
+    opcode: Opcode = Opcode.OP_BOOLAND
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_bool(a != 0 and b != 0)
+
+
+@dataclass(frozen=True)
+class OP_BOOLOR:
+    opcode: Opcode = Opcode.OP_BOOLOR
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_bool(a != 0 or b != 0)
+
+
+@dataclass(frozen=True)
+class OP_NUMEQUAL:
+    opcode: Opcode = Opcode.OP_NUMEQUAL
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_bool(a == b)
+
+
+@dataclass(frozen=True)
+class OP_NUMEQUALVERIFY:
+    opcode: Opcode = Opcode.OP_NUMEQUALVERIFY
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        if a != b:
+            raise ScriptExecutionError(ScriptError.SCRIPT_ERR_NUMEQUALVERIFY)
+
+
+@dataclass(frozen=True)
+class OP_NUMNOTEQUAL:
+    opcode: Opcode = Opcode.OP_NUMNOTEQUAL
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_bool(a != b)
+
+
+@dataclass(frozen=True)
+class OP_LESSTHAN:
+    opcode: Opcode = Opcode.OP_LESSTHAN
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_bool(a < b)
+
+
+@dataclass(frozen=True)
+class OP_GREATERTHAN:
+    opcode: Opcode = Opcode.OP_GREATERTHAN
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_bool(a > b)
+
+
+@dataclass(frozen=True)
+class OP_LESSTHANOREQUAL:
+    opcode: Opcode = Opcode.OP_LESSTHANOREQUAL
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_bool(a <= b)
+
+
+@dataclass(frozen=True)
+class OP_GREATERTHANOREQUAL:
+    opcode: Opcode = Opcode.OP_GREATERTHANOREQUAL
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_bool(a >= b)
+
+
+@dataclass(frozen=True)
+class OP_MIN:
+    opcode: Opcode = Opcode.OP_MIN
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_num(min(a, b))
+
+
+@dataclass(frozen=True)
+class OP_MAX:
+    opcode: Opcode = Opcode.OP_MAX
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(2)
+        b = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        a = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_num(max(a, b))
+
+
+@dataclass(frozen=True)
+class OP_WITHIN:
+    opcode: Opcode = Opcode.OP_WITHIN
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(3)
+        max_value = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        min_value = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        x = ctx.stack.pop_num(require_minimal=False, max_size=1024)
+        ctx.stack.push_bool(min_value <= x < max_value)
+
+
+@dataclass(frozen=True)
+class OP_RIPEMD160:
+    opcode: Opcode = Opcode.OP_RIPEMD160
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        ctx.stack.push(ScriptCrypto.ripemd160(ctx.stack.pop()))
+
+
+@dataclass(frozen=True)
+class OP_SHA1:
+    opcode: Opcode = Opcode.OP_SHA1
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        ctx.stack.push(ScriptCrypto.sha1(ctx.stack.pop()))
+
+
+@dataclass(frozen=True)
+class OP_SHA256:
+    opcode: Opcode = Opcode.OP_SHA256
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        ctx.stack.push(ScriptCrypto.sha256(ctx.stack.pop()))
+
+
+@dataclass(frozen=True)
+class OP_HASH160:
+    opcode: Opcode = Opcode.OP_HASH160
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        ctx.stack.push(ScriptCrypto.hash160(ctx.stack.pop()))
+
+
+@dataclass(frozen=True)
+class OP_HASH256:
+    opcode: Opcode = Opcode.OP_HASH256
+
+    def execute(self, ctx: ScriptContext) -> None:
+        ctx.require_stack_min_size(1)
+        ctx.stack.push(ScriptCrypto.hash256(ctx.stack.pop()))
+
+
+@dataclass(frozen=True)
+class OP_CODESEPARATOR:
+    opcode: Opcode = Opcode.OP_CODESEPARATOR
+
+    def execute(self, ctx: ScriptContext) -> None:
+        raise NotImplementedError("TODO")
+
+
+@dataclass(frozen=True)
+class OP_CHECKSIG:
+    opcode: Opcode = Opcode.OP_CHECKSIG
+
+    def execute(self, ctx: ScriptContext) -> None:
+        raise NotImplementedError("TODO")
+
+
+@dataclass(frozen=True)
+class OP_CHECKSIGVERIFY:
+    opcode: Opcode = Opcode.OP_CHECKSIGVERIFY
+
+    def execute(self, ctx: ScriptContext) -> None:
+        raise NotImplementedError("TODO")
+
+
+@dataclass(frozen=True)
+class OP_CHECKMULTISIG:
+    opcode: Opcode = Opcode.OP_CHECKMULTISIG
+
+    def execute(self, ctx: ScriptContext) -> None:
+        raise NotImplementedError("TODO")
+
+
+@dataclass(frozen=True)
+class OP_CHECKMULTISIGVERIFY:
+    opcode: Opcode = Opcode.OP_CHECKMULTISIGVERIFY
+
+    def execute(self, ctx: ScriptContext) -> None:
+        raise NotImplementedError("TODO")
+
+
+@dataclass(frozen=True)
+class OP_CHECKSIGADD:
+    opcode: Opcode = Opcode.OP_CHECKSIGADD
+
+    def execute(self, ctx: ScriptContext) -> None:
+        raise NotImplementedError("TODO")
+
+
+@dataclass(frozen=True)
+class OP_CHECKLOCKTIMEVERIFY:  # OP_NOP2
+    opcode: Opcode = Opcode.OP_CHECKLOCKTIMEVERIFY
+
+    def execute(self, ctx: ScriptContext) -> None:
+        raise NotImplementedError("TODO")
+
+
+@dataclass(frozen=True)
+class OP_CHECKSEQUENCEVERIFY:  # OP_NOP3
+    opcode: Opcode = Opcode.OP_CHECKSEQUENCEVERIFY
+
+    def execute(self, ctx: ScriptContext) -> None:
+        raise NotImplementedError("TODO")
+
+
+@dataclass(frozen=True)
+class OP_RESERVED:
+    opcode: Opcode = Opcode.OP_RESERVED
+
+    def execute(self, ctx: ScriptContext) -> None:
+        raise ScriptExecutionError(
+            ScriptError.SCRIPT_ERR_BAD_OPCODE,
+            "Encountered reserved/illegal opcode: OP_RESERVED",
+        )
+
+
+@dataclass(frozen=True)
+class OP_VER:
+    opcode: Opcode = Opcode.OP_VER
+
+    def execute(self, ctx: ScriptContext) -> None:
+        raise ScriptExecutionError(
+            ScriptError.SCRIPT_ERR_BAD_OPCODE,
+            "Encountered reserved/illegal opcode: OP_VER",
+        )
+
+
+@dataclass(frozen=True)
+class OP_VERIF:
+    opcode: Opcode = Opcode.OP_VERIF
+
+    def execute(self, ctx: ScriptContext) -> None:
+        raise ScriptExecutionError(
+            ScriptError.SCRIPT_ERR_BAD_OPCODE,
+            "Encountered reserved/illegal opcode: OP_VERIF",
+        )
+
+
+@dataclass(frozen=True)
+class OP_VERNOTIF:
+    opcode: Opcode = Opcode.OP_VERNOTIF
+
+    def execute(self, ctx: ScriptContext) -> None:
+        raise ScriptExecutionError(
+            ScriptError.SCRIPT_ERR_BAD_OPCODE,
+            "Encountered reserved/illegal opcode: OP_VERNOTIF",
+        )
+
+
+@dataclass(frozen=True)
+class OP_RESERVED1:
+    opcode: Opcode = Opcode.OP_RESERVED1
+
+    def execute(self, ctx: ScriptContext) -> None:
+        raise ScriptExecutionError(
+            ScriptError.SCRIPT_ERR_BAD_OPCODE,
+            "Encountered reserved/illegal opcode: OP_RESERVED1",
+        )
+
+
+@dataclass(frozen=True)
+class OP_RESERVED2:
+    opcode: Opcode = Opcode.OP_RESERVED2
+
+    def execute(self, ctx: ScriptContext) -> None:
+        raise ScriptExecutionError(
+            ScriptError.SCRIPT_ERR_BAD_OPCODE,
+            "Encountered reserved/illegal opcode: OP_RESERVED2",
+        )
+
+
+@dataclass(frozen=True)
+class OP_NOP1:
+    opcode: Opcode = Opcode.OP_NOP1
+
+    def execute(self, ctx: ScriptContext) -> None:
+        pass
+
+
+@dataclass(frozen=True)
+class OP_NOP4:
+    opcode: Opcode = Opcode.OP_NOP4
+
+    def execute(self, ctx: ScriptContext) -> None:
+        pass
+
+
+@dataclass(frozen=True)
+class OP_NOP5:
+    opcode: Opcode = Opcode.OP_NOP5
+
+    def execute(self, ctx: ScriptContext) -> None:
+        pass
+
+
+@dataclass(frozen=True)
+class OP_NOP6:
+    opcode: Opcode = Opcode.OP_NOP6
+
+    def execute(self, ctx: ScriptContext) -> None:
+        pass
+
+
+@dataclass(frozen=True)
+class OP_NOP7:
+    opcode: Opcode = Opcode.OP_NOP7
+
+    def execute(self, ctx: ScriptContext) -> None:
+        pass
+
+
+@dataclass(frozen=True)
+class OP_NOP8:
+    opcode: Opcode = Opcode.OP_NOP8
+
+    def execute(self, ctx: ScriptContext) -> None:
+        pass
+
+
+@dataclass(frozen=True)
+class OP_NOP9:
+    opcode: Opcode = Opcode.OP_NOP9
+
+    def execute(self, ctx: ScriptContext) -> None:
+        pass
+
+
+@dataclass(frozen=True)
+class OP_NOP10:
+    opcode: Opcode = Opcode.OP_NOP10
+
+    def execute(self, ctx: ScriptContext) -> None:
+        pass
+
+
+@dataclass(frozen=True)
+class OP_INVALIDOPCODE:
+    opcode: Opcode = Opcode.OP_INVALIDOPCODE
+
+    def execute(self, ctx: ScriptContext) -> None:
+        raise ScriptExecutionError(
+            ScriptError.SCRIPT_ERR_BAD_OPCODE,
+            "Encountered OP_INVALIDOPCODE (0xFF)",
+        )
+
+
+class ScriptInterpreter:
+    ctx: ScriptContext
+    op_pushdata_direct: OP_PUSHDATA_DIRECT = OP_PUSHDATA_DIRECT()
+    op_pushdata1: OP_PUSHDATA1 = OP_PUSHDATA1()
+    op_pushdata2: OP_PUSHDATA2 = OP_PUSHDATA2()
+    op_pushdata4: OP_PUSHDATA4 = OP_PUSHDATA4()
+    op_1negate: OP_1NEGATE = OP_1NEGATE()
+    op_0: OP_0 = OP_0()
+    op_1: OP_1 = OP_1()
+    op_2: OP_2 = OP_2()
+    op_3: OP_3 = OP_3()
+    op_4: OP_4 = OP_4()
+    op_5: OP_5 = OP_5()
+    op_6: OP_6 = OP_6()
+    op_7: OP_7 = OP_7()
+    op_8: OP_8 = OP_8()
+    op_9: OP_9 = OP_9()
+    op_10: OP_10 = OP_10()
+    op_11: OP_11 = OP_11()
+    op_12: OP_12 = OP_12()
+    op_13: OP_13 = OP_13()
+    op_14: OP_14 = OP_14()
+    op_15: OP_15 = OP_15()
+    op_16: OP_16 = OP_16()
+    op_nop: OP_NOP = OP_NOP()
+    op_if: OP_IF = OP_IF()
+    op_notif: OP_NOTIF = OP_NOTIF()
+    op_else: OP_ELSE = OP_ELSE()
+    op_endif: OP_ENDIF = OP_ENDIF()
+    op_verify: OP_VERIFY = OP_VERIFY()
+    op_return: OP_RETURN = OP_RETURN()
+    op_toaltstack: OP_TOALTSTACK = OP_TOALTSTACK()
+    op_fromaltstack: OP_FROMALTSTACK = OP_FROMALTSTACK()
+    op_ifdup: OP_IFDUP = OP_IFDUP()
+    op_depth: OP_DEPTH = OP_DEPTH()
+    op_drop: OP_DROP = OP_DROP()
+    op_dup: OP_DUP = OP_DUP()
+    op_nip: OP_NIP = OP_NIP()
+    op_over: OP_OVER = OP_OVER()
+    op_pick: OP_PICK = OP_PICK()
+    op_roll: OP_ROLL = OP_ROLL()
+    op_rot: OP_ROT = OP_ROT()
+    op_swap: OP_SWAP = OP_SWAP()
+    op_tuck: OP_TUCK = OP_TUCK()
+    op_2drop: OP_2DROP = OP_2DROP()
+    op_2dup: OP_2DUP = OP_2DUP()
+    op_3dup: OP_3DUP = OP_3DUP()
+    op_2over: OP_2OVER = OP_2OVER()
+    op_2rot: OP_2ROT = OP_2ROT()
+    op_2swap: OP_2SWAP = OP_2SWAP()
+    op_cat: OP_CAT = OP_CAT()
+    op_substr: OP_SUBSTR = OP_SUBSTR()
+    op_left: OP_LEFT = OP_LEFT()
+    op_right: OP_RIGHT = OP_RIGHT()
+    op_size: OP_SIZE = OP_SIZE()
+    op_invert: OP_INVERT = OP_INVERT()
+    op_and: OP_AND = OP_AND()
+    op_or: OP_OR = OP_OR()
+    op_xor: OP_XOR = OP_XOR()
+    op_equal: OP_EQUAL = OP_EQUAL()
+    op_equalverify: OP_EQUALVERIFY = OP_EQUALVERIFY()
+    op_1add: OP_1ADD = OP_1ADD()
+    op_1sub: OP_1SUB = OP_1SUB()
+    op_2mul: OP_2MUL = OP_2MUL()
+    op_2div: OP_2DIV = OP_2DIV()
+    op_negate: OP_NEGATE = OP_NEGATE()
+    op_abs: OP_ABS = OP_ABS()
+    op_not: OP_NOT = OP_NOT()
+    op_0notequal: OP_0NOTEQUAL = OP_0NOTEQUAL()
+    op_add: OP_ADD = OP_ADD()
+    op_sub: OP_SUB = OP_SUB()
+    op_mul: OP_MUL = OP_MUL()
+    op_div: OP_DIV = OP_DIV()
+    op_mod: OP_MOD = OP_MOD()
+    op_lshift: OP_LSHIFT = OP_LSHIFT()
+    op_rshift: OP_RSHIFT = OP_RSHIFT()
+    op_booland: OP_BOOLAND = OP_BOOLAND()
+    op_boolor: OP_BOOLOR = OP_BOOLOR()
+    op_numequal: OP_NUMEQUAL = OP_NUMEQUAL()
+    op_numequalverify: OP_NUMEQUALVERIFY = OP_NUMEQUALVERIFY()
+    op_numnotequal: OP_NUMNOTEQUAL = OP_NUMNOTEQUAL()
+    op_lessthan: OP_LESSTHAN = OP_LESSTHAN()
+    op_greaterthan: OP_GREATERTHAN = OP_GREATERTHAN()
+    op_lessthanorequal: OP_LESSTHANOREQUAL = OP_LESSTHANOREQUAL()
+    op_greaterthanorequal: OP_GREATERTHANOREQUAL = OP_GREATERTHANOREQUAL()
+    op_min: OP_MIN = OP_MIN()
+    op_max: OP_MAX = OP_MAX()
+    op_within: OP_WITHIN = OP_WITHIN()
+    op_ripemd160: OP_RIPEMD160 = OP_RIPEMD160()
+    op_sha1: OP_SHA1 = OP_SHA1()
+    op_sha256: OP_SHA256 = OP_SHA256()
+    op_hash160: OP_HASH160 = OP_HASH160()
+    op_hash256: OP_HASH256 = OP_HASH256()
+    op_codeseparator: OP_CODESEPARATOR = OP_CODESEPARATOR()
+    op_checksig: OP_CHECKSIG = OP_CHECKSIG()
+    op_checksigverify: OP_CHECKSIGVERIFY = OP_CHECKSIGVERIFY()
+    op_checkmultisig: OP_CHECKMULTISIG = OP_CHECKMULTISIG()
+    op_checkmultisigverify: OP_CHECKMULTISIGVERIFY = OP_CHECKMULTISIGVERIFY()
+    op_checksigadd: OP_CHECKSIGADD = OP_CHECKSIGADD()
+    op_checklocktimeverify: OP_CHECKLOCKTIMEVERIFY = OP_CHECKLOCKTIMEVERIFY()
+    op_checksequenceverify: OP_CHECKSEQUENCEVERIFY = OP_CHECKSEQUENCEVERIFY()
+    op_reserved: OP_RESERVED = OP_RESERVED()
+    op_ver: OP_VER = OP_VER()
+    op_verif: OP_VERIF = OP_VERIF()
+    op_vernotif: OP_VERNOTIF = OP_VERNOTIF()
+    op_reserved1: OP_RESERVED1 = OP_RESERVED1()
+    op_reserved2: OP_RESERVED2 = OP_RESERVED2()
+    op_nop1: OP_NOP1 = OP_NOP1()
+    op_nop4: OP_NOP4 = OP_NOP4()
+    op_nop5: OP_NOP5 = OP_NOP5()
+    op_nop6: OP_NOP6 = OP_NOP6()
+    op_nop7: OP_NOP7 = OP_NOP7()
+    op_nop8: OP_NOP8 = OP_NOP8()
+    op_nop9: OP_NOP9 = OP_NOP9()
+    op_nop10: OP_NOP10 = OP_NOP10()
+    op_invalidopcode: OP_INVALIDOPCODE = OP_INVALIDOPCODE()
+
+    def __init__(self, stack: ScriptStack | None = None) -> None:
+        self.ctx = ScriptContext(stack)
+
+    def execute(self, script_bytes: bytes) -> ScriptContext.Terminated:
+        self.ctx.state = ScriptContext.Running()
         parser = ScriptParser(script_bytes)
         for token in parser:
             self._step(token)
-            if isinstance(self.state, self.Terminated):
-                return self.state
+            if isinstance(self.ctx.state, ScriptContext.Terminated):
+                return self.ctx.state
 
-        if self.branch_stack:
-            self.state = self.Terminated(
+        if self.ctx.branch_stack:
+            self.ctx.state = ScriptContext.Terminated(
                 error=ScriptError.SCRIPT_ERR_UNBALANCED_CONDITIONAL
             )
         else:
-            self.state = self.Terminated(error=ScriptError.SCRIPT_ERR_OK)
-        return self.state
+            self.ctx.state = ScriptContext.Terminated(error=ScriptError.SCRIPT_ERR_OK)
+        return self.ctx.state
 
     def _step(self, token: ScriptToken) -> None:
         try:
             opcode = token.opcode
-            branch_flag = all(
-                self.branch_stack
-            )  # [] => True, [True] => True, [True, ..., True] => True
 
-            if not branch_flag and opcode not in (
+            if not self.ctx.branch_flag() and opcode not in (
                 Opcode.OP_IF,
                 Opcode.OP_NOTIF,
                 Opcode.OP_ELSE,
@@ -635,620 +1945,236 @@ class ScriptInterpreter:
             match opcode:
                 case Opcode.OP_PUSHDATA_DIRECT:
                     assert token.data is not None
-                    self.stack.push(token.data)
-
+                    self.op_pushdata_direct.execute(self.ctx, token.data)
                 case Opcode.OP_PUSHDATA1:
                     assert token.data is not None
-                    self.stack.push(token.data)
-
+                    self.op_pushdata1.execute(self.ctx, token.data)
                 case Opcode.OP_PUSHDATA2:
                     assert token.data is not None
-                    self.stack.push(token.data)
-
+                    self.op_pushdata2.execute(self.ctx, token.data)
                 case Opcode.OP_PUSHDATA4:
                     assert token.data is not None
-                    self.stack.push(token.data)
-
+                    self.op_pushdata4.execute(self.ctx, token.data)
                 case Opcode.OP_1NEGATE:
-                    self.stack.push_num(-1)
-
+                    self.op_1negate.execute(self.ctx)
                 case Opcode.OP_0:  # OP_FALSE
-                    self.stack.push_num(0)
-
+                    self.op_0.execute(self.ctx)
                 case Opcode.OP_1:  # OP_TRUE
-                    self.stack.push_num(1)
-
+                    self.op_1.execute(self.ctx)
                 case Opcode.OP_2:
-                    self.stack.push_num(2)
-
+                    self.op_2.execute(self.ctx)
                 case Opcode.OP_3:
-                    self.stack.push_num(3)
-
+                    self.op_3.execute(self.ctx)
                 case Opcode.OP_4:
-                    self.stack.push_num(4)
-
+                    self.op_4.execute(self.ctx)
                 case Opcode.OP_5:
-                    self.stack.push_num(5)
-
+                    self.op_5.execute(self.ctx)
                 case Opcode.OP_6:
-                    self.stack.push_num(6)
-
+                    self.op_6.execute(self.ctx)
                 case Opcode.OP_7:
-                    self.stack.push_num(7)
-
+                    self.op_7.execute(self.ctx)
                 case Opcode.OP_8:
-                    self.stack.push_num(8)
-
+                    self.op_8.execute(self.ctx)
                 case Opcode.OP_9:
-                    self.stack.push_num(9)
-
+                    self.op_9.execute(self.ctx)
                 case Opcode.OP_10:
-                    self.stack.push_num(10)
-
+                    self.op_10.execute(self.ctx)
                 case Opcode.OP_11:
-                    self.stack.push_num(11)
-
+                    self.op_11.execute(self.ctx)
                 case Opcode.OP_12:
-                    self.stack.push_num(12)
-
+                    self.op_12.execute(self.ctx)
                 case Opcode.OP_13:
-                    self.stack.push_num(13)
-
+                    self.op_13.execute(self.ctx)
                 case Opcode.OP_14:
-                    self.stack.push_num(14)
-
+                    self.op_14.execute(self.ctx)
                 case Opcode.OP_15:
-                    self.stack.push_num(15)
-
+                    self.op_15.execute(self.ctx)
                 case Opcode.OP_16:
-                    self.stack.push_num(16)
-
+                    self.op_16.execute(self.ctx)
                 case Opcode.OP_NOP:
-                    pass
-
+                    self.op_nop.execute(self.ctx)
                 case Opcode.OP_IF:
-                    if branch_flag:
-                        self._require_stack_min_size(1)
-                        condition = self.stack.pop_bool()
-                        self.branch_stack.append(condition)
-                    else:
-                        self.branch_stack.append(False)
-
+                    self.op_if.execute(self.ctx)
                 case Opcode.OP_NOTIF:
-                    if branch_flag:
-                        self._require_stack_min_size(1)
-                        condition = not self.stack.pop_bool()
-                        self.branch_stack.append(condition)
-                    else:
-                        self.branch_stack.append(False)
-
+                    self.op_notif.execute(self.ctx)
                 case Opcode.OP_ELSE:
-                    if not self.branch_stack:
-                        raise ScriptExecutionError(
-                            ScriptError.SCRIPT_ERR_UNBALANCED_CONDITIONAL,
-                            "OP_ELSE without matching OP_IF",
-                        )
-                    raise NotImplementedError("TODO")
-
+                    self.op_else.execute(self.ctx)
                 case Opcode.OP_ENDIF:
-                    if not self.branch_stack:
-                        raise ScriptExecutionError(
-                            ScriptError.SCRIPT_ERR_UNBALANCED_CONDITIONAL,
-                            "OP_ENDIF without matching OP_IF",
-                        )
-                    _ = self.branch_stack.pop()
-
+                    self.op_endif.execute(self.ctx)
                 case Opcode.OP_VERIFY:
-                    self._require_stack_min_size(1)
-                    value = self.stack.pop_bool()
-                    if not value:
-                        raise ScriptExecutionError(
-                            ScriptError.SCRIPT_ERR_VERIFY,
-                            "OP_VERIFY failed: top stack item evaluated to false",
-                        )
-
+                    self.op_verify.execute(self.ctx)
                 case Opcode.OP_RETURN:
-                    # TODO consider IF branche
-                    raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_OP_RETURN,
-                        "Encountered OP_RETURN",
-                    )
-
+                    self.op_return.execute(self.ctx)
                 case Opcode.OP_TOALTSTACK:
-                    self._require_stack_min_size(1)
-                    self.altstack.push(self.stack.pop())
-
+                    self.op_toaltstack.execute(self.ctx)
                 case Opcode.OP_FROMALTSTACK:
-                    self._require_altstack_min_size(1)
-                    self.stack.push(self.altstack.pop())
-
+                    self.op_fromaltstack.execute(self.ctx)
                 case Opcode.OP_IFDUP:
-                    self._require_stack_min_size(1)
-                    if self.stack.peek_bool():
-                        self.stack.push(self.stack.peek())
-
+                    self.op_ifdup.execute(self.ctx)
                 case Opcode.OP_DEPTH:
-                    self.stack.push_num(len(self.stack))
-
+                    self.op_depth.execute(self.ctx)
                 case Opcode.OP_DROP:
-                    self._require_stack_min_size(1)
-                    _ = self.stack.pop()
-
+                    self.op_drop.execute(self.ctx)
                 case Opcode.OP_DUP:
-                    self._require_stack_min_size(1)
-                    self.stack.push(self.stack.peek())
-
+                    self.op_dup.execute(self.ctx)
                 case Opcode.OP_NIP:
-                    # [..., a, b] => [..., b]
-                    self._require_stack_min_size(2)
-                    _ = self.stack.remove_at(1)
-
+                    self.op_nip.execute(self.ctx)
                 case Opcode.OP_OVER:
-                    # [..., a, b] => [..., a, b, a]
-                    self._require_stack_min_size(2)
-                    self.stack.push(self.stack.peek(1))
-
+                    self.op_over.execute(self.ctx)
                 case Opcode.OP_PICK:
-                    # [..., item(depth=n), ...] => [..., item(depth=n), ..., item]
-                    self._require_stack_min_size(1)
-                    n = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    if n < 0 or n >= len(self.stack):
-                        raise ScriptExecutionError(
-                            ScriptError.SCRIPT_ERR_INVALID_STACK_OPERATION
-                        )
-                    self.stack.push(self.stack.peek(n))
-
+                    self.op_pick.execute(self.ctx)
                 case Opcode.OP_ROLL:
-                    # [..., item(depth=n), ...] => [..., (removed), ..., item]
-                    self._require_stack_min_size(1)
-                    n = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    if n < 0 or n >= len(self.stack):
-                        raise ScriptExecutionError(
-                            ScriptError.SCRIPT_ERR_INVALID_STACK_OPERATION
-                        )
-                    self.stack.push(self.stack.remove_at(n))
-
+                    self.op_roll.execute(self.ctx)
                 case Opcode.OP_ROT:
-                    # [..., a, b, c] => [..., b, c, a]
-                    self._require_stack_min_size(3)
-                    self.stack.push(self.stack.remove_at(2))
-
+                    self.op_rot.execute(self.ctx)
                 case Opcode.OP_SWAP:
-                    # [..., a, b] => [..., b, a]
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop()
-                    a = self.stack.pop()
-                    self.stack.push(b)
-                    self.stack.push(a)
-
+                    self.op_swap.execute(self.ctx)
                 case Opcode.OP_TUCK:
-                    # [..., a, b] => [..., b, a, b]
-                    self._require_stack_min_size(2)
-                    top = self.stack.peek(0)
-                    self.stack.insert_at(2, top)
-
+                    self.op_tuck.execute(self.ctx)
                 case Opcode.OP_2DROP:
-                    # [..., a, b] => [...]
-                    self._require_stack_min_size(2)
-                    _ = self.stack.pop()
-                    _ = self.stack.pop()
-
+                    self.op_2drop.execute(self.ctx)
                 case Opcode.OP_2DUP:
-                    # [..., a, b] => [..., a, b, a, b]
-                    self._require_stack_min_size(2)
-                    a = self.stack.peek(1)
-                    b = self.stack.peek(0)
-                    self.stack.push(a)
-                    self.stack.push(b)
-
+                    self.op_2dup.execute(self.ctx)
                 case Opcode.OP_3DUP:
-                    # [..., a, b, c] => [..., a, b, c, a, b, c]
-                    self._require_stack_min_size(3)
-                    a = self.stack.peek(2)
-                    b = self.stack.peek(1)
-                    c = self.stack.peek(0)
-                    self.stack.push(a)
-                    self.stack.push(b)
-                    self.stack.push(c)
-
+                    self.op_3dup.execute(self.ctx)
                 case Opcode.OP_2OVER:
-                    # [..., a, b, c, d] => [..., a, b, c, d, a, b]
-                    self._require_stack_min_size(4)
-                    a = self.stack.peek(3)
-                    b = self.stack.peek(2)
-                    self.stack.push(a)
-                    self.stack.push(b)
-
+                    self.op_2over.execute(self.ctx)
                 case Opcode.OP_2ROT:
-                    # [..., a, b, c, d, e, f] => [..., c, d, e, f, a, b]
-                    self._require_stack_min_size(6)
-                    a = self.stack.remove_at(5)
-                    b = self.stack.remove_at(4)
-                    self.stack.push(a)
-                    self.stack.push(b)
-
+                    self.op_2rot.execute(self.ctx)
                 case Opcode.OP_2SWAP:
-                    # [..., a, b, c, d] => [..., c, d, a, b]
-                    self._require_stack_min_size(4)
-                    a = self.stack.remove_at(3)
-                    b = self.stack.remove_at(2)
-                    self.stack.push(a)
-                    self.stack.push(b)
-
+                    self.op_2swap.execute(self.ctx)
                 case Opcode.OP_CAT:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop()
-                    a = self.stack.pop()
-                    self.stack.push(a + b)
-
+                    self.op_cat.execute(self.ctx)
                 case Opcode.OP_SUBSTR:
-                    self._require_stack_min_size(3)
-                    size = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    begin = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    if begin < 0 or size < 0:
-                        raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
-                    data = self.stack.pop()
-                    self.stack.push(data[begin : begin + size])
-
+                    self.op_substr.execute(self.ctx)
                 case Opcode.OP_LEFT:
-                    self._require_stack_min_size(2)
-                    size = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    if size < 0:
-                        raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
-                    data = self.stack.pop()
-                    self.stack.push(data[:size])
-
+                    self.op_left.execute(self.ctx)
                 case Opcode.OP_RIGHT:
-                    self._require_stack_min_size(2)
-                    size = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    if size < 0:
-                        raise ScriptExecutionError(ScriptError.SCRIPT_ERR_UNKNOWN_ERROR)
-                    data = self.stack.pop()
-                    self.stack.push(data[-size:] if size else b"")
-
+                    self.op_right.execute(self.ctx)
                 case Opcode.OP_SIZE:
-                    self._require_stack_min_size(1)
-                    self.stack.push_num(len(self.stack.peek()))
-
+                    self.op_size.execute(self.ctx)
                 case Opcode.OP_INVERT:
-                    self._require_stack_min_size(1)
-                    data = self.stack.pop()
-                    self.stack.push(bytes(~b & 0xFF for b in data))
-
+                    self.op_invert.execute(self.ctx)
                 case Opcode.OP_AND:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop()
-                    a = self.stack.pop()
-                    if len(a) != len(b):
-                        raise ScriptExecutionError(
-                            ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
-                            "Bitwise operands must have equal lengths",
-                        )
-                    self.stack.push(bytes(x & y for x, y in zip(a, b)))
-
+                    self.op_and.execute(self.ctx)
                 case Opcode.OP_OR:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop()
-                    a = self.stack.pop()
-                    if len(a) != len(b):
-                        raise ScriptExecutionError(
-                            ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
-                            "Bitwise operands must have equal lengths",
-                        )
-                    self.stack.push(bytes(x | y for x, y in zip(a, b)))
-
+                    self.op_or.execute(self.ctx)
                 case Opcode.OP_XOR:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop()
-                    a = self.stack.pop()
-                    if len(a) != len(b):
-                        raise ScriptExecutionError(
-                            ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
-                            "Bitwise operands must have equal lengths",
-                        )
-                    self.stack.push(bytes(x ^ y for x, y in zip(a, b)))
-
+                    self.op_xor.execute(self.ctx)
                 case Opcode.OP_EQUAL:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop()
-                    a = self.stack.pop()
-                    self.stack.push_bool(a == b)
-
+                    self.op_equal.execute(self.ctx)
                 case Opcode.OP_EQUALVERIFY:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop()
-                    a = self.stack.pop()
-                    if a != b:
-                        raise ScriptExecutionError(ScriptError.SCRIPT_ERR_EQUALVERIFY)
-
+                    self.op_equalverify.execute(self.ctx)
                 case Opcode.OP_1ADD:
-                    self._require_stack_min_size(1)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_num(a + 1)
-
+                    self.op_1add.execute(self.ctx)
                 case Opcode.OP_1SUB:
-                    self._require_stack_min_size(1)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_num(a - 1)
-
+                    self.op_1sub.execute(self.ctx)
                 case Opcode.OP_2MUL:
-                    self._require_stack_min_size(1)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_num(a * 2)
-
+                    self.op_2mul.execute(self.ctx)
                 case Opcode.OP_2DIV:
-                    self._require_stack_min_size(1)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_num(int(a / 2))
-
+                    self.op_2div.execute(self.ctx)
                 case Opcode.OP_NEGATE:
-                    self._require_stack_min_size(1)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_num(-a)
-
+                    self.op_negate.execute(self.ctx)
                 case Opcode.OP_ABS:
-                    self._require_stack_min_size(1)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_num(abs(a))
-
+                    self.op_abs.execute(self.ctx)
                 case Opcode.OP_NOT:
-                    self._require_stack_min_size(1)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_bool(a == 0)
-
+                    self.op_not.execute(self.ctx)
                 case Opcode.OP_0NOTEQUAL:
-                    self._require_stack_min_size(1)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_bool(a != 0)
-
+                    self.op_0notequal.execute(self.ctx)
                 case Opcode.OP_ADD:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_num(a + b)
-
+                    self.op_add.execute(self.ctx)
                 case Opcode.OP_SUB:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_num(a - b)
-
+                    self.op_sub.execute(self.ctx)
                 case Opcode.OP_MUL:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_num(a * b)
-
+                    self.op_mul.execute(self.ctx)
                 case Opcode.OP_DIV:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    if b == 0:
-                        raise ScriptExecutionError(
-                            ScriptError.SCRIPT_ERR_UNKNOWN_ERROR, "Division by zero"
-                        )
-                    self.stack.push_num(int(a / b))
-
+                    self.op_div.execute(self.ctx)
                 case Opcode.OP_MOD:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    if b == 0:
-                        raise ScriptExecutionError(
-                            ScriptError.SCRIPT_ERR_UNKNOWN_ERROR, "Modulo by zero"
-                        )
-                    rem = a - int(a / b) * b
-                    self.stack.push_num(rem)
-
+                    self.op_mod.execute(self.ctx)
                 case Opcode.OP_LSHIFT:
-                    self._require_stack_min_size(2)
-                    shift = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    value = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    if shift < 0:
-                        raise ScriptExecutionError(
-                            ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
-                            "Shift amount must not be negative",
-                        )
-                    self.stack.push_num(value << shift)
-
+                    self.op_lshift.execute(self.ctx)
                 case Opcode.OP_RSHIFT:
-                    self._require_stack_min_size(2)
-                    shift = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    value = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    if shift < 0:
-                        raise ScriptExecutionError(
-                            ScriptError.SCRIPT_ERR_UNKNOWN_ERROR,
-                            "Shift amount must not be negative",
-                        )
-                    sign = -1 if value < 0 else 1
-                    result = (abs(value) >> shift) * sign
-                    self.stack.push_num(result)
-
+                    self.op_rshift.execute(self.ctx)
                 case Opcode.OP_BOOLAND:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_bool(a != 0 and b != 0)
-
+                    self.op_booland.execute(self.ctx)
                 case Opcode.OP_BOOLOR:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_bool(a != 0 or b != 0)
-
+                    self.op_boolor.execute(self.ctx)
                 case Opcode.OP_NUMEQUAL:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_bool(a == b)
-
+                    self.op_numequal.execute(self.ctx)
                 case Opcode.OP_NUMEQUALVERIFY:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    if a != b:
-                        raise ScriptExecutionError(
-                            ScriptError.SCRIPT_ERR_NUMEQUALVERIFY
-                        )
-
+                    self.op_numequalverify.execute(self.ctx)
                 case Opcode.OP_NUMNOTEQUAL:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_bool(a != b)
-
+                    self.op_numnotequal.execute(self.ctx)
                 case Opcode.OP_LESSTHAN:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_bool(a < b)
-
+                    self.op_lessthan.execute(self.ctx)
                 case Opcode.OP_GREATERTHAN:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_bool(a > b)
-
+                    self.op_greaterthan.execute(self.ctx)
                 case Opcode.OP_LESSTHANOREQUAL:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_bool(a <= b)
-
+                    self.op_lessthanorequal.execute(self.ctx)
                 case Opcode.OP_GREATERTHANOREQUAL:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_bool(a >= b)
-
+                    self.op_greaterthanorequal.execute(self.ctx)
                 case Opcode.OP_MIN:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_num(min(a, b))
-
+                    self.op_min.execute(self.ctx)
                 case Opcode.OP_MAX:
-                    self._require_stack_min_size(2)
-                    b = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    a = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_num(max(a, b))
-
+                    self.op_max.execute(self.ctx)
                 case Opcode.OP_WITHIN:
-                    self._require_stack_min_size(3)
-                    max_value = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    min_value = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    x = self.stack.pop_num(require_minimal=False, max_size=1024)
-                    self.stack.push_bool(min_value <= x < max_value)
-
+                    self.op_within.execute(self.ctx)
                 case Opcode.OP_RIPEMD160:
-                    self._require_stack_min_size(1)
-                    self.stack.push(ScriptCrypto.ripemd160(self.stack.pop()))
-
+                    self.op_ripemd160.execute(self.ctx)
                 case Opcode.OP_SHA1:
-                    self._require_stack_min_size(1)
-                    self.stack.push(ScriptCrypto.sha1(self.stack.pop()))
-
+                    self.op_sha1.execute(self.ctx)
                 case Opcode.OP_SHA256:
-                    self._require_stack_min_size(1)
-                    self.stack.push(ScriptCrypto.sha256(self.stack.pop()))
-
+                    self.op_sha256.execute(self.ctx)
                 case Opcode.OP_HASH160:
-                    self._require_stack_min_size(1)
-                    self.stack.push(ScriptCrypto.hash160(self.stack.pop()))
-
+                    self.op_hash160.execute(self.ctx)
                 case Opcode.OP_HASH256:
-                    self._require_stack_min_size(1)
-                    self.stack.push(ScriptCrypto.hash256(self.stack.pop()))
-
+                    self.op_hash256.execute(self.ctx)
                 case Opcode.OP_CODESEPARATOR:
-                    raise NotImplementedError("TODO")
-
+                    self.op_codeseparator.execute(self.ctx)
                 case Opcode.OP_CHECKSIG:
-                    raise NotImplementedError("TODO")
-
+                    self.op_checksig.execute(self.ctx)
                 case Opcode.OP_CHECKSIGVERIFY:
-                    raise NotImplementedError("TODO")
-
+                    self.op_checksigverify.execute(self.ctx)
                 case Opcode.OP_CHECKMULTISIG:
-                    raise NotImplementedError("TODO")
-
+                    self.op_checkmultisig.execute(self.ctx)
                 case Opcode.OP_CHECKMULTISIGVERIFY:
-                    raise NotImplementedError("TODO")
-
+                    self.op_checkmultisigverify.execute(self.ctx)
                 case Opcode.OP_CHECKSIGADD:
-                    raise NotImplementedError("TODO")
-
+                    self.op_checksigadd.execute(self.ctx)
                 case Opcode.OP_CHECKLOCKTIMEVERIFY:  # OP_NOP2
-                    raise NotImplementedError("TODO")
-
+                    self.op_checklocktimeverify.execute(self.ctx)
                 case Opcode.OP_CHECKSEQUENCEVERIFY:  # OP_NOP3
-                    raise NotImplementedError("TODO")
-
+                    self.op_checksequenceverify.execute(self.ctx)
                 case Opcode.OP_RESERVED:
-                    raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_BAD_OPCODE,
-                        f"Encountered reserved/illegal opcode: {opcode.name}",
-                    )
-
+                    self.op_reserved.execute(self.ctx)
                 case Opcode.OP_VER:
-                    raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_BAD_OPCODE,
-                        f"Encountered reserved/illegal opcode: {opcode.name}",
-                    )
-
+                    self.op_ver.execute(self.ctx)
                 case Opcode.OP_VERIF:
-                    raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_BAD_OPCODE,
-                        f"Encountered reserved/illegal opcode: {opcode.name}",
-                    )
-
+                    self.op_verif.execute(self.ctx)
                 case Opcode.OP_VERNOTIF:
-                    raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_BAD_OPCODE,
-                        f"Encountered reserved/illegal opcode: {opcode.name}",
-                    )
-
+                    self.op_vernotif.execute(self.ctx)
                 case Opcode.OP_RESERVED1:
-                    raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_BAD_OPCODE,
-                        f"Encountered reserved/illegal opcode: {opcode.name}",
-                    )
-
+                    self.op_reserved1.execute(self.ctx)
                 case Opcode.OP_RESERVED2:
-                    raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_BAD_OPCODE,
-                        f"Encountered reserved/illegal opcode: {opcode.name}",
-                    )
-
+                    self.op_reserved2.execute(self.ctx)
                 case Opcode.OP_NOP1:
-                    pass
-
+                    self.op_nop1.execute(self.ctx)
                 case Opcode.OP_NOP4:
-                    pass
-
+                    self.op_nop4.execute(self.ctx)
                 case Opcode.OP_NOP5:
-                    pass
-
+                    self.op_nop5.execute(self.ctx)
                 case Opcode.OP_NOP6:
-                    pass
-
+                    self.op_nop6.execute(self.ctx)
                 case Opcode.OP_NOP7:
-                    pass
-
+                    self.op_nop7.execute(self.ctx)
                 case Opcode.OP_NOP8:
-                    pass
-
+                    self.op_nop8.execute(self.ctx)
                 case Opcode.OP_NOP9:
-                    pass
-
+                    self.op_nop9.execute(self.ctx)
                 case Opcode.OP_NOP10:
-                    pass
-
+                    self.op_nop10.execute(self.ctx)
                 case Opcode.OP_INVALIDOPCODE:
-                    raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_BAD_OPCODE,
-                        "Encountered OP_INVALIDOPCODE (0xFF)",
-                    )
+                    self.op_invalidopcode.execute(self.ctx)
 
                 case _:
                     raise ScriptExecutionError(
@@ -1256,17 +2182,7 @@ class ScriptInterpreter:
                         f"Unhandled opcode: {opcode.name}",
                     )
         except ScriptExecutionError as e:
-            self.state = self.Terminated(error=e.error)
-
-    def _require_stack_min_size(self, min_size: int) -> None:
-        if len(self.stack) < min_size:
-            raise ScriptExecutionError(ScriptError.SCRIPT_ERR_INVALID_STACK_OPERATION)
-
-    def _require_altstack_min_size(self, min_size: int) -> None:
-        if len(self.altstack) < min_size:
-            raise ScriptExecutionError(
-                ScriptError.SCRIPT_ERR_INVALID_ALTSTACK_OPERATION
-            )
+            self.ctx.state = ScriptContext.Terminated(error=e.error)
 
 
 class Prevout(TypedDict):
