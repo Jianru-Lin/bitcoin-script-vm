@@ -594,6 +594,7 @@ class ScriptContext:
     altstack: ScriptStack
     branch_stack: list[bool]
     state: State
+    current_token: ScriptToken | None = None
 
     def __init__(self, stack: ScriptStack | None = None) -> None:
         self.stack = stack if stack is not None else ScriptStack()
@@ -621,7 +622,9 @@ class ScriptContext:
 class OP_PUSHDATA_DIRECT:
     opcode: Opcode = Opcode.OP_PUSHDATA_DIRECT
 
-    def execute(self, ctx: ScriptContext, data: bytes) -> None:
+    def execute(self, ctx: ScriptContext) -> None:
+        assert ctx.current_token is not None and ctx.current_token.data is not None
+        data = ctx.current_token.data
         ctx.stack.push(data)
 
 
@@ -629,7 +632,9 @@ class OP_PUSHDATA_DIRECT:
 class OP_PUSHDATA1:
     opcode: Opcode = Opcode.OP_PUSHDATA1
 
-    def execute(self, ctx: ScriptContext, data: bytes) -> None:
+    def execute(self, ctx: ScriptContext) -> None:
+        assert ctx.current_token is not None and ctx.current_token.data is not None
+        data = ctx.current_token.data
         ctx.stack.push(data)
 
 
@@ -637,7 +642,9 @@ class OP_PUSHDATA1:
 class OP_PUSHDATA2:
     opcode: Opcode = Opcode.OP_PUSHDATA2
 
-    def execute(self, ctx: ScriptContext, data: bytes) -> None:
+    def execute(self, ctx: ScriptContext) -> None:
+        assert ctx.current_token is not None and ctx.current_token.data is not None
+        data = ctx.current_token.data
         ctx.stack.push(data)
 
 
@@ -645,7 +652,9 @@ class OP_PUSHDATA2:
 class OP_PUSHDATA4:
     opcode: Opcode = Opcode.OP_PUSHDATA4
 
-    def execute(self, ctx: ScriptContext, data: bytes) -> None:
+    def execute(self, ctx: ScriptContext) -> None:
+        assert ctx.current_token is not None and ctx.current_token.data is not None
+        data = ctx.current_token.data
         ctx.stack.push(data)
 
 
@@ -1933,6 +1942,7 @@ class ScriptInterpreter:
     def _step(self, token: ScriptToken) -> None:
         try:
             opcode = token.opcode
+            self.ctx.current_token = token
 
             if not self.ctx.branch_flag() and opcode not in (
                 Opcode.OP_IF,
@@ -1944,17 +1954,13 @@ class ScriptInterpreter:
 
             match opcode:
                 case Opcode.OP_PUSHDATA_DIRECT:
-                    assert token.data is not None
-                    self.op_pushdata_direct.execute(self.ctx, token.data)
+                    self.op_pushdata_direct.execute(self.ctx)
                 case Opcode.OP_PUSHDATA1:
-                    assert token.data is not None
-                    self.op_pushdata1.execute(self.ctx, token.data)
+                    self.op_pushdata1.execute(self.ctx)
                 case Opcode.OP_PUSHDATA2:
-                    assert token.data is not None
-                    self.op_pushdata2.execute(self.ctx, token.data)
+                    self.op_pushdata2.execute(self.ctx)
                 case Opcode.OP_PUSHDATA4:
-                    assert token.data is not None
-                    self.op_pushdata4.execute(self.ctx, token.data)
+                    self.op_pushdata4.execute(self.ctx)
                 case Opcode.OP_1NEGATE:
                     self.op_1negate.execute(self.ctx)
                 case Opcode.OP_0:  # OP_FALSE
