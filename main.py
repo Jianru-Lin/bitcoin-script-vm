@@ -1,7 +1,7 @@
 import hashlib
 import random
 import socket
-from abc import ABC
+from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from dataclasses import dataclass
 from enum import IntEnum, IntFlag
@@ -618,8 +618,16 @@ class ScriptContext:
         )  # [] => True, [True] => True, [True, ..., True] => True
 
 
+class BaseOp(ABC):
+    opcode: Opcode
+
+    @abstractmethod
+    def execute(self, ctx: ScriptContext) -> None:
+        pass
+
+
 @dataclass(frozen=True)
-class OP_PUSHDATA_DIRECT:
+class OP_PUSHDATA_DIRECT(BaseOp):
     opcode: Opcode = Opcode.OP_PUSHDATA_DIRECT
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -629,7 +637,7 @@ class OP_PUSHDATA_DIRECT:
 
 
 @dataclass(frozen=True)
-class OP_PUSHDATA1:
+class OP_PUSHDATA1(BaseOp):
     opcode: Opcode = Opcode.OP_PUSHDATA1
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -639,7 +647,7 @@ class OP_PUSHDATA1:
 
 
 @dataclass(frozen=True)
-class OP_PUSHDATA2:
+class OP_PUSHDATA2(BaseOp):
     opcode: Opcode = Opcode.OP_PUSHDATA2
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -649,7 +657,7 @@ class OP_PUSHDATA2:
 
 
 @dataclass(frozen=True)
-class OP_PUSHDATA4:
+class OP_PUSHDATA4(BaseOp):
     opcode: Opcode = Opcode.OP_PUSHDATA4
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -659,7 +667,7 @@ class OP_PUSHDATA4:
 
 
 @dataclass(frozen=True)
-class OP_1NEGATE:
+class OP_1NEGATE(BaseOp):
     opcode: Opcode = Opcode.OP_1NEGATE
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -667,7 +675,7 @@ class OP_1NEGATE:
 
 
 @dataclass(frozen=True)
-class OP_0:  # OP_FALSE
+class OP_0(BaseOp):  # OP_FALSE
     opcode: Opcode = Opcode.OP_0
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -675,7 +683,7 @@ class OP_0:  # OP_FALSE
 
 
 @dataclass(frozen=True)
-class OP_1:  # OP_TRUE
+class OP_1(BaseOp):  # OP_TRUE
     opcode: Opcode = Opcode.OP_1
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -683,7 +691,7 @@ class OP_1:  # OP_TRUE
 
 
 @dataclass(frozen=True)
-class OP_2:
+class OP_2(BaseOp):
     opcode: Opcode = Opcode.OP_2
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -691,7 +699,7 @@ class OP_2:
 
 
 @dataclass(frozen=True)
-class OP_3:
+class OP_3(BaseOp):
     opcode: Opcode = Opcode.OP_3
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -699,7 +707,7 @@ class OP_3:
 
 
 @dataclass(frozen=True)
-class OP_4:
+class OP_4(BaseOp):
     opcode: Opcode = Opcode.OP_4
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -707,7 +715,7 @@ class OP_4:
 
 
 @dataclass(frozen=True)
-class OP_5:
+class OP_5(BaseOp):
     opcode: Opcode = Opcode.OP_5
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -715,7 +723,7 @@ class OP_5:
 
 
 @dataclass(frozen=True)
-class OP_6:
+class OP_6(BaseOp):
     opcode: Opcode = Opcode.OP_6
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -723,7 +731,7 @@ class OP_6:
 
 
 @dataclass(frozen=True)
-class OP_7:
+class OP_7(BaseOp):
     opcode: Opcode = Opcode.OP_7
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -731,7 +739,7 @@ class OP_7:
 
 
 @dataclass(frozen=True)
-class OP_8:
+class OP_8(BaseOp):
     opcode: Opcode = Opcode.OP_8
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -739,7 +747,7 @@ class OP_8:
 
 
 @dataclass(frozen=True)
-class OP_9:
+class OP_9(BaseOp):
     opcode: Opcode = Opcode.OP_9
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -747,7 +755,7 @@ class OP_9:
 
 
 @dataclass(frozen=True)
-class OP_10:
+class OP_10(BaseOp):
     opcode: Opcode = Opcode.OP_10
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -755,7 +763,7 @@ class OP_10:
 
 
 @dataclass(frozen=True)
-class OP_11:
+class OP_11(BaseOp):
     opcode: Opcode = Opcode.OP_11
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -763,7 +771,7 @@ class OP_11:
 
 
 @dataclass(frozen=True)
-class OP_12:
+class OP_12(BaseOp):
     opcode: Opcode = Opcode.OP_12
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -771,7 +779,7 @@ class OP_12:
 
 
 @dataclass(frozen=True)
-class OP_13:
+class OP_13(BaseOp):
     opcode: Opcode = Opcode.OP_13
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -779,7 +787,7 @@ class OP_13:
 
 
 @dataclass(frozen=True)
-class OP_14:
+class OP_14(BaseOp):
     opcode: Opcode = Opcode.OP_14
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -787,7 +795,7 @@ class OP_14:
 
 
 @dataclass(frozen=True)
-class OP_15:
+class OP_15(BaseOp):
     opcode: Opcode = Opcode.OP_15
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -795,7 +803,7 @@ class OP_15:
 
 
 @dataclass(frozen=True)
-class OP_16:
+class OP_16(BaseOp):
     opcode: Opcode = Opcode.OP_16
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -803,7 +811,7 @@ class OP_16:
 
 
 @dataclass(frozen=True)
-class OP_NOP:
+class OP_NOP(BaseOp):
     opcode: Opcode = Opcode.OP_NOP
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -811,7 +819,7 @@ class OP_NOP:
 
 
 @dataclass(frozen=True)
-class OP_IF:
+class OP_IF(BaseOp):
     opcode: Opcode = Opcode.OP_IF
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -824,7 +832,7 @@ class OP_IF:
 
 
 @dataclass(frozen=True)
-class OP_NOTIF:
+class OP_NOTIF(BaseOp):
     opcode: Opcode = Opcode.OP_NOTIF
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -837,7 +845,7 @@ class OP_NOTIF:
 
 
 @dataclass(frozen=True)
-class OP_ELSE:
+class OP_ELSE(BaseOp):
     opcode: Opcode = Opcode.OP_ELSE
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -850,7 +858,7 @@ class OP_ELSE:
 
 
 @dataclass(frozen=True)
-class OP_ENDIF:
+class OP_ENDIF(BaseOp):
     opcode: Opcode = Opcode.OP_ENDIF
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -863,7 +871,7 @@ class OP_ENDIF:
 
 
 @dataclass(frozen=True)
-class OP_VERIFY:
+class OP_VERIFY(BaseOp):
     opcode: Opcode = Opcode.OP_VERIFY
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -877,7 +885,7 @@ class OP_VERIFY:
 
 
 @dataclass(frozen=True)
-class OP_RETURN:
+class OP_RETURN(BaseOp):
     opcode: Opcode = Opcode.OP_RETURN
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -889,7 +897,7 @@ class OP_RETURN:
 
 
 @dataclass(frozen=True)
-class OP_TOALTSTACK:
+class OP_TOALTSTACK(BaseOp):
     opcode: Opcode = Opcode.OP_TOALTSTACK
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -898,7 +906,7 @@ class OP_TOALTSTACK:
 
 
 @dataclass(frozen=True)
-class OP_FROMALTSTACK:
+class OP_FROMALTSTACK(BaseOp):
     opcode: Opcode = Opcode.OP_FROMALTSTACK
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -907,7 +915,7 @@ class OP_FROMALTSTACK:
 
 
 @dataclass(frozen=True)
-class OP_IFDUP:
+class OP_IFDUP(BaseOp):
     opcode: Opcode = Opcode.OP_IFDUP
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -917,7 +925,7 @@ class OP_IFDUP:
 
 
 @dataclass(frozen=True)
-class OP_DEPTH:
+class OP_DEPTH(BaseOp):
     opcode: Opcode = Opcode.OP_DEPTH
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -925,7 +933,7 @@ class OP_DEPTH:
 
 
 @dataclass(frozen=True)
-class OP_DROP:
+class OP_DROP(BaseOp):
     opcode: Opcode = Opcode.OP_DROP
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -934,7 +942,7 @@ class OP_DROP:
 
 
 @dataclass(frozen=True)
-class OP_DUP:
+class OP_DUP(BaseOp):
     opcode: Opcode = Opcode.OP_DUP
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -943,7 +951,7 @@ class OP_DUP:
 
 
 @dataclass(frozen=True)
-class OP_NIP:
+class OP_NIP(BaseOp):
     opcode: Opcode = Opcode.OP_NIP
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -953,7 +961,7 @@ class OP_NIP:
 
 
 @dataclass(frozen=True)
-class OP_OVER:
+class OP_OVER(BaseOp):
     opcode: Opcode = Opcode.OP_OVER
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -963,7 +971,7 @@ class OP_OVER:
 
 
 @dataclass(frozen=True)
-class OP_PICK:
+class OP_PICK(BaseOp):
     opcode: Opcode = Opcode.OP_PICK
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -976,7 +984,7 @@ class OP_PICK:
 
 
 @dataclass(frozen=True)
-class OP_ROLL:
+class OP_ROLL(BaseOp):
     opcode: Opcode = Opcode.OP_ROLL
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -989,7 +997,7 @@ class OP_ROLL:
 
 
 @dataclass(frozen=True)
-class OP_ROT:
+class OP_ROT(BaseOp):
     opcode: Opcode = Opcode.OP_ROT
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -999,7 +1007,7 @@ class OP_ROT:
 
 
 @dataclass(frozen=True)
-class OP_SWAP:
+class OP_SWAP(BaseOp):
     opcode: Opcode = Opcode.OP_SWAP
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1012,7 +1020,7 @@ class OP_SWAP:
 
 
 @dataclass(frozen=True)
-class OP_TUCK:
+class OP_TUCK(BaseOp):
     opcode: Opcode = Opcode.OP_TUCK
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1023,7 +1031,7 @@ class OP_TUCK:
 
 
 @dataclass(frozen=True)
-class OP_2DROP:
+class OP_2DROP(BaseOp):
     opcode: Opcode = Opcode.OP_2DROP
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1034,7 +1042,7 @@ class OP_2DROP:
 
 
 @dataclass(frozen=True)
-class OP_2DUP:
+class OP_2DUP(BaseOp):
     opcode: Opcode = Opcode.OP_2DUP
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1047,7 +1055,7 @@ class OP_2DUP:
 
 
 @dataclass(frozen=True)
-class OP_3DUP:
+class OP_3DUP(BaseOp):
     opcode: Opcode = Opcode.OP_3DUP
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1062,7 +1070,7 @@ class OP_3DUP:
 
 
 @dataclass(frozen=True)
-class OP_2OVER:
+class OP_2OVER(BaseOp):
     opcode: Opcode = Opcode.OP_2OVER
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1075,7 +1083,7 @@ class OP_2OVER:
 
 
 @dataclass(frozen=True)
-class OP_2ROT:
+class OP_2ROT(BaseOp):
     opcode: Opcode = Opcode.OP_2ROT
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1088,7 +1096,7 @@ class OP_2ROT:
 
 
 @dataclass(frozen=True)
-class OP_2SWAP:
+class OP_2SWAP(BaseOp):
     opcode: Opcode = Opcode.OP_2SWAP
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1101,7 +1109,7 @@ class OP_2SWAP:
 
 
 @dataclass(frozen=True)
-class OP_CAT:
+class OP_CAT(BaseOp):
     opcode: Opcode = Opcode.OP_CAT
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1112,7 +1120,7 @@ class OP_CAT:
 
 
 @dataclass(frozen=True)
-class OP_SUBSTR:
+class OP_SUBSTR(BaseOp):
     opcode: Opcode = Opcode.OP_SUBSTR
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1126,7 +1134,7 @@ class OP_SUBSTR:
 
 
 @dataclass(frozen=True)
-class OP_LEFT:
+class OP_LEFT(BaseOp):
     opcode: Opcode = Opcode.OP_LEFT
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1139,7 +1147,7 @@ class OP_LEFT:
 
 
 @dataclass(frozen=True)
-class OP_RIGHT:
+class OP_RIGHT(BaseOp):
     opcode: Opcode = Opcode.OP_RIGHT
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1152,7 +1160,7 @@ class OP_RIGHT:
 
 
 @dataclass(frozen=True)
-class OP_SIZE:
+class OP_SIZE(BaseOp):
     opcode: Opcode = Opcode.OP_SIZE
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1161,7 +1169,7 @@ class OP_SIZE:
 
 
 @dataclass(frozen=True)
-class OP_INVERT:
+class OP_INVERT(BaseOp):
     opcode: Opcode = Opcode.OP_INVERT
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1171,7 +1179,7 @@ class OP_INVERT:
 
 
 @dataclass(frozen=True)
-class OP_AND:
+class OP_AND(BaseOp):
     opcode: Opcode = Opcode.OP_AND
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1187,7 +1195,7 @@ class OP_AND:
 
 
 @dataclass(frozen=True)
-class OP_OR:
+class OP_OR(BaseOp):
     opcode: Opcode = Opcode.OP_OR
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1203,7 +1211,7 @@ class OP_OR:
 
 
 @dataclass(frozen=True)
-class OP_XOR:
+class OP_XOR(BaseOp):
     opcode: Opcode = Opcode.OP_XOR
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1219,7 +1227,7 @@ class OP_XOR:
 
 
 @dataclass(frozen=True)
-class OP_EQUAL:
+class OP_EQUAL(BaseOp):
     opcode: Opcode = Opcode.OP_EQUAL
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1230,7 +1238,7 @@ class OP_EQUAL:
 
 
 @dataclass(frozen=True)
-class OP_EQUALVERIFY:
+class OP_EQUALVERIFY(BaseOp):
     opcode: Opcode = Opcode.OP_EQUALVERIFY
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1242,7 +1250,7 @@ class OP_EQUALVERIFY:
 
 
 @dataclass(frozen=True)
-class OP_1ADD:
+class OP_1ADD(BaseOp):
     opcode: Opcode = Opcode.OP_1ADD
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1252,7 +1260,7 @@ class OP_1ADD:
 
 
 @dataclass(frozen=True)
-class OP_1SUB:
+class OP_1SUB(BaseOp):
     opcode: Opcode = Opcode.OP_1SUB
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1262,7 +1270,7 @@ class OP_1SUB:
 
 
 @dataclass(frozen=True)
-class OP_2MUL:
+class OP_2MUL(BaseOp):
     opcode: Opcode = Opcode.OP_2MUL
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1272,7 +1280,7 @@ class OP_2MUL:
 
 
 @dataclass(frozen=True)
-class OP_2DIV:
+class OP_2DIV(BaseOp):
     opcode: Opcode = Opcode.OP_2DIV
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1282,7 +1290,7 @@ class OP_2DIV:
 
 
 @dataclass(frozen=True)
-class OP_NEGATE:
+class OP_NEGATE(BaseOp):
     opcode: Opcode = Opcode.OP_NEGATE
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1292,7 +1300,7 @@ class OP_NEGATE:
 
 
 @dataclass(frozen=True)
-class OP_ABS:
+class OP_ABS(BaseOp):
     opcode: Opcode = Opcode.OP_ABS
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1302,7 +1310,7 @@ class OP_ABS:
 
 
 @dataclass(frozen=True)
-class OP_NOT:
+class OP_NOT(BaseOp):
     opcode: Opcode = Opcode.OP_NOT
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1312,7 +1320,7 @@ class OP_NOT:
 
 
 @dataclass(frozen=True)
-class OP_0NOTEQUAL:
+class OP_0NOTEQUAL(BaseOp):
     opcode: Opcode = Opcode.OP_0NOTEQUAL
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1322,7 +1330,7 @@ class OP_0NOTEQUAL:
 
 
 @dataclass(frozen=True)
-class OP_ADD:
+class OP_ADD(BaseOp):
     opcode: Opcode = Opcode.OP_ADD
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1333,7 +1341,7 @@ class OP_ADD:
 
 
 @dataclass(frozen=True)
-class OP_SUB:
+class OP_SUB(BaseOp):
     opcode: Opcode = Opcode.OP_SUB
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1344,7 +1352,7 @@ class OP_SUB:
 
 
 @dataclass(frozen=True)
-class OP_MUL:
+class OP_MUL(BaseOp):
     opcode: Opcode = Opcode.OP_MUL
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1355,7 +1363,7 @@ class OP_MUL:
 
 
 @dataclass(frozen=True)
-class OP_DIV:
+class OP_DIV(BaseOp):
     opcode: Opcode = Opcode.OP_DIV
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1370,7 +1378,7 @@ class OP_DIV:
 
 
 @dataclass(frozen=True)
-class OP_MOD:
+class OP_MOD(BaseOp):
     opcode: Opcode = Opcode.OP_MOD
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1386,7 +1394,7 @@ class OP_MOD:
 
 
 @dataclass(frozen=True)
-class OP_LSHIFT:
+class OP_LSHIFT(BaseOp):
     opcode: Opcode = Opcode.OP_LSHIFT
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1402,7 +1410,7 @@ class OP_LSHIFT:
 
 
 @dataclass(frozen=True)
-class OP_RSHIFT:
+class OP_RSHIFT(BaseOp):
     opcode: Opcode = Opcode.OP_RSHIFT
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1420,7 +1428,7 @@ class OP_RSHIFT:
 
 
 @dataclass(frozen=True)
-class OP_BOOLAND:
+class OP_BOOLAND(BaseOp):
     opcode: Opcode = Opcode.OP_BOOLAND
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1431,7 +1439,7 @@ class OP_BOOLAND:
 
 
 @dataclass(frozen=True)
-class OP_BOOLOR:
+class OP_BOOLOR(BaseOp):
     opcode: Opcode = Opcode.OP_BOOLOR
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1442,7 +1450,7 @@ class OP_BOOLOR:
 
 
 @dataclass(frozen=True)
-class OP_NUMEQUAL:
+class OP_NUMEQUAL(BaseOp):
     opcode: Opcode = Opcode.OP_NUMEQUAL
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1453,7 +1461,7 @@ class OP_NUMEQUAL:
 
 
 @dataclass(frozen=True)
-class OP_NUMEQUALVERIFY:
+class OP_NUMEQUALVERIFY(BaseOp):
     opcode: Opcode = Opcode.OP_NUMEQUALVERIFY
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1465,7 +1473,7 @@ class OP_NUMEQUALVERIFY:
 
 
 @dataclass(frozen=True)
-class OP_NUMNOTEQUAL:
+class OP_NUMNOTEQUAL(BaseOp):
     opcode: Opcode = Opcode.OP_NUMNOTEQUAL
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1476,7 +1484,7 @@ class OP_NUMNOTEQUAL:
 
 
 @dataclass(frozen=True)
-class OP_LESSTHAN:
+class OP_LESSTHAN(BaseOp):
     opcode: Opcode = Opcode.OP_LESSTHAN
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1487,7 +1495,7 @@ class OP_LESSTHAN:
 
 
 @dataclass(frozen=True)
-class OP_GREATERTHAN:
+class OP_GREATERTHAN(BaseOp):
     opcode: Opcode = Opcode.OP_GREATERTHAN
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1498,7 +1506,7 @@ class OP_GREATERTHAN:
 
 
 @dataclass(frozen=True)
-class OP_LESSTHANOREQUAL:
+class OP_LESSTHANOREQUAL(BaseOp):
     opcode: Opcode = Opcode.OP_LESSTHANOREQUAL
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1509,7 +1517,7 @@ class OP_LESSTHANOREQUAL:
 
 
 @dataclass(frozen=True)
-class OP_GREATERTHANOREQUAL:
+class OP_GREATERTHANOREQUAL(BaseOp):
     opcode: Opcode = Opcode.OP_GREATERTHANOREQUAL
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1520,7 +1528,7 @@ class OP_GREATERTHANOREQUAL:
 
 
 @dataclass(frozen=True)
-class OP_MIN:
+class OP_MIN(BaseOp):
     opcode: Opcode = Opcode.OP_MIN
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1531,7 +1539,7 @@ class OP_MIN:
 
 
 @dataclass(frozen=True)
-class OP_MAX:
+class OP_MAX(BaseOp):
     opcode: Opcode = Opcode.OP_MAX
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1542,7 +1550,7 @@ class OP_MAX:
 
 
 @dataclass(frozen=True)
-class OP_WITHIN:
+class OP_WITHIN(BaseOp):
     opcode: Opcode = Opcode.OP_WITHIN
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1554,7 +1562,7 @@ class OP_WITHIN:
 
 
 @dataclass(frozen=True)
-class OP_RIPEMD160:
+class OP_RIPEMD160(BaseOp):
     opcode: Opcode = Opcode.OP_RIPEMD160
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1563,7 +1571,7 @@ class OP_RIPEMD160:
 
 
 @dataclass(frozen=True)
-class OP_SHA1:
+class OP_SHA1(BaseOp):
     opcode: Opcode = Opcode.OP_SHA1
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1572,7 +1580,7 @@ class OP_SHA1:
 
 
 @dataclass(frozen=True)
-class OP_SHA256:
+class OP_SHA256(BaseOp):
     opcode: Opcode = Opcode.OP_SHA256
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1581,7 +1589,7 @@ class OP_SHA256:
 
 
 @dataclass(frozen=True)
-class OP_HASH160:
+class OP_HASH160(BaseOp):
     opcode: Opcode = Opcode.OP_HASH160
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1590,7 +1598,7 @@ class OP_HASH160:
 
 
 @dataclass(frozen=True)
-class OP_HASH256:
+class OP_HASH256(BaseOp):
     opcode: Opcode = Opcode.OP_HASH256
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1599,7 +1607,7 @@ class OP_HASH256:
 
 
 @dataclass(frozen=True)
-class OP_CODESEPARATOR:
+class OP_CODESEPARATOR(BaseOp):
     opcode: Opcode = Opcode.OP_CODESEPARATOR
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1607,7 +1615,7 @@ class OP_CODESEPARATOR:
 
 
 @dataclass(frozen=True)
-class OP_CHECKSIG:
+class OP_CHECKSIG(BaseOp):
     opcode: Opcode = Opcode.OP_CHECKSIG
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1615,7 +1623,7 @@ class OP_CHECKSIG:
 
 
 @dataclass(frozen=True)
-class OP_CHECKSIGVERIFY:
+class OP_CHECKSIGVERIFY(BaseOp):
     opcode: Opcode = Opcode.OP_CHECKSIGVERIFY
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1623,7 +1631,7 @@ class OP_CHECKSIGVERIFY:
 
 
 @dataclass(frozen=True)
-class OP_CHECKMULTISIG:
+class OP_CHECKMULTISIG(BaseOp):
     opcode: Opcode = Opcode.OP_CHECKMULTISIG
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1631,7 +1639,7 @@ class OP_CHECKMULTISIG:
 
 
 @dataclass(frozen=True)
-class OP_CHECKMULTISIGVERIFY:
+class OP_CHECKMULTISIGVERIFY(BaseOp):
     opcode: Opcode = Opcode.OP_CHECKMULTISIGVERIFY
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1639,7 +1647,7 @@ class OP_CHECKMULTISIGVERIFY:
 
 
 @dataclass(frozen=True)
-class OP_CHECKSIGADD:
+class OP_CHECKSIGADD(BaseOp):
     opcode: Opcode = Opcode.OP_CHECKSIGADD
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1647,7 +1655,7 @@ class OP_CHECKSIGADD:
 
 
 @dataclass(frozen=True)
-class OP_CHECKLOCKTIMEVERIFY:  # OP_NOP2
+class OP_CHECKLOCKTIMEVERIFY(BaseOp):  # OP_NOP2
     opcode: Opcode = Opcode.OP_CHECKLOCKTIMEVERIFY
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1655,7 +1663,7 @@ class OP_CHECKLOCKTIMEVERIFY:  # OP_NOP2
 
 
 @dataclass(frozen=True)
-class OP_CHECKSEQUENCEVERIFY:  # OP_NOP3
+class OP_CHECKSEQUENCEVERIFY(BaseOp):  # OP_NOP3
     opcode: Opcode = Opcode.OP_CHECKSEQUENCEVERIFY
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1663,7 +1671,7 @@ class OP_CHECKSEQUENCEVERIFY:  # OP_NOP3
 
 
 @dataclass(frozen=True)
-class OP_RESERVED:
+class OP_RESERVED(BaseOp):
     opcode: Opcode = Opcode.OP_RESERVED
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1674,7 +1682,7 @@ class OP_RESERVED:
 
 
 @dataclass(frozen=True)
-class OP_VER:
+class OP_VER(BaseOp):
     opcode: Opcode = Opcode.OP_VER
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1685,7 +1693,7 @@ class OP_VER:
 
 
 @dataclass(frozen=True)
-class OP_VERIF:
+class OP_VERIF(BaseOp):
     opcode: Opcode = Opcode.OP_VERIF
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1696,7 +1704,7 @@ class OP_VERIF:
 
 
 @dataclass(frozen=True)
-class OP_VERNOTIF:
+class OP_VERNOTIF(BaseOp):
     opcode: Opcode = Opcode.OP_VERNOTIF
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1707,7 +1715,7 @@ class OP_VERNOTIF:
 
 
 @dataclass(frozen=True)
-class OP_RESERVED1:
+class OP_RESERVED1(BaseOp):
     opcode: Opcode = Opcode.OP_RESERVED1
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1718,7 +1726,7 @@ class OP_RESERVED1:
 
 
 @dataclass(frozen=True)
-class OP_RESERVED2:
+class OP_RESERVED2(BaseOp):
     opcode: Opcode = Opcode.OP_RESERVED2
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1729,7 +1737,7 @@ class OP_RESERVED2:
 
 
 @dataclass(frozen=True)
-class OP_NOP1:
+class OP_NOP1(BaseOp):
     opcode: Opcode = Opcode.OP_NOP1
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1737,7 +1745,7 @@ class OP_NOP1:
 
 
 @dataclass(frozen=True)
-class OP_NOP4:
+class OP_NOP4(BaseOp):
     opcode: Opcode = Opcode.OP_NOP4
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1745,7 +1753,7 @@ class OP_NOP4:
 
 
 @dataclass(frozen=True)
-class OP_NOP5:
+class OP_NOP5(BaseOp):
     opcode: Opcode = Opcode.OP_NOP5
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1753,7 +1761,7 @@ class OP_NOP5:
 
 
 @dataclass(frozen=True)
-class OP_NOP6:
+class OP_NOP6(BaseOp):
     opcode: Opcode = Opcode.OP_NOP6
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1761,7 +1769,7 @@ class OP_NOP6:
 
 
 @dataclass(frozen=True)
-class OP_NOP7:
+class OP_NOP7(BaseOp):
     opcode: Opcode = Opcode.OP_NOP7
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1769,7 +1777,7 @@ class OP_NOP7:
 
 
 @dataclass(frozen=True)
-class OP_NOP8:
+class OP_NOP8(BaseOp):
     opcode: Opcode = Opcode.OP_NOP8
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1777,7 +1785,7 @@ class OP_NOP8:
 
 
 @dataclass(frozen=True)
-class OP_NOP9:
+class OP_NOP9(BaseOp):
     opcode: Opcode = Opcode.OP_NOP9
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1785,7 +1793,7 @@ class OP_NOP9:
 
 
 @dataclass(frozen=True)
-class OP_NOP10:
+class OP_NOP10(BaseOp):
     opcode: Opcode = Opcode.OP_NOP10
 
     def execute(self, ctx: ScriptContext) -> None:
@@ -1793,7 +1801,7 @@ class OP_NOP10:
 
 
 @dataclass(frozen=True)
-class OP_INVALIDOPCODE:
+class OP_INVALIDOPCODE(BaseOp):
     opcode: Opcode = Opcode.OP_INVALIDOPCODE
 
     def execute(self, ctx: ScriptContext) -> None:
