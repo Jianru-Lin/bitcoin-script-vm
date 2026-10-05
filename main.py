@@ -1925,125 +1925,143 @@ class OP_INVALIDOPCODE(BaseOp):
         )
 
 
+class InstructionSet:
+    _ops: dict[Opcode, BaseOp]
+
+    def __init__(self) -> None:
+        self._ops = {}
+        self._register_defaults()
+
+    def _register_defaults(self) -> None:
+        self.register(OP_PUSHDATA_DIRECT())
+        self.register(OP_PUSHDATA1())
+        self.register(OP_PUSHDATA2())
+        self.register(OP_PUSHDATA4())
+        self.register(OP_1NEGATE())
+        self.register(OP_0())
+        self.register(OP_1())
+        self.register(OP_2())
+        self.register(OP_3())
+        self.register(OP_4())
+        self.register(OP_5())
+        self.register(OP_6())
+        self.register(OP_7())
+        self.register(OP_8())
+        self.register(OP_9())
+        self.register(OP_10())
+        self.register(OP_11())
+        self.register(OP_12())
+        self.register(OP_13())
+        self.register(OP_14())
+        self.register(OP_15())
+        self.register(OP_16())
+        self.register(OP_NOP())
+        self.register(OP_IF())
+        self.register(OP_NOTIF())
+        self.register(OP_ELSE())
+        self.register(OP_ENDIF())
+        self.register(OP_VERIFY())
+        self.register(OP_RETURN())
+        self.register(OP_TOALTSTACK())
+        self.register(OP_FROMALTSTACK())
+        self.register(OP_IFDUP())
+        self.register(OP_DEPTH())
+        self.register(OP_DROP())
+        self.register(OP_DUP())
+        self.register(OP_NIP())
+        self.register(OP_OVER())
+        self.register(OP_PICK())
+        self.register(OP_ROLL())
+        self.register(OP_ROT())
+        self.register(OP_SWAP())
+        self.register(OP_TUCK())
+        self.register(OP_2DROP())
+        self.register(OP_2DUP())
+        self.register(OP_3DUP())
+        self.register(OP_2OVER())
+        self.register(OP_2ROT())
+        self.register(OP_2SWAP())
+        self.register(OP_CAT())
+        self.register(OP_SUBSTR())
+        self.register(OP_LEFT())
+        self.register(OP_RIGHT())
+        self.register(OP_SIZE())
+        self.register(OP_INVERT())
+        self.register(OP_AND())
+        self.register(OP_OR())
+        self.register(OP_XOR())
+        self.register(OP_EQUAL())
+        self.register(OP_EQUALVERIFY())
+        self.register(OP_1ADD())
+        self.register(OP_1SUB())
+        self.register(OP_2MUL())
+        self.register(OP_2DIV())
+        self.register(OP_NEGATE())
+        self.register(OP_ABS())
+        self.register(OP_NOT())
+        self.register(OP_0NOTEQUAL())
+        self.register(OP_ADD())
+        self.register(OP_SUB())
+        self.register(OP_MUL())
+        self.register(OP_DIV())
+        self.register(OP_MOD())
+        self.register(OP_LSHIFT())
+        self.register(OP_RSHIFT())
+        self.register(OP_BOOLAND())
+        self.register(OP_BOOLOR())
+        self.register(OP_NUMEQUAL())
+        self.register(OP_NUMEQUALVERIFY())
+        self.register(OP_NUMNOTEQUAL())
+        self.register(OP_LESSTHAN())
+        self.register(OP_GREATERTHAN())
+        self.register(OP_LESSTHANOREQUAL())
+        self.register(OP_GREATERTHANOREQUAL())
+        self.register(OP_MIN())
+        self.register(OP_MAX())
+        self.register(OP_WITHIN())
+        self.register(OP_RIPEMD160())
+        self.register(OP_SHA1())
+        self.register(OP_SHA256())
+        self.register(OP_HASH160())
+        self.register(OP_HASH256())
+        self.register(OP_CODESEPARATOR())
+        self.register(OP_CHECKSIG())
+        self.register(OP_CHECKSIGVERIFY())
+        self.register(OP_CHECKMULTISIG())
+        self.register(OP_CHECKMULTISIGVERIFY())
+        self.register(OP_CHECKSIGADD())
+        self.register(OP_CHECKLOCKTIMEVERIFY())
+        self.register(OP_CHECKSEQUENCEVERIFY())
+        self.register(OP_RESERVED())
+        self.register(OP_VER())
+        self.register(OP_VERIF())
+        self.register(OP_VERNOTIF())
+        self.register(OP_RESERVED1())
+        self.register(OP_RESERVED2())
+        self.register(OP_NOP1())
+        self.register(OP_NOP4())
+        self.register(OP_NOP5())
+        self.register(OP_NOP6())
+        self.register(OP_NOP7())
+        self.register(OP_NOP8())
+        self.register(OP_NOP9())
+        self.register(OP_NOP10())
+        self.register(OP_INVALIDOPCODE())
+
+    def register(self, op: BaseOp) -> None:
+        self._ops[op.opcode] = op
+
+    def get(self, opcode: Opcode) -> BaseOp | None:
+        return self._ops.get(opcode)
+
+
 class ScriptInterpreter:
     ctx: ScriptContext
-    op_pushdata_direct: OP_PUSHDATA_DIRECT = OP_PUSHDATA_DIRECT()
-    op_pushdata1: OP_PUSHDATA1 = OP_PUSHDATA1()
-    op_pushdata2: OP_PUSHDATA2 = OP_PUSHDATA2()
-    op_pushdata4: OP_PUSHDATA4 = OP_PUSHDATA4()
-    op_1negate: OP_1NEGATE = OP_1NEGATE()
-    op_0: OP_0 = OP_0()
-    op_1: OP_1 = OP_1()
-    op_2: OP_2 = OP_2()
-    op_3: OP_3 = OP_3()
-    op_4: OP_4 = OP_4()
-    op_5: OP_5 = OP_5()
-    op_6: OP_6 = OP_6()
-    op_7: OP_7 = OP_7()
-    op_8: OP_8 = OP_8()
-    op_9: OP_9 = OP_9()
-    op_10: OP_10 = OP_10()
-    op_11: OP_11 = OP_11()
-    op_12: OP_12 = OP_12()
-    op_13: OP_13 = OP_13()
-    op_14: OP_14 = OP_14()
-    op_15: OP_15 = OP_15()
-    op_16: OP_16 = OP_16()
-    op_nop: OP_NOP = OP_NOP()
-    op_if: OP_IF = OP_IF()
-    op_notif: OP_NOTIF = OP_NOTIF()
-    op_else: OP_ELSE = OP_ELSE()
-    op_endif: OP_ENDIF = OP_ENDIF()
-    op_verify: OP_VERIFY = OP_VERIFY()
-    op_return: OP_RETURN = OP_RETURN()
-    op_toaltstack: OP_TOALTSTACK = OP_TOALTSTACK()
-    op_fromaltstack: OP_FROMALTSTACK = OP_FROMALTSTACK()
-    op_ifdup: OP_IFDUP = OP_IFDUP()
-    op_depth: OP_DEPTH = OP_DEPTH()
-    op_drop: OP_DROP = OP_DROP()
-    op_dup: OP_DUP = OP_DUP()
-    op_nip: OP_NIP = OP_NIP()
-    op_over: OP_OVER = OP_OVER()
-    op_pick: OP_PICK = OP_PICK()
-    op_roll: OP_ROLL = OP_ROLL()
-    op_rot: OP_ROT = OP_ROT()
-    op_swap: OP_SWAP = OP_SWAP()
-    op_tuck: OP_TUCK = OP_TUCK()
-    op_2drop: OP_2DROP = OP_2DROP()
-    op_2dup: OP_2DUP = OP_2DUP()
-    op_3dup: OP_3DUP = OP_3DUP()
-    op_2over: OP_2OVER = OP_2OVER()
-    op_2rot: OP_2ROT = OP_2ROT()
-    op_2swap: OP_2SWAP = OP_2SWAP()
-    op_cat: OP_CAT = OP_CAT()
-    op_substr: OP_SUBSTR = OP_SUBSTR()
-    op_left: OP_LEFT = OP_LEFT()
-    op_right: OP_RIGHT = OP_RIGHT()
-    op_size: OP_SIZE = OP_SIZE()
-    op_invert: OP_INVERT = OP_INVERT()
-    op_and: OP_AND = OP_AND()
-    op_or: OP_OR = OP_OR()
-    op_xor: OP_XOR = OP_XOR()
-    op_equal: OP_EQUAL = OP_EQUAL()
-    op_equalverify: OP_EQUALVERIFY = OP_EQUALVERIFY()
-    op_1add: OP_1ADD = OP_1ADD()
-    op_1sub: OP_1SUB = OP_1SUB()
-    op_2mul: OP_2MUL = OP_2MUL()
-    op_2div: OP_2DIV = OP_2DIV()
-    op_negate: OP_NEGATE = OP_NEGATE()
-    op_abs: OP_ABS = OP_ABS()
-    op_not: OP_NOT = OP_NOT()
-    op_0notequal: OP_0NOTEQUAL = OP_0NOTEQUAL()
-    op_add: OP_ADD = OP_ADD()
-    op_sub: OP_SUB = OP_SUB()
-    op_mul: OP_MUL = OP_MUL()
-    op_div: OP_DIV = OP_DIV()
-    op_mod: OP_MOD = OP_MOD()
-    op_lshift: OP_LSHIFT = OP_LSHIFT()
-    op_rshift: OP_RSHIFT = OP_RSHIFT()
-    op_booland: OP_BOOLAND = OP_BOOLAND()
-    op_boolor: OP_BOOLOR = OP_BOOLOR()
-    op_numequal: OP_NUMEQUAL = OP_NUMEQUAL()
-    op_numequalverify: OP_NUMEQUALVERIFY = OP_NUMEQUALVERIFY()
-    op_numnotequal: OP_NUMNOTEQUAL = OP_NUMNOTEQUAL()
-    op_lessthan: OP_LESSTHAN = OP_LESSTHAN()
-    op_greaterthan: OP_GREATERTHAN = OP_GREATERTHAN()
-    op_lessthanorequal: OP_LESSTHANOREQUAL = OP_LESSTHANOREQUAL()
-    op_greaterthanorequal: OP_GREATERTHANOREQUAL = OP_GREATERTHANOREQUAL()
-    op_min: OP_MIN = OP_MIN()
-    op_max: OP_MAX = OP_MAX()
-    op_within: OP_WITHIN = OP_WITHIN()
-    op_ripemd160: OP_RIPEMD160 = OP_RIPEMD160()
-    op_sha1: OP_SHA1 = OP_SHA1()
-    op_sha256: OP_SHA256 = OP_SHA256()
-    op_hash160: OP_HASH160 = OP_HASH160()
-    op_hash256: OP_HASH256 = OP_HASH256()
-    op_codeseparator: OP_CODESEPARATOR = OP_CODESEPARATOR()
-    op_checksig: OP_CHECKSIG = OP_CHECKSIG()
-    op_checksigverify: OP_CHECKSIGVERIFY = OP_CHECKSIGVERIFY()
-    op_checkmultisig: OP_CHECKMULTISIG = OP_CHECKMULTISIG()
-    op_checkmultisigverify: OP_CHECKMULTISIGVERIFY = OP_CHECKMULTISIGVERIFY()
-    op_checksigadd: OP_CHECKSIGADD = OP_CHECKSIGADD()
-    op_checklocktimeverify: OP_CHECKLOCKTIMEVERIFY = OP_CHECKLOCKTIMEVERIFY()
-    op_checksequenceverify: OP_CHECKSEQUENCEVERIFY = OP_CHECKSEQUENCEVERIFY()
-    op_reserved: OP_RESERVED = OP_RESERVED()
-    op_ver: OP_VER = OP_VER()
-    op_verif: OP_VERIF = OP_VERIF()
-    op_vernotif: OP_VERNOTIF = OP_VERNOTIF()
-    op_reserved1: OP_RESERVED1 = OP_RESERVED1()
-    op_reserved2: OP_RESERVED2 = OP_RESERVED2()
-    op_nop1: OP_NOP1 = OP_NOP1()
-    op_nop4: OP_NOP4 = OP_NOP4()
-    op_nop5: OP_NOP5 = OP_NOP5()
-    op_nop6: OP_NOP6 = OP_NOP6()
-    op_nop7: OP_NOP7 = OP_NOP7()
-    op_nop8: OP_NOP8 = OP_NOP8()
-    op_nop9: OP_NOP9 = OP_NOP9()
-    op_nop10: OP_NOP10 = OP_NOP10()
-    op_invalidopcode: OP_INVALIDOPCODE = OP_INVALIDOPCODE()
+    instruction_set: InstructionSet
 
     def __init__(self, stack: ScriptStack | None = None) -> None:
         self.ctx = ScriptContext(stack)
+        self.instruction_set = InstructionSet()
 
     def execute(self, script_bytes: bytes) -> ScriptContext.Terminated:
         self.ctx.state = ScriptContext.Running()
@@ -2074,243 +2092,19 @@ class ScriptInterpreter:
             ):
                 return
 
-            match opcode:
-                case Opcode.OP_PUSHDATA_DIRECT:
-                    self.op_pushdata_direct.execute(self.ctx)
-                case Opcode.OP_PUSHDATA1:
-                    self.op_pushdata1.execute(self.ctx)
-                case Opcode.OP_PUSHDATA2:
-                    self.op_pushdata2.execute(self.ctx)
-                case Opcode.OP_PUSHDATA4:
-                    self.op_pushdata4.execute(self.ctx)
-                case Opcode.OP_1NEGATE:
-                    self.op_1negate.execute(self.ctx)
-                case Opcode.OP_0:  # OP_FALSE
-                    self.op_0.execute(self.ctx)
-                case Opcode.OP_1:  # OP_TRUE
-                    self.op_1.execute(self.ctx)
-                case Opcode.OP_2:
-                    self.op_2.execute(self.ctx)
-                case Opcode.OP_3:
-                    self.op_3.execute(self.ctx)
-                case Opcode.OP_4:
-                    self.op_4.execute(self.ctx)
-                case Opcode.OP_5:
-                    self.op_5.execute(self.ctx)
-                case Opcode.OP_6:
-                    self.op_6.execute(self.ctx)
-                case Opcode.OP_7:
-                    self.op_7.execute(self.ctx)
-                case Opcode.OP_8:
-                    self.op_8.execute(self.ctx)
-                case Opcode.OP_9:
-                    self.op_9.execute(self.ctx)
-                case Opcode.OP_10:
-                    self.op_10.execute(self.ctx)
-                case Opcode.OP_11:
-                    self.op_11.execute(self.ctx)
-                case Opcode.OP_12:
-                    self.op_12.execute(self.ctx)
-                case Opcode.OP_13:
-                    self.op_13.execute(self.ctx)
-                case Opcode.OP_14:
-                    self.op_14.execute(self.ctx)
-                case Opcode.OP_15:
-                    self.op_15.execute(self.ctx)
-                case Opcode.OP_16:
-                    self.op_16.execute(self.ctx)
-                case Opcode.OP_NOP:
-                    self.op_nop.execute(self.ctx)
-                case Opcode.OP_IF:
-                    self.op_if.execute(self.ctx)
-                case Opcode.OP_NOTIF:
-                    self.op_notif.execute(self.ctx)
-                case Opcode.OP_ELSE:
-                    self.op_else.execute(self.ctx)
-                case Opcode.OP_ENDIF:
-                    self.op_endif.execute(self.ctx)
-                case Opcode.OP_VERIFY:
-                    self.op_verify.execute(self.ctx)
-                case Opcode.OP_RETURN:
-                    self.op_return.execute(self.ctx)
-                case Opcode.OP_TOALTSTACK:
-                    self.op_toaltstack.execute(self.ctx)
-                case Opcode.OP_FROMALTSTACK:
-                    self.op_fromaltstack.execute(self.ctx)
-                case Opcode.OP_IFDUP:
-                    self.op_ifdup.execute(self.ctx)
-                case Opcode.OP_DEPTH:
-                    self.op_depth.execute(self.ctx)
-                case Opcode.OP_DROP:
-                    self.op_drop.execute(self.ctx)
-                case Opcode.OP_DUP:
-                    self.op_dup.execute(self.ctx)
-                case Opcode.OP_NIP:
-                    self.op_nip.execute(self.ctx)
-                case Opcode.OP_OVER:
-                    self.op_over.execute(self.ctx)
-                case Opcode.OP_PICK:
-                    self.op_pick.execute(self.ctx)
-                case Opcode.OP_ROLL:
-                    self.op_roll.execute(self.ctx)
-                case Opcode.OP_ROT:
-                    self.op_rot.execute(self.ctx)
-                case Opcode.OP_SWAP:
-                    self.op_swap.execute(self.ctx)
-                case Opcode.OP_TUCK:
-                    self.op_tuck.execute(self.ctx)
-                case Opcode.OP_2DROP:
-                    self.op_2drop.execute(self.ctx)
-                case Opcode.OP_2DUP:
-                    self.op_2dup.execute(self.ctx)
-                case Opcode.OP_3DUP:
-                    self.op_3dup.execute(self.ctx)
-                case Opcode.OP_2OVER:
-                    self.op_2over.execute(self.ctx)
-                case Opcode.OP_2ROT:
-                    self.op_2rot.execute(self.ctx)
-                case Opcode.OP_2SWAP:
-                    self.op_2swap.execute(self.ctx)
-                case Opcode.OP_CAT:
-                    self.op_cat.execute(self.ctx)
-                case Opcode.OP_SUBSTR:
-                    self.op_substr.execute(self.ctx)
-                case Opcode.OP_LEFT:
-                    self.op_left.execute(self.ctx)
-                case Opcode.OP_RIGHT:
-                    self.op_right.execute(self.ctx)
-                case Opcode.OP_SIZE:
-                    self.op_size.execute(self.ctx)
-                case Opcode.OP_INVERT:
-                    self.op_invert.execute(self.ctx)
-                case Opcode.OP_AND:
-                    self.op_and.execute(self.ctx)
-                case Opcode.OP_OR:
-                    self.op_or.execute(self.ctx)
-                case Opcode.OP_XOR:
-                    self.op_xor.execute(self.ctx)
-                case Opcode.OP_EQUAL:
-                    self.op_equal.execute(self.ctx)
-                case Opcode.OP_EQUALVERIFY:
-                    self.op_equalverify.execute(self.ctx)
-                case Opcode.OP_1ADD:
-                    self.op_1add.execute(self.ctx)
-                case Opcode.OP_1SUB:
-                    self.op_1sub.execute(self.ctx)
-                case Opcode.OP_2MUL:
-                    self.op_2mul.execute(self.ctx)
-                case Opcode.OP_2DIV:
-                    self.op_2div.execute(self.ctx)
-                case Opcode.OP_NEGATE:
-                    self.op_negate.execute(self.ctx)
-                case Opcode.OP_ABS:
-                    self.op_abs.execute(self.ctx)
-                case Opcode.OP_NOT:
-                    self.op_not.execute(self.ctx)
-                case Opcode.OP_0NOTEQUAL:
-                    self.op_0notequal.execute(self.ctx)
-                case Opcode.OP_ADD:
-                    self.op_add.execute(self.ctx)
-                case Opcode.OP_SUB:
-                    self.op_sub.execute(self.ctx)
-                case Opcode.OP_MUL:
-                    self.op_mul.execute(self.ctx)
-                case Opcode.OP_DIV:
-                    self.op_div.execute(self.ctx)
-                case Opcode.OP_MOD:
-                    self.op_mod.execute(self.ctx)
-                case Opcode.OP_LSHIFT:
-                    self.op_lshift.execute(self.ctx)
-                case Opcode.OP_RSHIFT:
-                    self.op_rshift.execute(self.ctx)
-                case Opcode.OP_BOOLAND:
-                    self.op_booland.execute(self.ctx)
-                case Opcode.OP_BOOLOR:
-                    self.op_boolor.execute(self.ctx)
-                case Opcode.OP_NUMEQUAL:
-                    self.op_numequal.execute(self.ctx)
-                case Opcode.OP_NUMEQUALVERIFY:
-                    self.op_numequalverify.execute(self.ctx)
-                case Opcode.OP_NUMNOTEQUAL:
-                    self.op_numnotequal.execute(self.ctx)
-                case Opcode.OP_LESSTHAN:
-                    self.op_lessthan.execute(self.ctx)
-                case Opcode.OP_GREATERTHAN:
-                    self.op_greaterthan.execute(self.ctx)
-                case Opcode.OP_LESSTHANOREQUAL:
-                    self.op_lessthanorequal.execute(self.ctx)
-                case Opcode.OP_GREATERTHANOREQUAL:
-                    self.op_greaterthanorequal.execute(self.ctx)
-                case Opcode.OP_MIN:
-                    self.op_min.execute(self.ctx)
-                case Opcode.OP_MAX:
-                    self.op_max.execute(self.ctx)
-                case Opcode.OP_WITHIN:
-                    self.op_within.execute(self.ctx)
-                case Opcode.OP_RIPEMD160:
-                    self.op_ripemd160.execute(self.ctx)
-                case Opcode.OP_SHA1:
-                    self.op_sha1.execute(self.ctx)
-                case Opcode.OP_SHA256:
-                    self.op_sha256.execute(self.ctx)
-                case Opcode.OP_HASH160:
-                    self.op_hash160.execute(self.ctx)
-                case Opcode.OP_HASH256:
-                    self.op_hash256.execute(self.ctx)
-                case Opcode.OP_CODESEPARATOR:
-                    self.op_codeseparator.execute(self.ctx)
-                case Opcode.OP_CHECKSIG:
-                    self.op_checksig.execute(self.ctx)
-                case Opcode.OP_CHECKSIGVERIFY:
-                    self.op_checksigverify.execute(self.ctx)
-                case Opcode.OP_CHECKMULTISIG:
-                    self.op_checkmultisig.execute(self.ctx)
-                case Opcode.OP_CHECKMULTISIGVERIFY:
-                    self.op_checkmultisigverify.execute(self.ctx)
-                case Opcode.OP_CHECKSIGADD:
-                    self.op_checksigadd.execute(self.ctx)
-                case Opcode.OP_CHECKLOCKTIMEVERIFY:  # OP_NOP2
-                    self.op_checklocktimeverify.execute(self.ctx)
-                case Opcode.OP_CHECKSEQUENCEVERIFY:  # OP_NOP3
-                    self.op_checksequenceverify.execute(self.ctx)
-                case Opcode.OP_RESERVED:
-                    self.op_reserved.execute(self.ctx)
-                case Opcode.OP_VER:
-                    self.op_ver.execute(self.ctx)
-                case Opcode.OP_VERIF:
-                    self.op_verif.execute(self.ctx)
-                case Opcode.OP_VERNOTIF:
-                    self.op_vernotif.execute(self.ctx)
-                case Opcode.OP_RESERVED1:
-                    self.op_reserved1.execute(self.ctx)
-                case Opcode.OP_RESERVED2:
-                    self.op_reserved2.execute(self.ctx)
-                case Opcode.OP_NOP1:
-                    self.op_nop1.execute(self.ctx)
-                case Opcode.OP_NOP4:
-                    self.op_nop4.execute(self.ctx)
-                case Opcode.OP_NOP5:
-                    self.op_nop5.execute(self.ctx)
-                case Opcode.OP_NOP6:
-                    self.op_nop6.execute(self.ctx)
-                case Opcode.OP_NOP7:
-                    self.op_nop7.execute(self.ctx)
-                case Opcode.OP_NOP8:
-                    self.op_nop8.execute(self.ctx)
-                case Opcode.OP_NOP9:
-                    self.op_nop9.execute(self.ctx)
-                case Opcode.OP_NOP10:
-                    self.op_nop10.execute(self.ctx)
-                case Opcode.OP_INVALIDOPCODE:
-                    self.op_invalidopcode.execute(self.ctx)
+            op = self.instruction_set.get(opcode)
+            if op is None:
+                raise ScriptExecutionError(
+                    ScriptError.SCRIPT_ERR_BAD_OPCODE,
+                    f"Unhandled opcode: {opcode.name}",
+                )
 
-                case _:
-                    raise ScriptExecutionError(
-                        ScriptError.SCRIPT_ERR_BAD_OPCODE,
-                        f"Unhandled opcode: {opcode.name}",
-                    )
+            op.execute(self.ctx)
+
         except ScriptExecutionError as e:
             self.ctx.state = ScriptContext.Terminated(error=e.error)
+        finally:
+            self.ctx.current_token = None
 
 
 class Prevout(TypedDict):
