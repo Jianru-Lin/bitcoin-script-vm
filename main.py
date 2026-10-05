@@ -612,7 +612,7 @@ class ScriptContext:
                 ScriptError.SCRIPT_ERR_INVALID_ALTSTACK_OPERATION
             )
 
-    def branch_flag(self) -> bool:
+    def is_branch_active(self) -> bool:
         return all(
             self.branch_stack
         )  # [] => True, [True] => True, [True, ..., True] => True
@@ -621,6 +621,7 @@ class ScriptContext:
 class BaseOp(ABC):
     opcode: Opcode
     disabled: bool = False
+    is_branch_control: bool = False
 
     @abstractmethod
     def execute(self, ctx: ScriptContext) -> None:
@@ -845,10 +846,11 @@ class OP_NOP(BaseOp):
 @dataclass(frozen=True)
 class OP_IF(BaseOp):
     opcode: Opcode = Opcode.OP_IF
+    is_branch_control: bool = True
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
-        if ctx.branch_flag():
+        if ctx.is_branch_active():
             ctx.require_stack_min_size(1)
             condition = ctx.stack.pop_bool()
             ctx.branch_stack.append(condition)
@@ -859,10 +861,11 @@ class OP_IF(BaseOp):
 @dataclass(frozen=True)
 class OP_NOTIF(BaseOp):
     opcode: Opcode = Opcode.OP_NOTIF
+    is_branch_control: bool = True
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
-        if ctx.branch_flag():
+        if ctx.is_branch_active():
             ctx.require_stack_min_size(1)
             condition = not ctx.stack.pop_bool()
             ctx.branch_stack.append(condition)
@@ -873,6 +876,7 @@ class OP_NOTIF(BaseOp):
 @dataclass(frozen=True)
 class OP_ELSE(BaseOp):
     opcode: Opcode = Opcode.OP_ELSE
+    is_branch_control: bool = True
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
@@ -887,6 +891,7 @@ class OP_ELSE(BaseOp):
 @dataclass(frozen=True)
 class OP_ENDIF(BaseOp):
     opcode: Opcode = Opcode.OP_ENDIF
+    is_branch_control: bool = True
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
@@ -2255,20 +2260,15 @@ class ScriptInterpreter:
             opcode = token.opcode
             self.ctx.current_token = token
 
-            if not self.ctx.branch_flag() and opcode not in (
-                Opcode.OP_IF,
-                Opcode.OP_NOTIF,
-                Opcode.OP_ELSE,
-                Opcode.OP_ENDIF,
-            ):
-                return
-
             op = self.instruction_set.get(opcode)
             if op is None:
                 raise ScriptExecutionError(
                     ScriptError.SCRIPT_ERR_BAD_OPCODE,
                     f"Unhandled opcode: {opcode.name}",
                 )
+
+            if not self.ctx.is_branch_active() and not op.is_branch_control:
+                return
 
             if op.disabled:
                 raise ScriptExecutionError(
