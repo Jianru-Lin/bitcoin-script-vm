@@ -617,6 +617,12 @@ class ScriptContext:
             self.branch_stack
         )  # [] => True, [True] => True, [True, ..., True] => True
 
+    def is_parent_branch_active(self) -> bool:
+        if len(self.branch_stack) <= 1:
+            return True
+        else:
+            return all(self.branch_stack[:-1])
+
 
 class BaseOp(ABC):
     opcode: Opcode
@@ -885,7 +891,11 @@ class OP_ELSE(BaseOp):
                 ScriptError.SCRIPT_ERR_UNBALANCED_CONDITIONAL,
                 "OP_ELSE without matching OP_IF",
             )
-        raise NotImplementedError("TODO")
+
+        if ctx.is_parent_branch_active():
+            ctx.branch_stack[-1] = not ctx.branch_stack[-1]
+        else:
+            ctx.branch_stack[-1] = False
 
 
 @dataclass(frozen=True)
