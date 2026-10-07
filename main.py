@@ -938,7 +938,6 @@ class OP_RETURN(BaseOp):
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
-        # TODO consider IF branche
         raise ScriptExecutionError(
             ScriptError.SCRIPT_ERR_OP_RETURN,
             "Encountered OP_RETURN",
