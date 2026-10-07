@@ -1893,7 +1893,8 @@ class OP_CODESEPARATOR(BaseOp):
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
-        raise NotImplementedError("TODO")
+        assert ctx.current_token is not None
+        ctx.codesep_pos = ctx.current_token.offset
 
 
 @dataclass(frozen=True)
