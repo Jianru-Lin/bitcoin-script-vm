@@ -268,6 +268,7 @@ class ScriptError(IntEnum):
 
 
 class ScriptToken(NamedTuple):
+    offset: int
     opcode: Opcode
     data: bytes | None = None  # only for OP_PUSHDATA
 
@@ -296,27 +297,27 @@ class ScriptParser:
 
         if 0x01 <= byte <= 0x4B:
             data = reader.read_bytes(byte)
-            return ScriptToken(Opcode.OP_PUSHDATA_DIRECT, data)
+            return ScriptToken(offset, Opcode.OP_PUSHDATA_DIRECT, data)
 
         elif byte == Opcode.OP_PUSHDATA1:
             data_len = reader.read_byte()
             data = reader.read_bytes(data_len)
-            return ScriptToken(Opcode.OP_PUSHDATA1, data)
+            return ScriptToken(offset, Opcode.OP_PUSHDATA1, data)
 
         elif byte == Opcode.OP_PUSHDATA2:
             data_len = reader.read_uint16_le()
             data = reader.read_bytes(data_len)
-            return ScriptToken(Opcode.OP_PUSHDATA2, data)
+            return ScriptToken(offset, Opcode.OP_PUSHDATA2, data)
 
         elif byte == Opcode.OP_PUSHDATA4:
             data_len = reader.read_uint32_le()
             data = reader.read_bytes(data_len)
-            return ScriptToken(Opcode.OP_PUSHDATA4, data)
+            return ScriptToken(offset, Opcode.OP_PUSHDATA4, data)
 
         else:
             try:
                 opcode = Opcode(byte)
-                return ScriptToken(opcode)
+                return ScriptToken(offset, opcode)
             except ValueError:
                 raise ValueError(
                     f"Unknown opcode byte: 0x{byte:02X} at offset {offset}"
@@ -594,13 +595,16 @@ class ScriptContext:
     altstack: ScriptStack
     branch_stack: list[bool]
     state: State
-    current_token: ScriptToken | None = None
+    current_token: ScriptToken | None
+    codesep_pos: int
 
     def __init__(self, stack: ScriptStack | None = None) -> None:
         self.stack = stack if stack is not None else ScriptStack()
         self.altstack = ScriptStack()
         self.branch_stack = []
         self.state = self.Ready()
+        self.current_token = None
+        self.codesep_pos = 0xFFFFFFFF  # BIP342
 
     def require_stack_min_size(self, min_size: int) -> None:
         if len(self.stack) < min_size:
