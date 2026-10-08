@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from dataclasses import dataclass
 from enum import IntEnum, IntFlag
+from inspect import signature
 from typing import NamedTuple, Protocol, Self, TypedDict, override
 
 from btclib.ecc import dsa, ssa
@@ -471,6 +472,19 @@ class ScriptStack:
             raise ValueError("Stack underflow: cannot pop from empty stack")
         return self._stack.pop()
 
+    def pop_n(self, n: int) -> list[bytes]:
+        if n < 0:
+            raise ValueError(f"Cannot pop negative count: {n}")
+        if n == 0:
+            return []
+        if n > len(self._stack):
+            raise ValueError(
+                f"Stack underflow: required {n} items, but only {len(self._stack)} available"
+            )
+        items = self._stack[-n:]
+        del self._stack[-n:]
+        return items
+
     def peek(self, depth: int = 0) -> bytes:
         # 0 -> len - 1
         # 1 -> len - 2
@@ -617,7 +631,7 @@ class ScriptContext:
 
     type State = Ready | Running | Terminated
 
-    # MAX_PUBKEYS_PER_MULTISIG: int = 20
+    MAX_PUBKEYS_PER_MULTISIG: int = 20
     # MAX_SCRIPT_NUM_LENGTH: int = 4
     # MAX_CLTV_NUM_LENGTH: int = 5
 
@@ -1973,19 +1987,82 @@ class OP_CHECKSIGVERIFY(BaseOp):
 @dataclass(frozen=True)
 class OP_CHECKMULTISIG(BaseOp):
     opcode: Opcode = Opcode.OP_CHECKMULTISIG
+    require_minimal: bool = False
+    max_size: int = 1024  # 4 (BIP62)
+    bug_off_by_one: bool = False
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
-        raise NotImplementedError("TODO")
+        ctx.require_stack_min_size(1)
+        pubkeys_len = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        if pubkeys_len < 0 or pubkeys_len > ctx.MAX_PUBKEYS_PER_MULTISIG:
+            raise ScriptExecutionError(ScriptError.SCRIPT_ERR_PUBKEY_COUNT)
+        ctx.require_stack_min_size(pubkeys_len)
+        pubkeys = ctx.stack.pop_n(pubkeys_len)
+
+        ctx.require_stack_min_size(1)
+        signatures_len = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        if signatures_len < 0 or signatures_len > pubkeys_len:
+            raise ScriptExecutionError(ScriptError.SCRIPT_ERR_SIG_COUNT)
+        ctx.require_stack_min_size(signatures_len)
+        signatures = ctx.stack.pop_n(signatures_len)
+
+        if self.bug_off_by_one:
+            ctx.require_stack_min_size(1)
+            dummy = ctx.stack.pop()
+            if len(dummy) != 0:  # BIP147
+                raise ScriptExecutionError(ScriptError.SCRIPT_ERR_SIG_NULLDUMMY)
+
+        sig_idx = 0
+        pk_idx = 0
+        success = True
+
+        while sig_idx < signatures_len:
+            if (pubkeys_len - pk_idx) < (signatures_len - sig_idx):
+                success = False
+
+            sig = signatures[sig_idx]
+            pubkey = pubkeys[pk_idx]
+
+            if len(sig) > 0 and ctx.sig_checker.check_sig(sig, pubkey, ctx):
+                sig_idx += 1
+
+            pk_idx += 1
+
+        if sig_idx < signatures_len:
+            success = False
+
+        if not success:
+            for sig in signatures:
+                if len(sig) != 0:
+                    raise ScriptExecutionError(
+                        ScriptError.SCRIPT_ERR_SIG_NULLFAIL,
+                        "Signatures must be zero-length if verification fails",
+                    )
+            ctx.stack.push_bool(False)
+        else:
+            ctx.stack.push_bool(True)
 
 
 @dataclass(frozen=True)
 class OP_CHECKMULTISIGVERIFY(BaseOp):
     opcode: Opcode = Opcode.OP_CHECKMULTISIGVERIFY
+    require_minimal: bool = False
+    max_size: int = 1024
+    bug_off_by_one: bool = False
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
-        raise NotImplementedError("TODO")
+        OP_CHECKMULTISIG(
+            require_minimal=self.require_minimal,
+            max_size=self.max_size,
+            bug_off_by_one=self.bug_off_by_one,
+        ).execute(ctx)
+        OP_VERIFY().execute(ctx)
 
 
 @dataclass(frozen=True)
