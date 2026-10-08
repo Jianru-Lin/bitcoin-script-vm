@@ -1941,7 +1941,23 @@ class OP_CHECKSIG(BaseOp):
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
-        raise NotImplementedError("TODO")
+        ctx.require_stack_min_size(2)
+        pubkey = ctx.stack.pop()
+        sig = ctx.stack.pop()
+
+        if len(sig) == 0:
+            ctx.stack.push_bool(False)
+            return
+
+        success = ctx.sig_checker.check_sig(sig=sig, pubkey=pubkey, ctx=ctx)
+
+        if not success:  # BIP146
+            raise ScriptExecutionError(
+                ScriptError.SCRIPT_ERR_SIG_NULLFAIL,
+                "Signature must be zero-length if verification fails",
+            )
+
+        ctx.stack.push_bool(True)
 
 
 @dataclass(frozen=True)
@@ -1950,7 +1966,8 @@ class OP_CHECKSIGVERIFY(BaseOp):
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
-        raise NotImplementedError("TODO")
+        OP_CHECKSIG().execute(ctx)
+        OP_VERIFY().execute(ctx)
 
 
 @dataclass(frozen=True)
