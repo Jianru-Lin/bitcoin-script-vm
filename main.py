@@ -5,7 +5,6 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from dataclasses import dataclass
 from enum import IntEnum, IntFlag
-from inspect import signature
 from typing import NamedTuple, Protocol, Self, TypedDict, override
 
 from btclib.ecc import dsa, ssa
@@ -2024,6 +2023,7 @@ class OP_CHECKMULTISIG(BaseOp):
         while sig_idx < signatures_len:
             if (pubkeys_len - pk_idx) < (signatures_len - sig_idx):
                 success = False
+                break
 
             sig = signatures[sig_idx]
             pubkey = pubkeys[pk_idx]
