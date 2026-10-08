@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from dataclasses import dataclass
 from enum import IntEnum, IntFlag
-from typing import NamedTuple, Self, TypedDict, override
+from typing import NamedTuple, Protocol, Self, TypedDict, override
 
 from btclib.ecc import dsa, ssa
 
@@ -576,6 +576,32 @@ class ScriptExecutionError(Exception):
         self.error = error
 
 
+class SignatureChecker(Protocol):
+    def check_sig(self, sig: bytes, pubkey: bytes, ctx: "ScriptContext") -> bool: ...
+
+
+class DummySignatureChecker:
+    def check_sig(self, sig: bytes, pubkey: bytes, ctx: "ScriptContext") -> bool:
+        return len(sig) != 0
+
+
+@dataclass(frozen=True)
+class TransactionContext:
+    LOCKTIME_THRESHOLD: int = 500_000_000
+    SEQUENCE_FINAL: int = 0xFFFF_FFFF
+
+    tx_locktime: int = 0
+    input_sequence: int = 0xFFFF_FFFF
+
+    def check_lock_time(self, lock_time: int) -> bool:
+        # BIP65
+        raise NotImplementedError("TODO")
+
+    def check_sequence(self, sequence: int) -> bool:
+        # BIP112
+        raise NotImplementedError("TODO")
+
+
 class ScriptContext:
     @dataclass(frozen=True)
     class Ready:
@@ -591,6 +617,10 @@ class ScriptContext:
 
     type State = Ready | Running | Terminated
 
+    # MAX_PUBKEYS_PER_MULTISIG: int = 20
+    # MAX_SCRIPT_NUM_LENGTH: int = 4
+    # MAX_CLTV_NUM_LENGTH: int = 5
+
     stack: ScriptStack
     altstack: ScriptStack
     branch_stack: list[bool]
@@ -598,13 +628,22 @@ class ScriptContext:
     current_token: ScriptToken | None
     codesep_pos: int
 
-    def __init__(self, stack: ScriptStack | None = None) -> None:
-        self.stack = stack if stack is not None else ScriptStack()
+    tx_ctx: TransactionContext
+    sig_checker: SignatureChecker
+
+    def __init__(
+        self,
+        tx_ctx: TransactionContext,
+        sig_checker: SignatureChecker,
+    ) -> None:
+        self.stack = ScriptStack()
         self.altstack = ScriptStack()
         self.branch_stack = []
         self.state = self.Ready()
         self.current_token = None
         self.codesep_pos = 0xFFFFFFFF  # BIP342
+        self.tx_ctx = tx_ctx
+        self.sig_checker = sig_checker
 
     def require_stack_min_size(self, min_size: int) -> None:
         if len(self.stack) < min_size:
@@ -1944,19 +1983,48 @@ class OP_CHECKSIGADD(BaseOp):
 @dataclass(frozen=True)
 class OP_CHECKLOCKTIMEVERIFY(BaseOp):  # OP_NOP2
     opcode: Opcode = Opcode.OP_CHECKLOCKTIMEVERIFY
+    require_minimal: bool = False
+    max_size: int = 1024  # 5 (BIP65)
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
-        raise NotImplementedError("TODO")
+        ctx.require_stack_min_size(1)
+        lock_time = ctx.stack.peek_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+
+        if lock_time < 0:
+            raise ScriptExecutionError(ScriptError.SCRIPT_ERR_NEGATIVE_LOCKTIME)
+
+        if not ctx.tx_ctx.check_lock_time(lock_time):
+            raise ScriptExecutionError(
+                ScriptError.SCRIPT_ERR_UNSATISFIED_LOCKTIME,
+                "Locktime condition not satisfied by current transaction",
+            )
 
 
 @dataclass(frozen=True)
 class OP_CHECKSEQUENCEVERIFY(BaseOp):  # OP_NOP3
     opcode: Opcode = Opcode.OP_CHECKSEQUENCEVERIFY
+    require_minimal: bool = False
+    max_size: int = 1024  # 5 (BIP112)
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
-        raise NotImplementedError("TODO")
+        ctx.require_stack_min_size(1)
+
+        sequence = ctx.stack.peek_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+
+        if sequence < 0:
+            raise ScriptExecutionError(ScriptError.SCRIPT_ERR_NEGATIVE_LOCKTIME)
+
+        if not ctx.tx_ctx.check_sequence(sequence):
+            raise ScriptExecutionError(
+                ScriptError.SCRIPT_ERR_UNSATISFIED_LOCKTIME,
+                "Sequence locktime condition not satisfied by current transaction",
+            )
 
 
 @dataclass(frozen=True)
@@ -2249,8 +2317,8 @@ class ScriptInterpreter:
     ctx: ScriptContext
     instruction_set: InstructionSet
 
-    def __init__(self, stack: ScriptStack | None = None) -> None:
-        self.ctx = ScriptContext(stack)
+    def __init__(self, tx_ctx: TransactionContext) -> None:
+        self.ctx = ScriptContext(tx_ctx=tx_ctx, sig_checker=DummySignatureChecker())
         self.instruction_set = InstructionSet()
 
     def execute(self, script_bytes: bytes) -> ScriptContext.Terminated:

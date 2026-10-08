@@ -26,10 +26,10 @@ class TestScriptParser(unittest.TestCase):
             ]
         )
         expected = [
-            ScriptToken(Opcode.OP_DUP),
-            ScriptToken(Opcode.OP_HASH160),
-            ScriptToken(Opcode.OP_EQUALVERIFY),
-            ScriptToken(Opcode.OP_CHECKSIG),
+            ScriptToken(0, Opcode.OP_DUP),
+            ScriptToken(1, Opcode.OP_HASH160),
+            ScriptToken(2, Opcode.OP_EQUALVERIFY),
+            ScriptToken(3, Opcode.OP_CHECKSIG),
         ]
         self.assertEqual(parse(raw), expected)
 
@@ -37,20 +37,20 @@ class TestScriptParser(unittest.TestCase):
         raw_4bytes = b"\x04\xde\xad\xbe\xef"
         self.assertEqual(
             parse(raw_4bytes),
-            [ScriptToken(Opcode.OP_PUSHDATA_DIRECT, b"\xde\xad\xbe\xef")],
+            [ScriptToken(0, Opcode.OP_PUSHDATA_DIRECT, b"\xde\xad\xbe\xef")],
         )
 
         # 75 bytes data
         data_75 = b"A" * 75
         raw_75bytes = b"\x4b" + data_75
         self.assertEqual(
-            parse(raw_75bytes), [ScriptToken(Opcode.OP_PUSHDATA_DIRECT, data_75)]
+            parse(raw_75bytes), [ScriptToken(0, Opcode.OP_PUSHDATA_DIRECT, data_75)]
         )
 
     def test_pushdata1(self):
         data_80 = b"B" * 80
         raw = b"\x4c\x50" + data_80
-        self.assertEqual(parse(raw), [ScriptToken(Opcode.OP_PUSHDATA1, data_80)])
+        self.assertEqual(parse(raw), [ScriptToken(0, Opcode.OP_PUSHDATA1, data_80)])
 
     # def test_unknown_opcode_raises_error(self):
     #     raw = bytes([0x76, 0xA9, 0xFF, 0x88])
