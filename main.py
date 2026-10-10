@@ -1,6 +1,7 @@
 import hashlib
 import random
 import socket
+import sys
 from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from dataclasses import dataclass
@@ -668,6 +669,55 @@ class ScriptFlagsParser:
         return ",".join(names)
 
 
+@dataclass(frozen=True)
+class ScriptLimits:
+    max_script_size: int = 10_000
+    max_script_element_size: int = 520
+    max_stack_size: int = 1_000
+    max_ops_per_script: int = 201
+    max_pubkeys_per_multisig: int = 20
+    max_script_num_length: int = 4
+    max_cltv_csv_num_length: int = 5
+    max_tapscript_num_length: int = 8
+    validation_weight_offset: int = 50
+    validation_weight_per_sigop: int = 50
+
+    @classmethod
+    def mainnet(cls) -> Self:
+        return cls()
+
+    @classmethod
+    def testnet(cls) -> Self:
+        return cls()
+
+    @classmethod
+    def regtest(cls) -> Self:
+        return cls()
+
+    @classmethod
+    def unlimited(cls) -> Self:
+        max_int = sys.maxsize
+        return cls(
+            max_script_size=max_int,
+            max_script_element_size=max_int,
+            max_stack_size=max_int,
+            max_ops_per_script=max_int,
+            max_pubkeys_per_multisig=max_int,
+            max_script_num_length=max_int,
+            max_cltv_csv_num_length=max_int,
+            max_tapscript_num_length=max_int,
+            validation_weight_offset=max_int,
+            validation_weight_per_sigop=0,  # no cost
+        )
+
+
+class ScriptSignatureVersion(IntEnum):
+    BASE = 0
+    WITNESS_V0 = 1
+    TAPROOT = 2
+    TAPSCRIPT = 3
+
+
 class SignatureChecker(Protocol):
     def check_sig(self, sig: bytes, pubkey: bytes, ctx: "ScriptContext") -> bool: ...
 
@@ -741,11 +791,9 @@ class ScriptContext:
 
     type State = Ready | Running | Terminated
 
-    MAX_PUBKEYS_PER_MULTISIG: int = 20
-    # MAX_SCRIPT_NUM_LENGTH: int = 4
-    # MAX_CLTV_NUM_LENGTH: int = 5
-
     flags: ScriptFlags
+    limits: ScriptLimits
+    sig_version: ScriptSignatureVersion
 
     stack: ScriptStack
     altstack: ScriptStack
@@ -760,10 +808,14 @@ class ScriptContext:
     def __init__(
         self,
         flags: ScriptFlags,
+        limits: ScriptLimits,
+        sig_version: ScriptSignatureVersion,
         tx_ctx: TransactionContext,
         sig_checker: SignatureChecker,
     ) -> None:
         self.flags = flags
+        self.limits = limits
+        self.sig_version = sig_version
         self.stack = ScriptStack()
         self.altstack = ScriptStack()
         self.branch_stack = []
@@ -2115,7 +2167,7 @@ class OP_CHECKMULTISIG(BaseOp):
         pubkeys_len = ctx.stack.pop_num(
             require_minimal=self.require_minimal, max_size=self.max_size
         )
-        if pubkeys_len < 0 or pubkeys_len > ctx.MAX_PUBKEYS_PER_MULTISIG:
+        if pubkeys_len < 0 or pubkeys_len > ctx.limits.max_pubkeys_per_multisig:
             raise ScriptExecutionError(ScriptError.SCRIPT_ERR_PUBKEY_COUNT)
         ctx.require_stack_min_size(pubkeys_len)
         pubkeys = ctx.stack.pop_n(pubkeys_len)
@@ -2681,8 +2733,16 @@ class ScriptInterpreter:
     ctx: ScriptContext
     instruction_set: InstructionSet
 
-    def __init__(self, flags: ScriptFlags, tx_ctx: TransactionContext) -> None:
+    def __init__(
+        self,
+        limits: ScriptLimits,
+        sig_version: ScriptSignatureVersion,
+        flags: ScriptFlags,
+        tx_ctx: TransactionContext,
+    ) -> None:
         self.ctx = ScriptContext(
+            limits=limits,
+            sig_version=sig_version,
             flags=flags,
             tx_ctx=tx_ctx,
             sig_checker=DummySignatureChecker(),
