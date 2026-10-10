@@ -603,16 +603,48 @@ class TransactionContext:
     LOCKTIME_THRESHOLD: int = 500_000_000
     SEQUENCE_FINAL: int = 0xFFFF_FFFF
 
+    SEQUENCE_LOCKTIME_DISABLE_FLAG: int = 1 << 31  # 0x80000000
+    SEQUENCE_LOCKTIME_TYPE_FLAG: int = 1 << 22  # 0x00400000
+    SEQUENCE_LOCKTIME_MASK: int = 0x0000_FFFF  # 0x0000FFFF
+
+    tx_version: int = 2
     tx_locktime: int = 0
     input_sequence: int = 0xFFFF_FFFF
 
     def check_lock_time(self, lock_time: int) -> bool:
         # BIP65
-        raise NotImplementedError("TODO")
+        is_script_time = lock_time >= self.LOCKTIME_THRESHOLD
+        is_tx_time = self.tx_locktime >= self.LOCKTIME_THRESHOLD
+        if is_script_time != is_tx_time:
+            return False
+
+        if self.input_sequence == self.SEQUENCE_FINAL:
+            return False
+
+        return lock_time <= self.tx_locktime
 
     def check_sequence(self, sequence: int) -> bool:
-        # BIP112
-        raise NotImplementedError("TODO")
+        # BIP68 BIP112
+        if self.tx_version < 2:
+            return False
+
+        if sequence & self.SEQUENCE_LOCKTIME_DISABLE_FLAG:
+            return False
+
+        if self.input_sequence & self.SEQUENCE_LOCKTIME_DISABLE_FLAG:
+            return False
+
+        is_script_time_locked = bool(sequence & self.SEQUENCE_LOCKTIME_TYPE_FLAG)
+        is_input_time_locked = bool(
+            self.input_sequence & self.SEQUENCE_LOCKTIME_TYPE_FLAG
+        )
+        if is_script_time_locked != is_input_time_locked:
+            return False
+
+        script_val = sequence & self.SEQUENCE_LOCKTIME_MASK
+        input_val = self.input_sequence & self.SEQUENCE_LOCKTIME_MASK
+
+        return script_val <= input_val
 
 
 class ScriptContext:
