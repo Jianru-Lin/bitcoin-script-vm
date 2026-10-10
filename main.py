@@ -745,6 +745,8 @@ class ScriptContext:
     # MAX_SCRIPT_NUM_LENGTH: int = 4
     # MAX_CLTV_NUM_LENGTH: int = 5
 
+    flags: ScriptFlags
+
     stack: ScriptStack
     altstack: ScriptStack
     branch_stack: list[bool]
@@ -757,9 +759,11 @@ class ScriptContext:
 
     def __init__(
         self,
+        flags: ScriptFlags,
         tx_ctx: TransactionContext,
         sig_checker: SignatureChecker,
     ) -> None:
+        self.flags = flags
         self.stack = ScriptStack()
         self.altstack = ScriptStack()
         self.branch_stack = []
@@ -2674,8 +2678,12 @@ class ScriptInterpreter:
     ctx: ScriptContext
     instruction_set: InstructionSet
 
-    def __init__(self, tx_ctx: TransactionContext) -> None:
-        self.ctx = ScriptContext(tx_ctx=tx_ctx, sig_checker=DummySignatureChecker())
+    def __init__(self, flags: ScriptFlags, tx_ctx: TransactionContext) -> None:
+        self.ctx = ScriptContext(
+            flags=flags,
+            tx_ctx=tx_ctx,
+            sig_checker=DummySignatureChecker(),
+        )
         self.instruction_set = InstructionSet.ideal()
 
     def execute(self, script_bytes: bytes) -> ScriptContext.Terminated:
