@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from dataclasses import dataclass
 from enum import IntEnum, IntFlag
-from typing import NamedTuple, Protocol, Self, TypedDict, override
+from typing import ClassVar, NamedTuple, Protocol, Self, TypedDict, override
 
 from btclib.ecc import dsa, ssa
 
@@ -587,6 +587,85 @@ class ScriptExecutionError(Exception):
     def __init__(self, error: ScriptError, message: str = ""):
         super().__init__(message or error.name)
         self.error = error
+
+
+# Check here https://github.com/bitcoin/bitcoin/blob/master/src/script/interpreter.h
+class ScriptFlags(IntFlag):
+    SCRIPT_VERIFY_NONE = 0
+    SCRIPT_VERIFY_P2SH = 1 << 0
+    SCRIPT_VERIFY_STRICTENC = 1 << 1
+    SCRIPT_VERIFY_DERSIG = 1 << 2
+    SCRIPT_VERIFY_LOW_S = 1 << 3
+    SCRIPT_VERIFY_NULLDUMMY = 1 << 4
+    SCRIPT_VERIFY_SIGPUSHONLY = 1 << 5
+    SCRIPT_VERIFY_MINIMALDATA = 1 << 6
+    SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_NOPS = 1 << 7
+    SCRIPT_VERIFY_CLEANSTACK = 1 << 8
+    SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY = 1 << 9
+    SCRIPT_VERIFY_CHECKSEQUENCEVERIFY = 1 << 10
+    SCRIPT_VERIFY_WITNESS = 1 << 11
+    SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_WITNESS_PROGRAM = 1 << 12
+    SCRIPT_VERIFY_MINIMALIF = 1 << 13
+    SCRIPT_VERIFY_NULLFAIL = 1 << 14
+    SCRIPT_VERIFY_WITNESS_PUBKEYTYPE = 1 << 15
+    SCRIPT_VERIFY_CONST_SCRIPTCODE = 1 << 16
+    SCRIPT_VERIFY_TAPROOT = 1 << 17
+    SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_TAPROOT_VERSION = 1 << 18
+    SCRIPT_VERIFY_DISCOURAGE_OP_SUCCESS = 1 << 19
+    SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_PUBKEYTYPE = 1 << 20
+
+
+class ScriptFlagsParser:
+    _STRING_TO_FLAG: ClassVar[dict[str, ScriptFlags]] = {
+        "": ScriptFlags.SCRIPT_VERIFY_NONE,
+        "NONE": ScriptFlags.SCRIPT_VERIFY_NONE,
+        "P2SH": ScriptFlags.SCRIPT_VERIFY_P2SH,
+        "STRICTENC": ScriptFlags.SCRIPT_VERIFY_STRICTENC,
+        "DERSIG": ScriptFlags.SCRIPT_VERIFY_DERSIG,
+        "LOW_S": ScriptFlags.SCRIPT_VERIFY_LOW_S,
+        "NULLDUMMY": ScriptFlags.SCRIPT_VERIFY_NULLDUMMY,
+        "SIGPUSHONLY": ScriptFlags.SCRIPT_VERIFY_SIGPUSHONLY,
+        "MINIMALDATA": ScriptFlags.SCRIPT_VERIFY_MINIMALDATA,
+        "DISCOURAGE_UPGRADABLE_NOPS": ScriptFlags.SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_NOPS,
+        "CLEANSTACK": ScriptFlags.SCRIPT_VERIFY_CLEANSTACK,
+        "CHECKLOCKTIMEVERIFY": ScriptFlags.SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY,
+        "CHECKSEQUENCEVERIFY": ScriptFlags.SCRIPT_VERIFY_CHECKSEQUENCEVERIFY,
+        "WITNESS": ScriptFlags.SCRIPT_VERIFY_WITNESS,
+        "DISCOURAGE_UPGRADABLE_WITNESS_PROGRAM": ScriptFlags.SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_WITNESS_PROGRAM,
+        "MINIMALIF": ScriptFlags.SCRIPT_VERIFY_MINIMALIF,
+        "NULLFAIL": ScriptFlags.SCRIPT_VERIFY_NULLFAIL,
+        "WITNESS_PUBKEYTYPE": ScriptFlags.SCRIPT_VERIFY_WITNESS_PUBKEYTYPE,
+        "CONST_SCRIPTCODE": ScriptFlags.SCRIPT_VERIFY_CONST_SCRIPTCODE,
+        "TAPROOT": ScriptFlags.SCRIPT_VERIFY_TAPROOT,
+        "DISCOURAGE_UPGRADABLE_TAPROOT_VERSION": ScriptFlags.SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_TAPROOT_VERSION,
+        "DISCOURAGE_OP_SUCCESS": ScriptFlags.SCRIPT_VERIFY_DISCOURAGE_OP_SUCCESS,
+        "DISCOURAGE_UPGRADABLE_PUBKEYTYPE": ScriptFlags.SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_PUBKEYTYPE,
+    }
+
+    @classmethod
+    def parse(cls, flags_str: str) -> ScriptFlags:
+        flags = ScriptFlags.SCRIPT_VERIFY_NONE
+        for item in flags_str.split(","):
+            name = item.strip()
+            if not name:
+                continue
+            if name not in cls._STRING_TO_FLAG:
+                raise ValueError(f"Unknown script verification flag: {name}")
+            flags |= cls._STRING_TO_FLAG[name]
+
+        return flags
+
+    @classmethod
+    def to_string(cls, flags: ScriptFlags) -> str:
+        if flags == ScriptFlags.SCRIPT_VERIFY_NONE:
+            return "NONE"
+
+        names = [
+            name
+            for name, flag_val in cls._STRING_TO_FLAG.items()
+            if flag_val != ScriptFlags.SCRIPT_VERIFY_NONE and bool(flags & flag_val)
+        ]
+        return ",".join(names)
 
 
 class SignatureChecker(Protocol):
