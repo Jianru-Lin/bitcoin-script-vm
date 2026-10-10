@@ -794,6 +794,9 @@ class ScriptContext:
         else:
             return all(self.branch_stack[:-1])
 
+    def has_flag(self, flag: ScriptFlags) -> bool:
+        return bool(self.flags & flag)
+
 
 @dataclass(frozen=True)
 class BaseOp(ABC):
