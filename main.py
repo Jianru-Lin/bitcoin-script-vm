@@ -2338,9 +2338,16 @@ class InstructionSet:
 
     def __init__(self) -> None:
         self._ops = {}
-        self._register_defaults()
 
-    def _register_defaults(self) -> None:
+    def register(self, op: BaseOp) -> None:
+        self._ops[op.opcode] = op
+
+    def get(self, opcode: Opcode) -> BaseOp | None:
+        return self._ops.get(opcode)
+
+    @classmethod
+    def ideal(cls) -> Self:
+        self = cls()
         self.register(OP_PUSHDATA_DIRECT())
         self.register(OP_PUSHDATA1())
         self.register(OP_PUSHDATA2())
@@ -2455,12 +2462,7 @@ class InstructionSet:
         self.register(OP_NOP9())
         self.register(OP_NOP10())
         self.register(OP_INVALIDOPCODE())
-
-    def register(self, op: BaseOp) -> None:
-        self._ops[op.opcode] = op
-
-    def get(self, opcode: Opcode) -> BaseOp | None:
-        return self._ops.get(opcode)
+        return self
 
 
 class ScriptInterpreter:
