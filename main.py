@@ -2562,8 +2562,14 @@ class InstructionSet:
         self.register(OP_CODESEPARATOR())
         self.register(OP_CHECKSIG())
         self.register(OP_CHECKSIGVERIFY())
-        self.register(OP_CHECKMULTISIG(bug_off_by_one=True, require_minimal=True, max_size=4))
-        self.register(OP_CHECKMULTISIGVERIFY(bug_off_by_one=True, require_minimal=True, max_size=4))
+        self.register(
+            OP_CHECKMULTISIG(bug_off_by_one=True, require_minimal=True, max_size=4)
+        )
+        self.register(
+            OP_CHECKMULTISIGVERIFY(
+                bug_off_by_one=True, require_minimal=True, max_size=4
+            )
+        )
         self.register(OP_CHECKSIGADD(require_minimal=True, max_size=4))
         self.register(OP_CHECKLOCKTIMEVERIFY(require_minimal=True, max_size=5))
         self.register(OP_CHECKSEQUENCEVERIFY(require_minimal=True, max_size=5))
@@ -2591,7 +2597,7 @@ class ScriptInterpreter:
 
     def __init__(self, tx_ctx: TransactionContext) -> None:
         self.ctx = ScriptContext(tx_ctx=tx_ctx, sig_checker=DummySignatureChecker())
-        self.instruction_set = InstructionSet()
+        self.instruction_set = InstructionSet.ideal()
 
     def execute(self, script_bytes: bytes) -> ScriptContext.Terminated:
         self.ctx.state = ScriptContext.Running()
