@@ -2068,10 +2068,34 @@ class OP_CHECKMULTISIGVERIFY(BaseOp):
 @dataclass(frozen=True)
 class OP_CHECKSIGADD(BaseOp):
     opcode: Opcode = Opcode.OP_CHECKSIGADD
+    require_minimal: bool = False
+    max_size: int = 1024
 
     @override
     def execute(self, ctx: ScriptContext) -> None:
-        raise NotImplementedError("TODO")
+        ctx.require_stack_min_size(3)
+        pubkey = ctx.stack.pop()
+        n = ctx.stack.pop_num(
+            require_minimal=self.require_minimal, max_size=self.max_size
+        )
+        sig = ctx.stack.pop()
+
+        if len(pubkey) == 0:
+            raise ScriptExecutionError(
+                ScriptError.SCRIPT_ERR_TAPSCRIPT_EMPTY_PUBKEY,
+                "OP_CHECKSIGADD encountered an empty public key",
+            )
+
+        if len(sig) == 0:
+            ctx.stack.push_num(n)
+        else:
+            success = ctx.sig_checker.check_sig(sig=sig, pubkey=pubkey, ctx=ctx)
+            if not success:
+                raise ScriptExecutionError(
+                    ScriptError.SCRIPT_ERR_SIG_NULLFAIL,
+                    "OP_CHECKSIGADD: non-empty signature failed verification",
+                )
+            ctx.stack.push_num(n + 1)
 
 
 @dataclass(frozen=True)
